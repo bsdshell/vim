@@ -41,7 +41,7 @@ highlight Type						cterm=NONE
 syn match DashLine /---\+/
 highlight DashLine guifg=Brown ctermfg=Brown
 
-syn match NumberDot /\d\+\.\ /
+syn match NumberDot /\W\+\d\+\.\s\|^\d\+\.\s/
 highlight NumberDot guifg=Red ctermfg=Red 
 
 
@@ -54,19 +54,14 @@ highlight ACEBug   guifg=Yellow ctermfg=Yellow
 syn match MyTodo   /todo\c/
 highlight MyTodo    guifg=Yellow ctermfg=Yellow
 
-
-"syn match FileName /\(\w\|[-_]\)\+\.\w\{2,4}\s\+\c/
 syn match FileName /\w\+\.\w\{2,4}\s\+\c/
 highlight FileName  guifg=Cyan    ctermfg=Cyan 
 
-syn match MyDate /\d\{2}\/\d\{2}\/\d\{4}/
+syn match MyDate /\d\{1,2}\/\d\{2}\/\d\{4}/
 highlight MyDate    guifg=Magenta ctermfg=Magenta
 
 syn match MyString /\".*\"/
 highlight MyString guifg=LightRed ctermfg=LightRed
-
-"syn match MyLeftBracket /(\ze[^)]*/
-"highlight MyLeftBracket guifg=LightRed ctermfg=LightRed
 
 syn match MyRightBracket /([^)]*)/
 highlight MyRightBracket guifg=LightRed ctermfg=LightRed
@@ -82,6 +77,12 @@ highlight MyBranch guifg=#F53986
 
 syn match MyTitle /Title:\c/
 highlight MyTitle guifg=#FAAA2F
+
+syn match MyDone /Done:\c/
+highlight MyDone guifg=Magenta
+
+syn match MyLetter /\s[A-Z]\./
+highlight MyLetter guifg=#FAAA2F
 
 
 
