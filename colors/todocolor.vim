@@ -1,9 +1,3 @@
-" Vim color file
-" Maintainer:	Thorsten Maerz <info@netztorte.de>
-" Last Change:	2006 Dec 07
-" grey on black
-" optimized for TFT panels
-
 set background=dark
 hi clear
 if exists("syntax_on")
