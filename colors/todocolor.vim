@@ -16,8 +16,12 @@ let g:colors_name = "todocolor"
 " GUI Comment : #80a0ff = Light blue
 
 " GUI
-highlight Normal     guifg=Grey80	guibg=Black
-highlight Search     guifg=Black	guibg=Red	gui=bold
+highlight Normal     guifg=Grey80	guibg=#2C332D
+
+highlight Search     guifg=Black	guibg=Red	gui=NONE
+highlight Search1    guifg=Black	guibg=Green	gui=NONE
+highlight Search2    guifg=Black	guibg=Brown	gui=NONE
+
 highlight Visual     guifg=#404040			gui=bold
 highlight Cursor     guifg=Black	guibg=Green	gui=bold
 highlight Special    guifg=Orange
@@ -28,8 +32,12 @@ highlight Type						gui=NONE
 
 
 " Console
-highlight Normal     ctermfg=LightGrey	ctermbg=Black
-highlight Search     ctermfg=Black	ctermbg=Red	cterm=NONE
+" highlight Normal     ctermfg=LightGrey	ctermbg=Black
+highlight  Normal  guibg=#2C332D
+
+highlight Search     ctermfg=Black	ctermbg=Red	    cterm=NONE
+highlight Search1    ctermfg=Black	ctermbg=Green	cterm=NONE
+highlight Search2    ctermfg=Black	ctermbg=Brown	cterm=NONE
 highlight Visual					cterm=reverse
 highlight Cursor     ctermfg=Black	ctermbg=Green	cterm=bold
 highlight Special    ctermfg=Brown
@@ -51,16 +59,19 @@ highlight DoubleDashLine guifg=Green ctermfg=Green
 syn match AceBug   /ACE-\d\+\c/
 highlight ACEBug   guifg=Yellow ctermfg=Yellow
 
-syn match MyTodo   /todo\c/
+syn match MyTodo   /todo:\c/
 highlight MyTodo    guifg=Yellow ctermfg=Yellow
 
-syn match FileName /\w\+\.\w\{2,4}\s\+\c/
-highlight FileName  guifg=Cyan    ctermfg=Cyan 
+syn match MyFixed   /fixed:\c/
+highlight MyFixed   guifg=Brown  ctermfg=Yellow
+
+syn match FileName /\w\+\.\w\{2,7}\(\s\+\|\n\)\c/
+highlight FileName  guifg=Brown    ctermfg=Brown 
 
 syn match MyDate /\d\{1,2}\/\d\{2}\/\d\{4}/
 highlight MyDate    guifg=Magenta ctermfg=Magenta
 
-syn match MyString /\".*\"/
+syn match MyString /\"[^"]*\"/
 highlight MyString guifg=LightRed ctermfg=LightRed
 
 syn match MyRightBracket /([^)]*)/
@@ -80,6 +91,14 @@ highlight MyTitle guifg=#FAAA2F
 
 syn match MyDone /Done:\c/
 highlight MyDone guifg=Magenta
+
+syn match MyTest /Test:\c/
+highlight MyTest guifg=#E3783C 
+
+syn match MyModifiedFiles /Modified\s\+\file:\c/
+highlight MyModifiedFiles guifg=#3E7833 
+
+
 
 syn match MyLetter /\s[A-Z]\./
 highlight MyLetter guifg=#FAAA2F
