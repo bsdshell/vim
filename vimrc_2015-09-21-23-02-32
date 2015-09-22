@@ -1,0 +1,243 @@
+
+let g:clang_library_path='/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib'
+syntax enable
+"colorscheme solarized
+colorscheme default 
+hi search ctermbg=Gray ctermfg=Brown
+
+"For Align
+filetype plugin on
+
+set hls
+set omnifunc=csscomplete#CompleteCSS
+set autoindent
+set nocp
+set ruler
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set showcmd
+set nobackup
+set nowritebackup
+set noswapfile 
+set autochdir
+set backspace=2
+set dictionary=/home/user/.vim/myword/myword.txt
+
+cabbr svim :source ~/.vimrc
+
+map <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader idea.pdf <CR>
+map <F9> :e!<CR>
+map <F8> :res +15 <CR> 
+map <F7> :res -15 <CR> 
+map <F3> :tabn <CR> 
+map <F2> :tabp <CR>
+map <F1> :tabnew <CR>
+map ,nl :.,$s/\S.*\S/\0<br>/gc <bar> :nohlsearch <CR>
+map ,n :nohlsearch <CR>
+map ,w :w!<CR>
+map ,l :.,.s/\S.*\S$/\\[ \0 \\]/gc <bar> :nohlsearch <CR>
+
+imap ,w OQ  :w! <CR>
+cabbr vc :tabnew ~/.vimrc
+iabbr cc \mathbb{C}
+iabbr qq \mathbb{Q}
+iabbr nn \mathbb{N}
+iabbr rr \mathbb{R}
+iabbr gro $(\mathbb{N}, +)$
+iabbr cml <p><CR>$\Large \color{red}\lambda$ 
+        \<CR>Rename file name of default screenshots in Mac OSX, Open your Terminal and type:<br><br>
+        \<CR><span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">  
+        \<CR>defaults write com.apple.screencapture name "myName"<br>
+        \<CR></span><br>
+        \<CR>And type:<br><br>
+        \<CR><span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">  
+        \<CR>killall SystemUIServer
+        \<CR></span> 
+        \<CR></p>
+
+iabbr grl \[
+        \<CR>\alpha        \theta                  \tau       \\ 
+        \<CR>\beta         \vartheta    \pi          \upsilon \\ 
+        \<CR>\gamma        \gamma       \varpi       \phi     \\ 
+        \<CR>\delta        \kappa       \rho         \varphi  \\ 
+        \<CR>\epsilon      \lambda      \varrho      \chi     \\ 
+        \<CR>\varepsilon   \mu          \sigma       \psi     \\ 
+        \<CR>\zeta         \nu          \varsigma    \omega   \\ 
+        \<CR>\eta          \xi                                \\ 
+        \<CR>                                                 \\ 
+        \<CR>\Gamma        \Lambda      \Sigma       \Psi     \\ 
+        \<CR>\Delta                  \Upsilon     \Omega      \\ 
+        \<CR>\Theta        \Pi          \Phi
+        \<CR>\]
+iabbr grtau $\Huge \color{red}\tau$ 
+iabbr lmapq $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$  
+iabbr lmapr $\phi: \polyringr{x} \rightarrow  \polyringr{x}$ 
+iabbr lmapn $\phi: \polyringn{x} \rightarrow  \polyringn{x}$ 
+iabbr lmapc $\phi: \mathbb{C} \rightarrow \mathbb{C}$  
+iabbr ma \begin{bmatrix}
+        \<CR>1 & 2  & 3 \\
+        \<CR>4 & 5  & 6 \\
+        \<CR>7 & 8  & 9 \\
+        \<CR>\end{bmatrix}
+iabbr ee [\  \]
+iabbr txx \text{}
+iabbr fraa \frac{}{}
+iabbr xblo NSString* (^myBlock)(int) = ^(int num) { 
+        \<CR>   return num*num; 
+        \<CR>
+        \<CR>};
+
+
+iabbr xpp [path moveToPoint:CGPointMake(location.x, location.y)];
+        \<CR>[path addLineToPoint:CGPointMake(location.x + width, location.y)];
+        \<CR>[path addLineToPoint:CGPointMake(location.x + width, location.y + height)];
+        \<CR>[path addLineToPoint:CGPointMake(location.x, location.y + height)];
+        \<CR>[path addLineToPoint:CGPointMake(location.x, location.y)];
+
+iabbr xcc blackColor 
+        \<CR>darkGrayColor 
+        \<CR>lightGrayColor
+        \<CR>whiteColor
+        \<CR>grayColor
+        \<CR>redColor
+        \<CR>greenColor
+        \<CR>blueColor
+        \<CR>cyanColor
+        \<CR>yellowColor
+        \<CR>magentaColor
+        \<CR>orangeColor
+        \<CR>purpleColor
+        \<CR>brownColor
+        \<CR>clearColor
+
+iabbr hhh =Hello()<CR> 
+iabbr kkk ListMonth()
+iabbr timm [NSTimer scheduledTimerWithTimeInterval:self.delayInterval
+        \<CR>target:self
+        \<CR>selector:@selector(suspendDisplay:)<CR>userInfo:nil<CR>repeats:NO];<CR><CR>-(void)suspendDisplay:(NSTimer*)timer{<CR>}
+
+iabbr imav UIImageView* _imageView; 
+                    \<CR>@property (nonatomic, retain) UIImageView* imageView;
+                    \<CR>@synthesize imageView = _imageView;
+                    \<CR>self.imageView = [[UIImageView alloc]initWithFrame:self.window.bounds];
+                    \<CR>self.imageView.image=[UIImage imageNamed:@"myimage.jpg"];
+                    \<CR>[self.window addSubview:self.imageView];
+
+iabbr labb UILabel *myLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, 50, 300, 300)];
+                \<CR>[myLabel setTextColor:[UIColor redColor]];
+                \<CR>[myLabel setBackgroundColor:[UIColor clearColor]];
+                \<CR>[myLabel setFont:[UIFont fontWithName: @"Trebuchet MS" size: 20.0f]];
+                \<CR>[myLabel setText:@"Supper Simple Application"];
+                \<CR>[self.window addSubview:myLabel];
+iabbr xss [%S]
+iabbr xdd [%d]
+iabbr xff [%f]
+iabbr nsa NSLog(@"num1=[%f] num2=[%f]", num1, num2); <CR>NSLog(@"num1=[%d] num2=[%d]", num1, num2); 
+iabbr nsd NSLog(@"num1=[%d] num2=[%d]", num1, num2); 
+iabbr nsf NSLog(@"num1=[%f] num2=[%f]", num1, num2); 
+iabbr ns NSLog(@"%s", __PRETTY_FUNCTION__);
+iabbr crr \<CR>
+iabbr tt3 public static void test3()<CR>{<CR>}
+iabbr tt2 public static void test2()<CR>{<CR>}
+iabbr tt1 public static void test1()<CR>{<CR>}
+iabbr mn String name = new Object(){}.getClass().getEnclosingMethod().getName();
+        \<CR>System.out.println("{"+name + "}");
+
+iabbr 2ari int[][] arr = { {1, 2, 3},
+        \<CR>{4, 5, 6},
+        \<CR>{7, 8, 9}
+        \<CR>};
+
+iabbr 1ari int[] arr1 = {1, 4, 9};
+
+iabbr 2ar int height = 1; 
+        \<CR>int width = 2;
+        \<CR>int[][] = new int[height][width];
+
+iabbr forr for(int i=0; i<array.length; i++)
+            \<CR>System.out.println("[" + i + "]=" + array[i]);
+
+iabbr pub public static void print(int[][] arr, int height, int width)
+iabbr bb <br>
+iabbr apa <span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">
+          \<CR></span>
+
+iabbr tab   <table>
+            \<CR><tbody>
+            \<CR><tr>
+            \<CR><td>Jim</td>
+            \<CR><td>00001</td>
+            \<CR><td>Blue</td>
+            \<CR></tr>
+            \<CR><tr>
+            \<CR><td>Sue</td>
+            \<CR><td>00002</td>
+            \<CR><td>Red</td>
+            \<CR></tr>
+            \<CR><tr>
+            \<CR><td>Barb</td>
+            \<CR><td>00003</td>
+            \<CR><td>Green</td>
+            \<CR></tr>
+            \<CR></tbody>
+            \<CR></table>
+iabbr divv <div style="text-align:center">
+      \<CR></div>
+abbr re \color{red}
+abbr im <img src="../image/rotatedarrayfigure.svg" width="100%" height="100%" /><br>
+abbr ep </span>
+abbr sp <span style="color:#FF00EE">
+cabbr todo :tabnew ~/myfile/todo/todo.txt 
+cabbr note :tabnew ~/myfile/github/note/note.txt 
+cabbr sess :mksession! ~/.vim/session/sess.vim 
+cabbr vimrc :e ~/.vimrc
+cabbr svim :source ~/.vimrc
+cabbr me :g/[-+]\s*(\w\+\s*\*\?)\s*\w\+/z#.1
+
+iabbr par System.out.println("[" + height + "][" + width + "]");
+iabbr pp System.out.println("string ");
+
+" compile latex
+autocmd FileType tex nnoremap <buffer> <F10>  :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader idea.pdf <CR>
+autocmd FileType objc nnoremap <buffer><localleader>c I//<Esc>
+
+
+"map  <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader idea.pdf <CR>
+
+" Vim >= 7.0 specific colors
+if version >= 700
+  hi CursorLine guibg=#2d2d2d
+  hi CursorColumn guibg=#2d2d2d
+  hi MatchParen guifg=#f6f3e8 guibg=#857b6f gui=bold
+  hi Pmenu 		guifg=#f6f3e8 guibg=#444444
+  hi PmenuSel 	guifg=#000000 guibg=#cae682
+endif
+
+"follwoing color will overwrite the colorscheme
+" General colors
+"hi Cursor 		guifg=NONE    guibg=#656565 gui=none
+"hi Normal 		guifg=#f6f3e8 guibg=#242424 gui=none
+"hi NonText 		guifg=#808080 guibg=#303030 gui=none
+"hi LineNr 		guifg=#857b6f guibg=#000000 gui=none
+"hi StatusLine 	guifg=#f6f3e8 guibg=#444444 gui=italic
+"hi StatusLineNC guifg=#857b6f guibg=#444444 gui=none
+"hi VertSplit 	guifg=#444444 guibg=#444444 gui=none
+"hi Folded 		guibg=#384048 guifg=#a0a8b0 gui=none
+"hi Title		guifg=#f6f3e8 guibg=NONE	gui=bold
+"hi Visual		guifg=#f6f3e8 guibg=#444444 gui=none
+"hi SpecialKey	guifg=#808080 guibg=#343434 gui=none
+
+" Syntax highlighting
+"hi Comment 		guifg=#99968b gui=italic
+"hi Todo 		guifg=#8f8f8f gui=italic
+"hi Constant 	guifg=#e5786d gui=none
+"hi String 		guifg=#95e454 gui=italic
+"hi Identifier 	guifg=#cae682 gui=none
+"hi Function 	guifg=#cae682 gui=none
+"hi Type 		guifg=#cae682 gui=none
+"hi Statement 	guifg=#8ac6f2 gui=none
+"hi Keyword		guifg=#8ac6f2 gui=none
+"hi PreProc 		guifg=#e5786d gui=none
+"hi Number		guifg=#e5786d gui=none
+"hi Special		guifg=#e7f6da gui=none
