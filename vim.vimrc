@@ -15,6 +15,7 @@ set laststatus=2
 set statusline=%F
 set statusline+=\[%-2.5n]
 set statusline+=\ %l:%c\ %r\ %m
+set statusline+=\ %{CheckToggleBracketGroup()}
 set hls
 set autoindent
 set smartindent
@@ -31,6 +32,7 @@ set autochdir
 set backspace=2
 set dictionary=/home/user/.vim/myword/myword.txt
  
+
 "=====================================================================
 " objc header file
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/Foundation.framework/Headers/*
@@ -39,7 +41,7 @@ autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Dev
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/*
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/*
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/*
-autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*
+autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*.tex
 
 :set notimeout          " don't timeout on mappings
 :set ttimeout           " do timeout on terminal key codes
@@ -64,8 +66,10 @@ colorscheme default
 "colorscheme solarized
 "colorscheme haskellcolor
 "=====================================================================
-map <Left>       :nohlsearch <CR>
-imap <Left><Esc> :nohlsearch <CR>
+
+nnoremap <silent> <C-l> :nohlsearch<CR>
+"map <Left>       :nohlsearch <CR>
+"imap <Left><Esc> :nohlsearch <CR>
 map <F7>         :vertical   res +5 <CR>
 map <F8>         :vertical   res -5 <CR>
 map <F2>         :tabp       <CR>
@@ -79,6 +83,19 @@ map <S-F10>      :call       ToggleColorScheme() <CR>
 nnoremap <F6>    :call ToggleBracketGroup()<CR>
 map <F1>         :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt <CR>
 
+"=====================================================================
+" Generate code snippets 
+"---------------------------------------------------------------------
+func! RunSnippet()
+   " Not sure why following command doesn't work
+   :call system('runhaskell ' . ' -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
+
+    " It does works like that, don't ask me why
+   :call system('runhaskell -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
+   :source /Users/cat/myfile/github/snippets/objectivec.vimrc 
+endfunc
+"=====================================================================
+
 "inoremap <F6> <C-R>=ListMonths()<CR>
 func! ListMonths()
   call complete(col('.'), ['January', 'February', 'March',
@@ -86,8 +103,6 @@ func! ListMonths()
     \ 'October', 'November', 'December'])
   return ''
 endfunc
-
-" inoremap <F6> <C-R>=CompleteMonths()<CR>
 
 fun! CompleteMonths(findstart, base)
 	  if a:findstart
@@ -100,16 +115,25 @@ fun! CompleteMonths(findstart, base)
 	    return start
 	  else
 	    " find months matching with "a:base"
-	    let res = []
+        let matches = split("cat dog cow")
+        let dict   = {}
+        "let word   = {'word':'myword', 'abbr':'myabbr'}
+        "let word   = {'word':'myword', 'abbr':'myabbr', 'menu':'mymenu\n menu1 \n menu2', 'info':'myinfo'}
+        let word   = {'word':'myword', 'abbr':'myabbr', 'menu': "mymenu\n menu1 \n menu2"}
+        let matches[1] = word
+        let res    = []
 	    for m in split("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
-	      if m =~ '^' . a:base
-            call add(res, m)
-	      endif
-	    endfor
-	    return res
+            if m =~ '^' . a:base
+                call add(res, m)
+                let dict = {'words': matches, 'refresh': 'always'}
+            endif
+        endfor
+	    "return res
+        return dict
 	  endif
-	endfun
-"set completefunc=CompleteMonths
+endfun
+set completefunc=CompleteMonths
+
 
 " -----------------------------------------------------------------------------
 " Read vimrc file and capture all the iabbr, store it in a list
@@ -205,6 +229,7 @@ cabbr mk :mksession! $sess <CR>
 cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt
 cabbr mm :marks
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito <CR>
+cabbr Sni :tabnew $g/snippets/objectivec.mm 
 
 " command line mode
 "-----------------------------------------------------------------
@@ -225,38 +250,43 @@ cabbr pl   :call ListTabPage() <CR>
 "------------------------------------------------------------------
 
 " Add block code to noteindex file
-autocmd BufRead *.txt iabbr <buffer> bl '[ ]
+autocmd BufEnter *.txt iabbr <buffer> bl [ ]
                                     \<CR>`[
                                     \<CR>
-                                    \<CR>`]' . "\<Esc>" . '3k' . '1h'
+                                    \<CR>`]
 
 augroup Java
 au!
-autocmd BufRead *.java setlocal completefunc=CompleteAbbre
-autocmd BufRead *.tex  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.java setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.tex  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.cpp  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.py  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.m,*.h  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.html  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
 
 " Move the cursor to the beginning of the line
-autocmd BufRead *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
+autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
                                                     
-autocmd BufRead *.java iabbr <expr> forr_one_for_loop 'for(int xxx=0; xxx<10; xxx++){
+autocmd BufEnter *.java iabbr <expr> forr_one_for_loop 'for(int xxx=0; xxx<10; xxx++){
                                          \<CR>}' . "\<Esc>" . "1k" . "^". ":.,.s/xxx/i/gc" . "<CR>"
 
-autocmd BufRead *.java iabbr <expr> for2_two_for_loop 'for(int xxx=0; xxx < 9; xxx++){
+autocmd BufEnter *.java iabbr <expr> for2_two_for_loop 'for(int xxx=0; xxx < 9; xxx++){
                                       \<CR>for(int xxx=0; xxx < 9; xxx++){
                                       \<CR>}
                                       \<CR>}' . "\<Esc>" . "3k" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
 
 
 
-autocmd BufRead *.java iabbr <expr> jim 'import java.io.*;
+autocmd BufEnter *.java iabbr <expr> jim 'import java.io.*;
                                  \<CR>import java.lang.String;
                                  \<CR>import java.util.*;' . "\<Esc>" . "^"
 
-autocmd BufRead *.java iabbr <expr> jl 'List<String> list = new ArrayList<String>();' . "\<Esc>" . "^" . ":.,.s/String/Integer/gc" . "<CR>"
+autocmd BufEnter *.java iabbr <expr> jl 'List<String> list = new ArrayList<String>();' . "\<Esc>" . "^" . ":.,.s/String/Integer/gc" . "<CR>"
 
-autocmd BufRead *.java iabbr <expr> jm 'Map<String, Integer> map = new HashMap<String, Integer>();' . "\<Esc>" . "^"
+autocmd BufEnter *.java iabbr <expr> jm 'Map<String, Integer> map = new HashMap<String, Integer>();' . "\<Esc>" . "^"
          
-autocmd BufRead *.java iabbr <expr> jda 'List<String> list = new ArrayList<String>();
+autocmd BufEnter *.java iabbr <expr> jda 'List<String> list = new ArrayList<String>();
                                         \<CR>List<String> list = new LinkedList<String>();
                                         \<CR>List<String> list = new Stack<String>();
                                         \<CR>List<String> list = new Vector<String>();
@@ -270,12 +300,12 @@ augroup END
 "------------------------------------------------------------------
 augroup Shell
 au!
-autocmd BufRead *.sh iabbr <buffer> forr 'for i in
+autocmd BufEnter *.sh iabbr <buffer> forr 'for i in
                                     \<CR>do
                                     \<CR>echo "$i"
                                     \<CR>done'. "\<Esc>" . "2h"
 
-autocmd BufRead *.sh iabbr <buffer>   iff 'if [ $# -gt 0 ]; then
+autocmd BufEnter *.sh iabbr <buffer>   iff 'if [ $# -gt 0 ]; then
                                     \<CR>echo "arg $1"
                                     \<CR>if [ $1 = "w" ]; then
                                     \<CR>echo "do sth"
@@ -295,20 +325,29 @@ augroup END
 "------------------------------------------------------------------
 
 "------------------------------------------------------------------
-" cpp mapping
+" cpp mapping, compile cpp, compile g++, cpp compile
 "------------------------------------------------------------------
 augroup cpp
 au!
 
-"autocmd BufWritePost *.cpp      :silent exec ':!g++ -I /usr/local/include/eigen3 -o %:p:r %:p' | :! %:p:r
-"autocmd BufWritePost *.cpp      :silent exec ':!g++ -std=c++11 -o %:p:r %:p' | :! %:p:r
+"autocmd BufEnter *.cpp  set makeprg=g++\ -std=c++11\ %:p
+"autocmd BufWritePost *.cpp  g++ -std=c++11 %:p <bar> :silent :! %:p:r <CR>
 
-"autocmd BufWritePost *.cpp  :silent exec ':!g++ -std=c++11 -o %:p:r %:p' | :! %:p:r
+" work
+"autocmd filetype cpp nnoremap <F9> :w <bar> exec '!g++ -std=c++11 '.shellescape('%').' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
 
-autocmd BufRead *.cpp  set makeprg=g++\ -std=c++11\ %
-autocmd BufWritePost *.cpp  :silent exec ':make' | :! %:p:r
 
 augroup END
+
+au BufEnter *.cpp set makeprg=g++\ -g\ %\ -o\ %< 
+au BufEnter *.c set makeprg=gcc\ -g\ %\ -o\ %< 
+au BufEnter *.py set makeprg=python\ % 
+map <F9> :call CompileGcc()<CR>
+func! CompileGcc()
+    silent make
+endfunc
+
+
 
 
 "------------------------------------------------------------------
@@ -336,6 +375,7 @@ function! ToggleBracketGroup()
             inoremap <buffer> { {}<++><Esc>F}i
             inoremap <buffer> $ $$<++><Esc>F$i
             inoremap <buffer> # \[ \\]<++><++><Esc>F\i
+
     else
          echo "iummap: <c-j> ( [ { $ #"
          iunmap <buffer> <c-j>
@@ -346,6 +386,16 @@ function! ToggleBracketGroup()
          iunmap <buffer> #
     endif
 endfunction
+
+" Check whether placeholder is enable or not
+fun! CheckToggleBracketGroup()
+    if(empty(maparg('(', 'i')))
+        return "-"
+    else
+        return "{}"
+    endif 
+endfun
+
 "------------------------------------------------------------------
 
 augroup latex
@@ -353,222 +403,222 @@ au!
 
 " Call Chrome from command line with url
 " Pass url to Chrome in command line
-autocmd BufRead  *.tex,*.html cabbr example :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/html/indexLatexExample.html -incongnito <CR>
-autocmd BufRead  *.tex,*.html cabbr Greek   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/greek1.png -incongnito <CR>
-autocmd BufRead  *.tex,*.html cabbr Font    :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/latexfont.png -incongnito <CR>
-autocmd BufRead  *.vimrc,*.html cabbr Color   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome https://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg<CR>
-autocmd BufRead  *.vimrc,*.html cabbr Mat   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  http://localhost/zsurface/html/indexLatexMatrix.html<CR>
+autocmd BufEnter  *.tex,*.html cabbr example :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/html/indexLatexExample.html -incongnito <CR>
+autocmd BufEnter  *.tex,*.html cabbr Greek   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/greek1.png -incongnito <CR>
+autocmd BufEnter  *.tex,*.html cabbr Font    :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/latexfont.png -incongnito <CR>
+autocmd BufEnter  *.vimrc,*.html cabbr Color   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome https://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg<CR>
+autocmd BufEnter  *.vimrc,*.html cabbr Mat   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  http://localhost/zsurface/html/indexLatexMatrix.html<CR>
 
 
 
-autocmd FileType tex cabbr ln :tabe /Users/cat/myfile/github/math/latexnote.tex
+autocmd BufEnter *.tex cabbr ln :tabe /Users/cat/myfile/github/math/latexnote.tex
 
-"autocmd FileType tex cabbr ee :.,$s/\S.*\S/\\\[ \0\ \\\]/gc <bar> :nohlsearch <CR>
-"autocmd FileType tex cabbr ed :.,$s/\S.*\S/\$\0\$/gc <bar> :nohlsearch <CR>
-"autocmd FileType tex cabbr el :.,$s/\S.*\S/\0\ \\\\/gc <bar> :nohlsearch <CR>
+"autocmd BufEnter *.tex cabbr ee :.,$s/\S.*\S/\\\[ \0\ \\\]/gc <bar> :nohlsearch <CR>
+"autocmd BufEnter *.tex cabbr ed :.,$s/\S.*\S/\$\0\$/gc <bar> :nohlsearch <CR>
+"autocmd BufEnter *.tex cabbr el :.,$s/\S.*\S/\0\ \\\\/gc <bar> :nohlsearch <CR>
 
-autocmd FileType tex iabbr nl \newline <CR>
-autocmd FileType tex iabbr bc \mathbb{C}
-autocmd FileType tex iabbr bq \mathbb{Q}
-autocmd FileType tex iabbr bn \mathbb{N}
-autocmd FileType tex iabbr br \mathbb{R}
-autocmd FileType tex iabbr gro   $(\mathbb{N}, +)$
-autocmd FileType tex iabbr grtau $\Huge \color{red}\tau$
-autocmd FileType tex iabbr lmapq $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
-autocmd FileType tex iabbr lmapr $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
-autocmd FileType tex iabbr lmapn $\phi: \polyringn{x} \rightarrow  \polyringn{x}$
-autocmd FileType tex iabbr lmapc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
-autocmd FileType tex iabbr <buffer> fra  '\frac{}{}'
-autocmd FileType tex iabbr <buffer> mdet '\det (\mathbf{A} - \lambda \mathbf{I}) = 0'
-autocmd FileType tex iabbr <buffer> deta '\det (\mathbf{A})'
-autocmd FileType tex iabbr <buffer> detb '\det (\mathbf{B})'
-autocmd FileType tex iabbr <buffer> detc '\det (\mathbf{C})' 
-autocmd FileType tex iabbr <buffer> ast  '^{\ast}' 
-autocmd FileType tex iabbr <buffer> bfa  '\mathbf{A}' 
-autocmd FileType tex iabbr <buffer> bfai '\mathbf{A^{\ast}}' 
-autocmd FileType tex iabbr <buffer> bfaa '$\mathbf{A}$' 
-autocmd FileType tex iabbr <buffer> bfb  '\mathbf{B}' 
-autocmd FileType tex iabbr <buffer> bfbi '\mathbf{B^{\ast}}' 
-autocmd FileType tex iabbr <buffer> bfbb '$\mathbf{B}$'
-autocmd FileType tex iabbr <buffer> bfc  '\mathbf{C}'
-autocmd FileType tex iabbr <buffer> bfci '\mathbf{C^{\ast}}'
-autocmd FileType tex iabbr <buffer> bfcc '$\mathbf{C}$'
-autocmd FileType tex iabbr <buffer> bfq  '\mathbf{Q}'
-autocmd FileType tex iabbr <buffer> bfqq '$\mathbf{Q}$'
-autocmd FileType tex iabbr <buffer> bfp  '\mathbf{P}'
-autocmd FileType tex iabbr <buffer> bfpi '\mathbf{P^{\ast}}'
-autocmd FileType tex iabbr <buffer> bfpp '$\mathbf{P}$'
-autocmd FileType tex iabbr <buffer> bfi  '\mathbf{I}'
-autocmd FileType tex iabbr <buffer> bfii '$\mathbf{I}$'
-autocmd FileType tex iabbr <buffer> bb '\[ \]'
-autocmd FileType tex iabbr <buffer> ff '$ $'
-autocmd FileType tex iabbr <buffer> noi '\setlength\parindent{0pt}'
+autocmd BufEnter *.tex iabbr <buffer> nl \newline <CR>
+autocmd BufEnter *.tex iabbr <buffer> bc \mathbb{C}
+autocmd BufEnter *.tex iabbr <buffer> bq \mathbb{Q}
+autocmd BufEnter *.tex iabbr <buffer> bn \mathbb{N}
+autocmd BufEnter *.tex iabbr <buffer> br \mathbb{R}
+autocmd BufEnter *.tex iabbr <buffer> gro   $(\mathbb{N}, +)$
+autocmd BufEnter *.tex iabbr <buffer> grtau $\Huge \color{red}\tau$
+autocmd BufEnter *.tex iabbr <buffer> lmapq $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
+autocmd BufEnter *.tex iabbr <buffer> lmapr $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
+autocmd BufEnter *.tex iabbr <buffer> lmapn $\phi: \polyringn{x} \rightarrow  \polyringn{x}$
+autocmd BufEnter *.tex iabbr <buffer> lmapc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
+autocmd BufEnter *.tex iabbr <buffer> fra  \frac{}{}
+autocmd BufEnter *.tex iabbr <buffer> mdet \det (\mathbf{A} - \lambda \mathbf{I}) = 0
+autocmd BufEnter *.tex iabbr <buffer> deta \det (\mathbf{A})
+autocmd BufEnter *.tex iabbr <buffer> detb \det (\mathbf{B})
+autocmd BufEnter *.tex iabbr <buffer> detc \det (\mathbf{C}) 
+autocmd BufEnter *.tex iabbr <buffer> ast  ^{\ast} 
+autocmd BufEnter *.tex iabbr <buffer> bfa  \mathbf{A} 
+autocmd BufEnter *.tex iabbr <buffer> bfai \mathbf{A^{\ast}} 
+autocmd BufEnter *.tex iabbr <buffer> bfaa $\mathbf{A}$ 
+autocmd BufEnter *.tex iabbr <buffer> bfb  \mathbf{B} 
+autocmd BufEnter *.tex iabbr <buffer> bfbi \mathbf{B^{\ast}} 
+autocmd BufEnter *.tex iabbr <buffer> bfbb $\mathbf{B}$
+autocmd BufEnter *.tex iabbr <buffer> bfc  \mathbf{C}
+autocmd BufEnter *.tex iabbr <buffer> bfci \mathbf{C^{\ast}}
+autocmd BufEnter *.tex iabbr <buffer> bfcc $\mathbf{C}$
+autocmd BufEnter *.tex iabbr <buffer> bfq  \mathbf{Q}
+autocmd BufEnter *.tex iabbr <buffer> bfqq $\mathbf{Q}$
+autocmd BufEnter *.tex iabbr <buffer> bfp  \mathbf{P}
+autocmd BufEnter *.tex iabbr <buffer> bfpi \mathbf{P^{\ast}}
+autocmd BufEnter *.tex iabbr <buffer> bfpp $\mathbf{P}$
+autocmd BufEnter *.tex iabbr <buffer> bfi  \mathbf{I}
+autocmd BufEnter *.tex iabbr <buffer> bfii $\mathbf{I}$
+autocmd BufEnter *.tex iabbr <buffer> bb \[ \]
+autocmd BufEnter *.tex iabbr <buffer> ff $ $
+autocmd BufEnter *.tex iabbr <buffer> noi \setlength\parindent{0pt}
 
-autocmd FileType tex iabbr <buffer> noi '\setlength\parindent{0pt}'
-autocmd FileType tex iabbr <buffer> bigo '$\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$'
+autocmd BufEnter *.tex iabbr <buffer> noi \setlength\parindent{0pt}
+autocmd BufEnter *.tex iabbr <buffer> bigo $\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$
 
 " visual mode substitute or select mode
-autocmd FileType tex vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
-autocmd FileType tex vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
+autocmd BufEnter *.tex vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
+autocmd BufEnter *.tex vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 
-autocmd FileType tex vmap  tbf  :s/\%V.*\%V/\\textbf{\0}/ <CR>
-autocmd FileType tex vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
+autocmd BufEnter *.tex vmap  tbf  :s/\%V.*\%V/\\textbf{\0}/ <CR>
+autocmd BufEnter *.tex vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
 
 " enclose with bracket
-autocmd FileType tex cabbr <buffer> 00$ ':s/\\\S\+/$\0$/gc'
-autocmd FileType tex cabbr <buffer> 00( ':s/\\\S\+/(\0)/gc'
-autocmd FileType tex cabbr <buffer> 00[ ':s/\\\S\+/[\0]/gc'
-autocmd FileType tex cabbr <buffer> 00{ ':s/\\\S\+/{\0}/gc'
+autocmd BufEnter *.tex cabbr <buffer> 00$ :s/\\\S\+/$\0$/gc
+autocmd BufEnter *.tex cabbr <buffer> 00( :s/\\\S\+/(\0)/gc
+autocmd BufEnter *.tex cabbr <buffer> 00[ :s/\\\S\+/[\0]/gc
+autocmd BufEnter *.tex cabbr <buffer> 00{ :s/\\\S\+/{\0}/gc
 
 " summary notation
-autocmd FileType tex iabbr <buffer> summ 's = \sum_{k=0}^{\infty} \frac{1}{k}'
-"autocmd FileType tex iabbr <buffer> tee '\[ \text{} \]'
-autocmd FileType tex iabbr <buffer> boo '\[ \mbox{ } \]'
-autocmd FileType tex iabbr <buffer> box '\mbox{ }'
-autocmd FileType tex iabbr <buffer> lr( '\left( \right)'
-autocmd FileType tex iabbr <buffer> lr[ '\left[ \right]'
-autocmd FileType tex iabbr <buffer> lr{ '\left{ \right}'
-autocmd FileType tex iabbr <buffer> lr< '\left< \right>'
-autocmd FileType tex iabbr <buffer> inn '\left< \vec{u} \,, \vec{v} \right>'
-autocmd FileType tex iabbr <buffer> sq  '\sqrt{a + b}'
+autocmd BufEnter *.tex iabbr <buffer> summ s = \sum_{k=0}^{\infty} \frac{1}{k}
+"autocmd BufEnter *.tex iabbr <buffer> tee \[ \text{} \]
+autocmd BufEnter *.tex iabbr <buffer> boo \[ \mbox{ } \]
+autocmd BufEnter *.tex iabbr <buffer> box \mbox{ }
+autocmd BufEnter *.tex iabbr <buffer> lr( \left( \right)
+autocmd BufEnter *.tex iabbr <buffer> lr[ \left[ \right]
+autocmd BufEnter *.tex iabbr <buffer> lr{ \left{ \right}
+autocmd BufEnter *.tex iabbr <buffer> lr< \left< \right>
+autocmd BufEnter *.tex iabbr <buffer> inn \left< \vec{u} \,, \vec{v} \right>
+autocmd BufEnter *.tex iabbr <buffer> sq  \sqrt{a + b}
 
-autocmd FileType tex iabbr <buffer> ctc '$\phi: \mathbb{C} \rightarrow \mathbb{C}$'
-autocmd FileType tex iabbr <buffer> qtc '$\phi: \mathbb{Q} \rightarrow \mathbb{Q}$'
-autocmd FileType tex iabbr <buffer> por '$\phi: \polyringr{x} \rightarrow  \polyringr{x}$'
+autocmd BufEnter *.tex iabbr <buffer> ctc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
+autocmd BufEnter *.tex iabbr <buffer> qtc $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
+autocmd BufEnter *.tex iabbr <buffer> por $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
 
-autocmd BufRead *.tex,*.html iabbr <buffer> vv '\left[ \begin{array}{cc}
+autocmd BufEnter *.tex,*.html iabbr <buffer> vv \left[ \begin{array}{cc}
                                  \<CR>c_1 \\
                                  \<CR>c_2 \\
                                  \<CR>\vdots \\
                                  \<CR>c_n
                                  \<CR>\end{array}
-                                 \<CR>\right]'
+                                 \<CR>\right]
 
 
-autocmd BufRead *.tex,*.html iabbr <buffer> detp '\[ \chi(\lambda) = \left\| \begin{array}{ccc}
+autocmd BufEnter *.tex,*.html iabbr <buffer> detp \[ \chi(\lambda) = \left\| \begin{array}{ccc}
                                       \<CR>\lambda - a & -b & -c \\
                                       \<CR>-d & \lambda - e & -f \\
-                                      \<CR>-g & -h & \lambda - i \end{array} \right\| \]'
+                                      \<CR>-g & -h & \lambda - i \end{array} \right\| \]
 
-autocmd BufRead *.tex,*.html iabbr <buffer> mat( '\[ \left( \begin{array}{ccc}
+autocmd BufEnter *.tex,*.html iabbr <buffer> mat( \[ \left( \begin{array}{ccc}
                                         \<CR>a & b & c \\
                                         \<CR>d & e & f \\
-                                        \<CR>g & h & i \end{array} \right)\]'
+                                        \<CR>g & h & i \end{array} \right)\]
 
-autocmd BufRead *.tex,*.html iabbr <buffer> det22 '\[ \left\| \begin{array}{cc}
+autocmd BufEnter *.tex,*.html iabbr <buffer> det22 \[ \left\| \begin{array}{cc}
                                   \<CR>a & b \\
-                                  \<CR>c & d \end{array} \right\| \] '
+                                  \<CR>c & d \end{array} \right\| \]
 
-autocmd BufRead *.tex,*.html iabbr <buffer> matv '\[ \left\| \begin{array}{ccc}
+autocmd BufEnter *.tex,*.html iabbr <buffer> matv \[ \left\| \begin{array}{ccc}
                                   \<CR>a & b & c \\
                                   \<CR>d & e & f \\
-                                  \<CR>g & h & i \end{array} \right\| \] '
+                                  \<CR>g & h & i \end{array} \right\| \]
 
 
-autocmd BufRead *.tex,*.html iabbr <buffer> bmat 'A_{m,n} =
+autocmd BufEnter *.tex,*.html iabbr <buffer> bmat A_{m,n} =
                                  \<CR>\begin{pmatrix}
                                  \<CR>a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
                                  \<CR>a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
                                  \<CR>\vdots  & \vdots  & \ddots & \vdots  \\
                                  \<CR>a_{m,1} & a_{m,2} & \cdots & a_{m,n}
-                                 \<CR>\end{pmatrix}'
+                                 \<CR>\end{pmatrix}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> matr 'A= \begin{bmatrix}
+autocmd BufEnter *.tex,*.html iabbr <buffer> matr A= \begin{bmatrix}
                                 \<CR>\cos(\beta) & -\sin(\beta)\\
                                 \<CR>\sin(\beta) & \cos(\beta)
-                                \<CR>\end{bmatrix}'
+                                \<CR>\end{bmatrix}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> mat1 'A= \begin{bmatrix}
+autocmd BufEnter *.tex,*.html iabbr <buffer> mat1 A= \begin{bmatrix}
                                 \<CR>1 & 2\\
                                 \<CR>3 & 4
-                                \<CR>\end{bmatrix}'
+                                \<CR>\end{bmatrix}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> mat2 'A= \begin{bmatrix}
+autocmd BufEnter *.tex,*.html iabbr <buffer> mat2 A= \begin{bmatrix}
                                 \<CR>1 & 2\\
                                 \<CR>3 & 4
-                                \<CR>\end{bmatrix}'
+                                \<CR>\end{bmatrix}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> mati 'A= \begin{bmatrix}
+autocmd BufEnter *.tex,*.html iabbr <buffer> mati A= \begin{bmatrix}
                                 \<CR>1 & 0\\
                                 \<CR>0 & 1
-                                \<CR>\end{bmatrix}'
+                                \<CR>\end{bmatrix}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> mat3 'A= \begin{bmatrix}
+autocmd BufEnter *.tex,*.html iabbr <buffer> mat3 A= \begin{bmatrix}
                                 \<CR>1 & 2 & 3\\
                                 \<CR>4 & 5 & 6\\
                                 \<CR>7 & 8 & 9
-                                \<CR>\end{bmatrix}'
+                                \<CR>\end{bmatrix}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> mati3 'A= \begin{bmatrix}
+autocmd BufEnter *.tex,*.html iabbr <buffer> mati3 A= \begin{bmatrix}
                                 \<CR>1 & 0 & 0\\
                                 \<CR>0 & 1 & 0\\
                                 \<CR>0 & 0 & 1
-                                \<CR>\end{bmatrix}'
+                                \<CR>\end{bmatrix}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> t66 '\begin{tabular}{\|c\|c\|c\|c\|c\|c\|} \hline
+autocmd BufEnter *.tex,*.html iabbr <buffer> t66 \begin{tabular}{\|c\|c\|c\|c\|c\|c\|} \hline
                                  \<CR>10 & 20 & 30 & 40 & 50 & 50 \\ \hline
                                  \<CR>22 & 28 & 38 & 48 & 58 & 50 \\ \hline
                                  \<CR>28 & 38 & 48 & 58 & 68 & 50 \\ \hline
                                  \<CR>33 & 18 & 18 & 28 & 99 & 50 \\ \hline
                                  \<CR>98 & 18 & 18 & 28 & 88 & 50 \\ \hline
                                  \<CR>98 & 18 & 18 & 28 & 88 & 50 \\ \hline
-                                 \<CR>\end{tabular}'
+                                 \<CR>\end{tabular}
 
-autocmd  BufRead *.tex,*.html iabbr <buffer> t55 '\begin{tabular}{\|c\|c\|c\|c\|c\|} \hline
+autocmd  BufEnter *.tex,*.html iabbr <buffer> t55 \begin{tabular}{\|c\|c\|c\|c\|c\|} \hline
                                  \<CR>10 & 20 & 30 & 40 & 50 \\ \hline
                                  \<CR>22 & 28 & 38 & 48 & 58 \\ \hline
                                  \<CR>28 & 38 & 48 & 58 & 68 \\ \hline
                                  \<CR>33 & 28 & 18 & 18 & 99 \\ \hline
                                  \<CR>98 & 28 & 18 & 18 & 88 \\ \hline
-                                 \<CR>\end{tabular}'
+                                 \<CR>\end{tabular}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> t44 '\begin{tabular}{\|c\|c\|c\|c\|} \hline
+autocmd BufEnter *.tex,*.html iabbr <buffer> t44 \begin{tabular}{\|c\|c\|c\|c\|} \hline
                                  \<CR>10 & 20 & 30 & 40 \\ \hline
                                  \<CR>22 & 28 & 37 & 48 \\ \hline
                                  \<CR>28 & 38 & 48 & 58 \\ \hline
                                  \<CR>33 & 10 & 11 & 12 \\ \hline
-                                 \<CR>\end{tabular}'
+                                 \<CR>\end{tabular}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> t33 '\begin{tabular}{\|c\|c\|c\|} \hline
+autocmd BufEnter *.tex,*.html iabbr <buffer> t33 \begin{tabular}{\|c\|c\|c\|} \hline
                                  \<CR>10 & 20 & 30  \\ \hline
                                  \<CR>22 & 28 & 38  \\ \hline
                                  \<CR>28 & 38 & 48  \\ \hline
-                                 \<CR>\end{tabular}'
+                                 \<CR>\end{tabular}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> eqq '\begin{equation}
+autocmd BufEnter *.tex,*.html iabbr <buffer> eqq \begin{equation}
                                        \<CR>\begin{aligned}
                                        \<CR>x & = y + 1
                                        \<CR>x & = z + 3
                                        \<CR>\end{aligned}
-                                       \<CR>\end{equation}'
+                                       \<CR>\end{equation}
                 
-autocmd BufRead *.tex,*.html iabbr <buffer> begg '\begin{equation}
+autocmd BufEnter *.tex,*.html iabbr <buffer> begg \begin{equation}
                                         \<CR>\begin{aligned}
                                         \<CR>\end{aligned}
-                                        \<CR>\end{equation}'
+                                        \<CR>\end{equation}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> enum '\begin{enumerate}
+autocmd BufEnter *.tex,*.html iabbr <buffer> enum \begin{enumerate}
                                         \<CR>\item
                                         \<CR>\item
-                                        \<CR>\end{enumerate}'
+                                        \<CR>\end{enumerate}
 
 
-autocmd BufRead *.tex,*.html iabbr <buffer> eqb '\begin{equation}
-                                 \<CR>\begin{aligned}'
+autocmd BufEnter *.tex,*.html iabbr <buffer> eqb \begin{equation}
+                                 \<CR>\begin{aligned}
 
-autocmd BufRead *.tex,*.html iabbr <buffer> eqe '\end{aligned}
-                                  \<CR>\end{equation}'
+autocmd BufEnter *.tex,*.html iabbr <buffer> eqe \end{aligned}
+                                  \<CR>\end{equation}
 
 
-autocmd BufRead *.tex,*.html iabbr <buffer> img '\begin{figure}
+autocmd BufEnter *.tex,*.html iabbr <buffer> img \begin{figure}
                                   \<CR>\centering
                                   \<CR>%\includegraphics[scale=0.5,height=1cm, width=6cm]{/Users/cat/myfile/github/image/spiral2.png} \\
                                   \<CR>\includegraphics[scale=0.3]{/Users/cat/myfile/github/image/spiral2.png} \\
-                                  \<CR>\end{figure} \\'
+                                  \<CR>\end{figure} \\
 
 
-autocmd BufRead *.tex,*.html iabbr gro $(\mathbb{N}, +)$
-autocmd BufRead *.tex,*.html iabbr cml <p><CR>$\Large \color{red}\lambda$
+autocmd BufEnter *.tex,*.html iabbr <buffer> gro $(\mathbb{N}, +)$
+autocmd BufEnter *.tex,*.html iabbr <buffer> cml <p><CR>$\Large \color{red}\lambda$
         \<CR>Rename file name of default screenshots in Mac OSX, Open your Terminal and type:<br><br>
         \<CR><span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">
         \<CR>defaults write com.apple.screencapture name "myName"<br>
@@ -579,7 +629,7 @@ autocmd BufRead *.tex,*.html iabbr cml <p><CR>$\Large \color{red}\lambda$
         \<CR></span>
         \<CR></p>
 
-autocmd BufRead *.tex,*.html iabbr gr \[
+autocmd BufEnter *.tex,*.html iabbr <buffer> gr \[
                          \<CR>\alpha     \theta     \tau      \beta
                          \<CR>\vartheta  \pi        \upsilon  \gamma
                          \<CR>\gamma     \varpi     \phi      \delta
@@ -593,14 +643,14 @@ autocmd BufRead *.tex,*.html iabbr gr \[
                          \<CR>\]
 
 
-autocmd BufRead *.tex,*.html iabbr ma \begin{bmatrix}
+autocmd BufEnter *.tex,*.html iabbr <buffer> ma \begin{bmatrix}
         \<CR>1 & 2  & 3 \\
         \<CR>4 & 5  & 6 \\
         \<CR>7 & 8  & 9 \\
         \<CR>\end{bmatrix}
 
 
-autocmd FileType tex iabbr xcc blackColor
+autocmd BufEnter *.tex iabbr <buffer> xcc blackColor
         \<CR>darkGrayColor
         \<CR>lightGrayColor
         \<CR>whiteColor
@@ -625,25 +675,27 @@ augroup END
 " searchkey
 iabbr skk // searchkey:
 
+autocmd BufEnter *.html vmap  <buffer> span  :s/\%V.*\%V/<span style="color:red;">\0<\/span>/ <CR>
 
-autocmd BufRead *.html iabbr <buffer> ioss '<div class="mytext">
+
+autocmd BufEnter *.html iabbr <buffer> ioss <div class="mytext">
                                         \<CR>The App shows how to use simple animation on iPhone.<br>
                                         \<CR>1. Load images to array<br>
                                         \<CR></div><br>
                                         \<CR><div class="cen">
                                         \<CR><img src="http://localhost/zsurface/image/kkk.png" width="80%" height="80%" /><br>
                                         \<CR><a href="https://github.com/bsdshell/xcode/tree/master/OneRotateBlockApp">Source Code</a>
-                                        \<CR></div>'
+                                        \<CR></div>
 
-autocmd BufRead *.html iabbr <buffer> myw '<div class="mytitle">
+autocmd BufEnter *.html iabbr <buffer> myw <div class="mytitle">
                                         \<CR>Find the maximum Height of a Binary Tree
                                         \<CR></div>
                                         \<CR><div class="mytext">
                                         \<CR>The height of binary tree is the maximum distance from the root to the children<br>
-                                        \<CR></div>'
+                                        \<CR></div>
 
 " escape single quote
-autocmd BufRead *.html iabbr <buffer> tipp '<!-- begin tooltip-wrap-->
+autocmd BufEnter *.html iabbr <buffer> tipp <!-- begin tooltip-wrap-->
                     \<CR><div class="tooltip-wrap">
                     \<CR>$$\textbf{sqare root}$$
                     \<CR>\[
@@ -657,10 +709,11 @@ autocmd BufRead *.html iabbr <buffer> tipp '<!-- begin tooltip-wrap-->
                     \<CR></div>
                     \<CR></div>
                     \<CR></div>
-                    \<CR><!-- end tooltip-wrap-->'
+                    \<CR><!-- end tooltip-wrap-->
+
 "compile latex
-"autocmd FileType tex map  <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader %<.pdf <CR>
-autocmd BufRead *.tex map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open %:p:r.pdf <CR>
+"autocmd BufEnter tex map  <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader %<.pdf <CR>
+autocmd BufEnter *.tex map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open %:p:r.pdf <CR>
 
 " save file and compile latex file
 "autocmd BufWritePost *.tex      :silent exec ':!pdflatex %:p ' | :!open %:p:r.pdf
@@ -669,79 +722,95 @@ augroup commentcode
 au!
 
 " vimrc
-autocmd BufRead *.vimrc vmap xx   :s/\%V\_^\%V/"/g <CR>
-autocmd BufRead *.vimrc vmap xu   :s/\%V\_^\s*\zs"\%V//g <CR>
+autocmd BufEnter *.vimrc vmap xx   :s/\%V\_^\%V/"/g <CR>
+autocmd BufEnter *.vimrc vmap xu   :s/\%V\_^\s*\zs"\%V//g <CR>
 
 " objectivec
-autocmd BufRead *.m,*.h,*.java,*.cpp,*.c vmap  xx  :s/\%V\_^\%V/\/\//g <CR>
-autocmd BufRead *.m,*.h,*.java,*.cpp,*.c vmap  xu  :s/\%V\_^\s*\zs\/\/\%V//g <CR>
+autocmd BufEnter *.m,*.h,*.java,*.cpp,*.c vmap  xx  :s/\%V\_^\%V/\/\//g <CR>
+autocmd BufEnter *.m,*.h,*.java,*.cpp,*.c vmap  xu  :s/\%V\_^\s*\zs\/\/\%V//g <CR>
 
 " tex
-autocmd BufRead *.tex vmap  xx  :s/\%V\_^\%V/%/g <CR>
-autocmd BufRead *.tex vmap  xu  :s/\%V\_^\s*\zs%\%V//g <CR>
+autocmd BufEnter *.tex vmap  xx  :s/\%V\_^\%V/%/g <CR>
+autocmd BufEnter *.tex vmap  xu  :s/\%V\_^\s*\zs%\%V//g <CR>
+
+" haskell 
+autocmd BufEnter *.hs vmap  xx  :s/\%V\_^\%V/--/g <CR>
+autocmd BufEnter *.hs vmap  xu  :s/\%V\_^\s*\zs--\%V//g <CR>
+
 
 augroup END
 
 "-----------------------------------------------------------------
+" Haskell mapping
+" BufEnter is better than FileType, don't ask me why
+"-----------------------------------------------------------------
+augroup Haskll 
+au!
+
+autocmd BufEnter *.hs iabbr <buffer> xx \x-> x
+augroup END 
+
+
+"-----------------------------------------------------------------
 " Xcode mapping
-" BufRead is better than FileType, don't ask me why
+" BufEnter is better than FileType, don't ask me why
 "-----------------------------------------------------------------
 augroup Xcode
 au!
 
 " run CoreApp test cases from command line
-autocmd BufRead *.m,*.h  map  <F9> :!/Users/cat/myfile/github/xcode/CoreApp/test.sh
+autocmd BufEnter *.m,*.h  map  <F9> :!/Users/cat/myfile/github/xcode/CoreApp/test.sh
 
-autocmd BufRead *.m,*.h cabbr ttd :call Test(@")<CR>
-autocmd BufRead *.m,*.h cabbr df  :call Defun()<CR>
-autocmd BufRead *.m,*.h cabbr dv  :call DeVariable()<CR>
-autocmd BufRead *.m,*.h cabbr ffu :call FindFun()<CR>
-autocmd BufRead *.m,*.h cabbr ffr :call RemoveDuplicatedTabs()<CR>
-autocmd BufRead *.m,*.h cabbr ww  :call HeaderSource()<CR>
-autocmd BufRead *.m,*.h call XcodeColor()
+autocmd BufEnter *.m,*.h cabbr ttd :call Test(@")<CR>
+autocmd BufEnter *.m,*.h cabbr df  :call Defun()<CR>
+autocmd BufEnter *.m,*.h cabbr dv  :call DeVariable()<CR>
+autocmd BufEnter *.m,*.h cabbr ffu :call FindFun()<CR>
+autocmd BufEnter *.m,*.h cabbr ffr :call RemoveDuplicatedTabs()<CR>
+autocmd BufEnter *.m,*.h cabbr ww  :call HeaderSource()<CR>
+autocmd BufEnter *.m,*.h call XcodeColor()
 
-autocmd BufRead *.m,*.h iabbr <buffer> recc 'CGRect rect = CGRectMake(0, 0, 10, 10);'
-autocmd BufRead *.m,*.h iabbr <buffer> pot  'CGPoint point = CGPointMake(1, 2);'
-autocmd BufRead *.m,*.h iabbr <buffer> caa  'CAShapeLayer* myLayer = [CAShapeLayer layer];'
-autocmd BufRead *.m,*.h iabbr <buffer> nsv  '[NSValue valueWithCGPoint:point];'
+autocmd BufEnter *.m,*.h iabbr <buffer> recc CGRect rect = CGRectMake(0, 0, 10, 10);
+autocmd BufEnter *.m,*.h iabbr <buffer> pot  CGPoint point = CGPointMake(1, 2);
+autocmd BufEnter *.m,*.h iabbr <buffer> caa  CAShapeLayer* myLayer = [CAShapeLayer layer];
+autocmd BufEnter *.m,*.h iabbr <buffer> nsv  [NSValue valueWithCGPoint:point];
 
-autocmd BufRead *.m,*.h iabbr <buffer> pre  'NSLog(@"%s", __PRETTY_FUNCTION__);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsp  'NSLog(@"point[%@]", [NSValue valueWithCGPoint:point]);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsr  'NSLog(@"rect[%@]", [NSValue valueWithCGRect:rect]);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsf  'NSLog(@"rect[%f]", float);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsf2 'NSLog(@"f1[%f] f2[%f]", f1, f2);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsf3 'NSLog(@"f1[%f] f2[%f] f3[%f]", f1, f2, f3);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsd  'NSLog(@"d1[%d] ", d1);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsd2 'NSLog(@"d1[%d] f2[%d]", d1, d2);'
-autocmd BufRead *.m,*.h iabbr <buffer> nsd3 'NSLog(@"d1[%d] f2[%d] f3[%d]", d1, d2, d3);'
+autocmd BufEnter *.m,*.h iabbr <buffer> pre  NSLog(@"%s", __PRETTY_FUNCTION__);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsp  NSLog(@"point[%@]", [NSValue valueWithCGPoint:point]);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsr  NSLog(@"rect[%@]", [NSValue valueWithCGRect:rect]);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsf  NSLog(@"rect[%f]", float);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsf2 NSLog(@"f1[%f] f2[%f]", f1, f2);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsf3 NSLog(@"f1[%f] f2[%f] f3[%f]", f1, f2, f3);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsd  NSLog(@"d1[%d] ", d1);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsd2 NSLog(@"d1[%d] f2[%d]", d1, d2);
+autocmd BufEnter *.m,*.h iabbr <buffer> nsd3 NSLog(@"d1[%d] f2[%d] f3[%d]", d1, d2, d3);
 
-autocmd BufRead *.m,*.h iabbr <buffer> forr 'for(int i=0; i<num; i++){
-                                      \<CR>}'
-autocmd BufRead *.m,*.h iabbr <buffer> forr2 'for(int i=0; i<num1; i++){
+autocmd BufEnter *.m,*.h iabbr <buffer> forr for(int i=0; i<num; i++){
+                                      \<CR>}
+autocmd BufEnter *.m,*.h iabbr <buffer> forr2 'for(int i=0; i<num1; i++){
                                             \<CR>for(int j=0; j<num2; j++){
                                             \<CR>}
-                                        \<CR>}'
+                                        \<CR>}
 
-autocmd BufRead *.m,*.h iabbr <buffer> arrm 'NSMutableArray* array = [[NSMutableArray alloc]init];'
+autocmd BufEnter *.m,*.h iabbr <buffer> arrm 'NSMutableArray* array = [[NSMutableArray alloc]init];
 
-autocmd BufRead *.m,*.h iabbr xpp [path moveToPoint:CGPointMake(location.x, location.y)];
+autocmd BufEnter *.m,*.h iabbr xpp [path moveToPoint:CGPointMake(location.x, location.y)];
         \<CR>[path addLineToPoint:CGPointMake(location.x + width, location.y)];
         \<CR>[path addLineToPoint:CGPointMake(location.x + width, location.y + height)];
         \<CR>[path addLineToPoint:CGPointMake(location.x, location.y + height)];
         \<CR>[path addLineToPoint:CGPointMake(location.x, location.y)];
 
-autocmd BufRead *.m,*.h iabbr timm [NSTimer scheduledTimerWithTimeInterval:self.delayInterval
+autocmd BufEnter *.m,*.h iabbr <buffer> timm [NSTimer scheduledTimerWithTimeInterval:self.delayInterval
         \<CR>target:self
         \<CR>selector:@selector(suspendDisplay:)<CR>userInfo:nil<CR>repeats:NO];<CR><CR>-(void)suspendDisplay:(NSTimer*)timer{<CR>}
 
-autocmd BufRead *.m,*.h iabbr imav UIImageView* _imageView;
+autocmd BufEnter *.m,*.h iabbr <buffer> imav UIImageView* _imageView;
                     \<CR>@property (nonatomic, retain) UIImageView* imageView;
                     \<CR>@synthesize imageView = _imageView;
                     \<CR>self.imageView = [[UIImageView alloc]initWithFrame:self.window.bounds];
                     \<CR>self.imageView.image=[UIImage imageNamed:@"myimage.jpg"];
                     \<CR>[self.window addSubview:self.imageView];
 
-autocmd BufRead *.m,*.h iabbr labb UILabel *myLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, 50, 300, 300)];
+autocmd BufEnter *.m,*.h iabbr <buffer> labb UILabel *myLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, 50, 300, 300)];
                     \<CR>[myLabel setTextColor:[UIColor redColor]];
                     \<CR>[myLabel setBackgroundColor:[UIColor clearColor]];
                     \<CR>[myLabel setFont:[UIFont fontWithName: @"Trebuchet MS" size: 20.0f]];
