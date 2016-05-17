@@ -88,7 +88,7 @@ map <F1>         :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt <CR>
 "---------------------------------------------------------------------
 func! RunSnippet()
    " Not sure why following command doesn't work
-   :call system('runhaskell ' . ' -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
+   ":call system('runhaskell ' . ' -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
 
     " It does works like that, don't ask me why
    :call system('runhaskell -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
@@ -229,7 +229,7 @@ cabbr mk :mksession! $sess <CR>
 cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt
 cabbr mm :marks
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito <CR>
-cabbr Sni :tabnew $g/snippets/objectivec.mm 
+cabbr Sni :tabnew $g/snippets/objectivec.m 
 
 " command line mode
 "-----------------------------------------------------------------
@@ -773,16 +773,6 @@ autocmd BufEnter *.m,*.h iabbr <buffer> recc CGRect rect = CGRectMake(0, 0, 10, 
 autocmd BufEnter *.m,*.h iabbr <buffer> pot  CGPoint point = CGPointMake(1, 2);
 autocmd BufEnter *.m,*.h iabbr <buffer> caa  CAShapeLayer* myLayer = [CAShapeLayer layer];
 autocmd BufEnter *.m,*.h iabbr <buffer> nsv  [NSValue valueWithCGPoint:point];
-
-autocmd BufEnter *.m,*.h iabbr <buffer> pre  NSLog(@"%s", __PRETTY_FUNCTION__);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsp  NSLog(@"point[%@]", [NSValue valueWithCGPoint:point]);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsr  NSLog(@"rect[%@]", [NSValue valueWithCGRect:rect]);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsf  NSLog(@"rect[%f]", float);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsf2 NSLog(@"f1[%f] f2[%f]", f1, f2);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsf3 NSLog(@"f1[%f] f2[%f] f3[%f]", f1, f2, f3);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsd  NSLog(@"d1[%d] ", d1);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsd2 NSLog(@"d1[%d] f2[%d]", d1, d2);
-autocmd BufEnter *.m,*.h iabbr <buffer> nsd3 NSLog(@"d1[%d] f2[%d] f3[%d]", d1, d2, d3);
 
 autocmd BufEnter *.m,*.h iabbr <buffer> forr for(int i=0; i<num; i++){
                                       \<CR>}
