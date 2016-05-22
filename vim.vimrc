@@ -10,7 +10,12 @@ hi User5          ctermbg=DarkGray  ctermfg=green guibg=#FFFFFE  guifg=brown
 hi User6          ctermbg=gray ctermfg=blue guibg=gray guifg=blue
 
 "=====================================================================
-cd %:p:h
+set undofile                " Save undo's after file closes
+set undodir=$HOME/.vim/undo " where to save undo histories
+set undolevels=1000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+"---------------------------------------------------------------------
+autocmd BufEnter * silent :lcd%:p:h
 set laststatus=2
 set statusline=%F
 set statusline+=\[%-2.5n]
@@ -32,6 +37,7 @@ set autochdir
 set backspace=2
 set dictionary=/home/user/.vim/myword/myword.txt
  
+set omnifunc=csscomplete#CompleteCSS
 
 "=====================================================================
 " objc header file
@@ -92,7 +98,7 @@ func! RunSnippet()
 
     " It does works like that, don't ask me why
    :call system('runhaskell -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
-   :source /Users/cat/myfile/github/snippets/objectivec.vimrc 
+   :source /Users/cat/myfile/github/snippets/snippet.vimrc 
 endfunc
 "=====================================================================
 
@@ -339,14 +345,14 @@ au!
 
 augroup END
 
-au BufEnter *.cpp set makeprg=g++\ -g\ %\ -o\ %< 
-au BufEnter *.c set makeprg=gcc\ -g\ %\ -o\ %< 
-au BufEnter *.py set makeprg=python\ % 
-map <F9> :call CompileGcc()<CR>
-func! CompileGcc()
-    silent make
-endfunc
-
+"au BufEnter *.cpp set makeprg=g++\ -g\ %\ -o\ %< 
+"au BufEnter *.c set makeprg=gcc\ -g\ %\ -o\ %< 
+"au BufEnter *.py set makeprg=python\ % 
+"map <F9> :call CompileGcc()<CR>
+"func! CompileGcc()
+"    silent make
+"endfunc
+"
 
 
 
@@ -456,6 +462,29 @@ autocmd BufEnter *.tex iabbr <buffer> noi \setlength\parindent{0pt}
 
 autocmd BufEnter *.tex iabbr <buffer> noi \setlength\parindent{0pt}
 autocmd BufEnter *.tex iabbr <buffer> bigo $\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$
+
+autocmd BufEnter *.tex iabbr <buffer> lcode 
+                                    \<CR>\begin{verbatim}
+                                    \<CR>for(int i=0; i<3; i++){
+                                    \<CR>}
+                                    \<CR>\end{verbatim}
+
+autocmd BufEnter *.tex iabbr <buffer> lhello 
+                                \<CR>\documentclass{article}
+                                \<CR>\usepackage[tc]{titlepic}
+                                \<CR>\usepackage{xcolor}
+                                \<CR>\usepackage{graphicx}
+                                \<CR>\usepackage{tipa}
+                                \<CR>\usepackage{pagecolor,lipsum}
+                                \<CR>\usepackage{amsmath}
+                                \<CR>\usepackage{amsfonts}
+                                \<CR>\usepackage{amssymb}
+                                \<CR>\usepackage{centernot}
+                                \<CR>\usepackage{xcolor}
+                                \<CR>\usepackage{listings}
+                                \<CR>\begin{document}
+                                \<CR>\textbf{Hello World}
+                                \<CR>\end{document}
 
 " visual mode substitute or select mode
 autocmd BufEnter *.tex vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
@@ -768,11 +797,20 @@ autocmd BufEnter *.m,*.h cabbr ffu :call FindFun()<CR>
 autocmd BufEnter *.m,*.h cabbr ffr :call RemoveDuplicatedTabs()<CR>
 autocmd BufEnter *.m,*.h cabbr ww  :call HeaderSource()<CR>
 autocmd BufEnter *.m,*.h call XcodeColor()
+autocmd BufEnter *.m,*.h cabbr ;;  :.,.s/$/;/ <bar> :nohlsearch<CR>
 
-autocmd BufEnter *.m,*.h iabbr <buffer> recc CGRect rect = CGRectMake(0, 0, 10, 10);
-autocmd BufEnter *.m,*.h iabbr <buffer> pot  CGPoint point = CGPointMake(1, 2);
-autocmd BufEnter *.m,*.h iabbr <buffer> caa  CAShapeLayer* myLayer = [CAShapeLayer layer];
-autocmd BufEnter *.m,*.h iabbr <buffer> nsv  [NSValue valueWithCGPoint:point];
+
+"autocmd BufEnter *.m,*.h iabbr <buffer> recc CGRect rect = CGRectMake(0, 0, 10, 10);
+"autocmd BufEnter *.m,*.h iabbr <buffer> pot  CGPoint point = CGPointMake(1, 2);
+"autocmd BufEnter *.m,*.h iabbr <buffer> caa  CAShapeLayer* myLayer = [CAShapeLayer layer];
+"autocmd BufEnter *.m,*.h iabbr <buffer> nsv  [NSValue valueWithCGPoint:point];
+"
+
+
+autocmd BufEnter *.m,*.h iabbr <buffer> debb AppDelegate* appDe = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+                                        \<CR>NSLog(@"[%ld][%s]->", appDe.debugCount++, __PRETTY_FUNCTION__); 
+
+autocmd BufEnter *.m,*.h iabbr <buffer> pree NSLog(@"%s", __PRETTY_FUNCTION__);
 
 autocmd BufEnter *.m,*.h iabbr <buffer> forr for(int i=0; i<num; i++){
                                       \<CR>}
