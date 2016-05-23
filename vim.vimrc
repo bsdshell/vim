@@ -988,6 +988,85 @@ func! XcodeColor()
     highlight CurlyBracket ctermfg=128
 endfunc
 
+" searchkey: note color notecolor, note highlight, notehighlight
+func! NoteColor()
+    syn match Property "\<_[a-zA-Z0-9]\+\>"
+    "highlight Property ctermfg=55 cterm=bold
+    "highlight Property ctermfg=142 cterm=bold
+    highlight Property ctermfg=058
+
+    syn match Colon ":"
+    highlight Colon ctermfg=red
+
+    syn match RightArrow "->"
+    "highlight RightArrow ctermfg=white
+    hi link RightArrow Special
+
+    
+
+    syn match CurlyBracket "{\|}"
+    "highlight CurlyBracket ctermfg=196
+    highlight CurlyBracket ctermfg=128
+
+
+
+    "syn match Title /\[\zs[^:\]]\+/
+    "hi link Title Comment 
+
+"    syn match MyBracket /:\@!\[\|\]/
+"    "hi link MyBracket Identifier
+"    highlight MyBracket ctermfg=red
+
+    syn match MySquareBracket /`\@!\[\|`\@!\]/
+    "hi link MyBracket Identifier
+    highlight MySquareBracket ctermfg=blue
+
+
+    syn match MyBracket /(\|)/
+    highlight MyBracket ctermfg=green
+
+    
+
+    syn match MyNumber /-\?\d\+\ze\(\.\d\)*/
+    highlight MyNumber ctermfg=green
+
+    "syn region String matchgroup=Quote start=+"+  skip=+\\"+  end=+"+
+
+    syn match MyFun /\w\+::\(\p*\)*->\(\p*\)*/
+    hi link MyFun Function 
+
+    syn match MyBlock /`\[\|`\]/
+    hi link MyBlock Special
+
+    syn match MyKeyWord /String\|NSString\|tar\|gpg\|List\|ArrayList/
+    highlight  MyKeyWord ctermfg=cyan 
+
+    syn match MyNameKey /CTRL\|ALT|Command/
+    highlight  MyNameKey ctermfg=107 
+
+    syn match AngleBracket /<\|>/
+    highlight  AngleBracket ctermfg=red 
+
+    syn match Assignment /[^=]\zs=\ze[^=]/
+    highlight  Assignment ctermfg=magenta 
+
+    syn match MyEqual /==/
+    highlight  MyEqual ctermfg=brown 
+
+    syn match MyEqual /\/\/.*$/
+    highlight  MyEqual ctermfg=150 
+
+    syn match CodeKeyword /\sif\s\|\sthen\s\|\sInt\s\|\sint\s\|\spublic\s\|\sstatic\s\|\sfor\s\|\sdo\|\sdone\s\|\sin\s/
+    highlight  CodeKeyword ctermfg=white 
+
+
+
+    syn match MyString /"[^"]*"/
+    highlight MyString  ctermfg=90 
+
+endfunc
+
+
 
 "-----------------------------------------------------------------
 func! ListTabPage()
