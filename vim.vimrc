@@ -261,6 +261,9 @@ autocmd BufEnter *.txt iabbr <buffer> bl [ ]
                                     \<CR>
                                     \<CR>`]
 
+
+autocmd BufEnter * if @% == 'noteindex.txt' | :call NoteColor() | endif 
+
 augroup Java
 au!
 autocmd BufEnter *.java setlocal completefunc=CompleteAbbre
@@ -1025,8 +1028,6 @@ func! NoteColor()
     syn match MyBracket /(\|)/
     highlight MyBracket ctermfg=green
 
-    
-
     syn match MyNumber /-\?\d\+\ze\(\.\d\)*/
     highlight MyNumber ctermfg=green
 
@@ -1038,7 +1039,7 @@ func! NoteColor()
     syn match MyBlock /`\[\|`\]/
     hi link MyBlock Special
 
-    syn match MyKeyWord /String\|NSString\|tar\|gpg\|List\|ArrayList/
+    syn match MyKeyWord /\sString\s\|\sNSString\s\|\star\s\|\sgpg\s\|\sList\|\sArrayList/
     highlight  MyKeyWord ctermfg=cyan 
 
     syn match MyNameKey /CTRL\|ALT|Command/
@@ -1056,10 +1057,14 @@ func! NoteColor()
     syn match MyEqual /\/\/.*$/
     highlight  MyEqual ctermfg=150 
 
-    syn match CodeKeyword /\sif\s\|\sthen\s\|\sInt\s\|\sint\s\|\spublic\s\|\sstatic\s\|\sfor\s\|\sdo\|\sdone\s\|\sin\s/
+    syn match CodeKeyword /\sif\(\s\|$\)\|\sthen\(\s\|$\)\|\sInt\(\s\|$\)\|\sint\(\s\|$\)\|\spublic\(\s\|$\)\|\sstatic\(\s\|$\)\|\sfor\(\s\|$\)\|\sdo\(\s\|$\)\|\sdone\(\s\|$\)/
+"\|\sdone\(\s\|$\)\|\sin\(\s\|$\)\|\swhere\(\s\|$\)
+
+
     highlight  CodeKeyword ctermfg=white 
 
-
+    syn match  HaskellKeyword /\sInt\s/
+    highlight  HaskellKeyword  ctermfg=24 
 
     syn match MyString /"[^"]*"/
     highlight MyString  ctermfg=90 
