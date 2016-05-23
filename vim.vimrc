@@ -1011,24 +1011,22 @@ func! NoteColor()
     "highlight CurlyBracket ctermfg=196
     highlight CurlyBracket ctermfg=128
 
-
-
     "syn match Title /\[\zs[^:\]]\+/
     "hi link Title Comment 
 
-"    syn match MyBracket /:\@!\[\|\]/
-"    "hi link MyBracket Identifier
-"    highlight MyBracket ctermfg=red
+""    syn match MyBracket /:\@!\[\|\]/
+""    "hi link MyBracket Identifier
+""    highlight MyBracket ctermfg=red
+"
 
-    syn match MySquareBracket /`\@!\[\|`\@!\]/
-    "hi link MyBracket Identifier
-    highlight MySquareBracket ctermfg=blue
 
 
     syn match MyBracket /(\|)/
     highlight MyBracket ctermfg=green
 
-    syn match MyNumber /-\?\d\+\ze\(\.\d\)*/
+    " TODO fix [123]
+    syn match MyNumber /\(\s\|[\[\]{}():<>]\)\zs-\?\d\+\(\.\d\)*\ze\(\s\|[\[\]{}():<>]\)/
+    "syn match MyNumber /\[\zs\d\+\ze\]/
     highlight MyNumber ctermfg=green
 
     "syn region String matchgroup=Quote start=+"+  skip=+\\"+  end=+"+
@@ -1042,7 +1040,7 @@ func! NoteColor()
     syn match MyKeyWord /\sString\s\|\sNSString\s\|\star\s\|\sgpg\s\|\sList\|\sArrayList/
     highlight  MyKeyWord ctermfg=cyan 
 
-    syn match MyNameKey /CTRL\|ALT|Command/
+    syn match MyNameKey /\s*CTRL\s*\|\s*ALT\s*\|\s*Command\s*\|\s*Shift\s*/
     highlight  MyNameKey ctermfg=107 
 
     syn match AngleBracket /<\|>/
@@ -1054,17 +1052,25 @@ func! NoteColor()
     syn match MyEqual /==/
     highlight  MyEqual ctermfg=brown 
 
-    syn match MyEqual /\/\/.*$/
+    syn match MyEqual /\s\/\/\s.*$/
     highlight  MyEqual ctermfg=150 
 
-    syn match CodeKeyword /\sif\(\s\|$\)\|\sthen\(\s\|$\)\|\sInt\(\s\|$\)\|\sint\(\s\|$\)\|\spublic\(\s\|$\)\|\sstatic\(\s\|$\)\|\sfor\(\s\|$\)\|\sdo\(\s\|$\)\|\sdone\(\s\|$\)/
-"\|\sdone\(\s\|$\)\|\sin\(\s\|$\)\|\swhere\(\s\|$\)
+    syn match CodeKeyword /\(\s\|[\[{(:<]\)\zsif\ze\(\s\|[\\\]}):>]\)\|\s*then\s*\|\s*public\s*\|\s*static\s*\|\s*for\ze\(\s\|[\[\]{}()]\)\|\s*do\s*\|\s*done\s*/
+    highlight  CodeKeyword ctermfg=white cterm=bold 
+    
+    syn match CodeKeyword /\s*where\s*\|\s*static\s*\|\s*void\s*\|\(\s\|[\[\]{}():<>]\)int\ze\(\s\|[\[\]{}():<>]\)\|\s*else\s*\|\s*return\s*/
+    highlight  CodeKeyword ctermfg=white  cterm=bold
 
 
-    highlight  CodeKeyword ctermfg=white 
+    
+    syn match  HaskellKeyword /\([\[]\)\zsInt\ze\([\]]\|\s\|$\)/
+    highlight  HaskellKeyword  ctermfg=26 cterm=bold 
 
-    syn match  HaskellKeyword /\sInt\s/
-    highlight  HaskellKeyword  ctermfg=24 
+    syn match MySquareBracket /`\@!\[\|`\@!\]/
+    highlight MySquareBracket ctermfg=blue
+
+    syn match  LinuxCmd /\s*grep\s*\|\s*awk\s*\|\s*ls\s*\|\s*echo\s*\|\s*sort\s*/
+    highlight  LinuxCmd ctermfg=129 
 
     syn match MyString /"[^"]*"/
     highlight MyString  ctermfg=90 
