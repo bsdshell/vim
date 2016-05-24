@@ -1,5 +1,5 @@
 syntax enable
-hi search         ctermbg=Gray ctermfg=Brown
+"hi search         ctermbg=Gray ctermfg=Brown
 highlight Cursor  ctermfg=green guifg=green guibg=white
 highlight iCursor ctermfg=green guifg=green guibg=white
 hi User1          ctermbg=white ctermfg=brown   guibg=white guifg=brown
@@ -68,7 +68,7 @@ if !has('gui_running')
   let g:solarized_termtrans=1
 endif
 "----------------------------------------------
-colorscheme default
+colorscheme aron 
 "colorscheme solarized
 "colorscheme haskellcolor
 "=====================================================================
@@ -82,9 +82,10 @@ map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
 map <F4>         :tabnew     <CR>
 imap <F2><Esc>   :tabp       <CR>
-imap <F3><Esc>   :tabn       <CR>
+imap <F3><Esc>   :tabnew     <CR>
 imap <F4><Esc>   :tabnew     <CR>
-map <F5>         :call       MaximizeToggle() <CR>
+"map <F5>         :call       MaximizeToggle() <CR>
+map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
 nnoremap <F6>    :call ToggleBracketGroup()<CR>
 map <F1>         :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt <CR>
@@ -100,6 +101,12 @@ func! RunSnippet()
    :call system('runhaskell -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
    :source /Users/cat/myfile/github/snippets/snippet.vimrc 
 endfunc
+
+func! SourceSnippet()
+   :source /Users/cat/myfile/github/snippets/snippet.vimrc 
+endfunc
+
+
 "=====================================================================
 
 "inoremap <F6> <C-R>=ListMonths()<CR>
@@ -263,6 +270,8 @@ autocmd BufEnter *.txt iabbr <buffer> bl [ ]
 
 
 autocmd BufEnter * if @% == 'noteindex.txt' | :call NoteColor() | endif 
+autocmd VimEnter *.h,*.m :call RunSnippet() 
+autocmd BufEnter,BufRead *.h,*.m :call SourceSnippet() 
 
 augroup Java
 au!
@@ -1025,9 +1034,10 @@ func! NoteColor()
     highlight MyBracket ctermfg=green
 
     " TODO fix [123]
-    syn match MyNumber /\(\s\|[\[\]{}():<>]\)\zs-\?\d\+\(\.\d\)*\ze\(\s\|[\[\]{}():<>]\)/
+    "syn match MyNumber /\(\s\|[\[\]{}():<>]\)\zs-\?\d\+\(\.\d\)*\ze\(\s\|[\[\]{}():<>]\)/
+    syn match MyNumber /\s*\d\+\s*/
     "syn match MyNumber /\[\zs\d\+\ze\]/
-    highlight MyNumber ctermfg=green
+    highlight MyNumber ctermfg=60
 
     "syn region String matchgroup=Quote start=+"+  skip=+\\"+  end=+"+
 
@@ -1052,6 +1062,9 @@ func! NoteColor()
     syn match MyEqual /==/
     highlight  MyEqual ctermfg=brown 
 
+    syn match MyOperator /+\|\*\|-/
+    highlight  MyOperator ctermfg=130 
+
     syn match MyEqual /\s\/\/\s.*$/
     highlight  MyEqual ctermfg=150 
 
@@ -1061,6 +1074,15 @@ func! NoteColor()
     syn match CodeKeyword /\s*where\s*\|\s*static\s*\|\s*void\s*\|\(\s\|[\[\]{}():<>]\)int\ze\(\s\|[\[\]{}():<>]\)\|\s*else\s*\|\s*return\s*/
     highlight  CodeKeyword ctermfg=white  cterm=bold
 
+    syn match NSKey /NS\h\+/
+    highlight  NSKey ctermfg=64
+    "highlight  NSKey ctermfg=72  cterm=bold
+
+    syn match CGKey /CG\h\+/
+    highlight  CGKey ctermfg=70
+
+    syn match UIKey /UI\h\+/
+    highlight  UIKey ctermfg=81
 
     
     syn match  HaskellKeyword /\([\[]\)\zsInt\ze\([\]]\|\s\|$\)/
