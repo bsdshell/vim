@@ -15,6 +15,7 @@ set undodir=$HOME/.vim/undo " where to save undo histories
 set undolevels=1000         " How many undos
 set undoreload=10000        " number of lines to save for undo
 "---------------------------------------------------------------------
+set shell=/Applications/fish.app/Contents/Resources/base/bin/fish
 autocmd BufEnter * silent :lcd%:p:h
 set laststatus=2
 set statusline=%F
@@ -84,6 +85,7 @@ map <F4>         :tabnew     <CR>
 imap <F2><Esc>   :tabp       <CR>
 imap <F3><Esc>   :tabnew     <CR>
 imap <F4><Esc>   :tabnew     <CR>
+map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
@@ -117,36 +119,36 @@ func! ListMonths()
   return ''
 endfunc
 
-fun! CompleteMonths(findstart, base)
-	  if a:findstart
-	    " locate the start of the word
-	    let line = getline('.')
-	    let start = col('.') - 1
-	    while start > 0 && line[start - 1] =~ '\a'
-	      let start -= 1
-	    endwhile
-	    return start
-	  else
-	    " find months matching with "a:base"
-        let matches = split("cat dog cow")
-        let dict   = {}
-        "let word   = {'word':'myword', 'abbr':'myabbr'}
-        "let word   = {'word':'myword', 'abbr':'myabbr', 'menu':'mymenu\n menu1 \n menu2', 'info':'myinfo'}
-        let word   = {'word':'myword', 'abbr':'myabbr', 'menu': "mymenu\n menu1 \n menu2"}
-        let matches[1] = word
-        let res    = []
-	    for m in split("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
-            if m =~ '^' . a:base
-                call add(res, m)
-                let dict = {'words': matches, 'refresh': 'always'}
-            endif
-        endfor
-	    "return res
-        return dict
-	  endif
-endfun
-set completefunc=CompleteMonths
-
+"fun! CompleteMonths(findstart, base)
+"	  if a:findstart
+"	    " locate the start of the word
+"	    let line = getline('.')
+"	    let start = col('.') - 1
+"	    while start > 0 && line[start - 1] =~ '\a'
+"	      let start -= 1
+"	    endwhile
+"	    return start
+"	  else
+"	    " find months matching with "a:base"
+"        let matches = split("cat dog cow")
+"        let dict   = {}
+"        "let word   = {'word':'myword', 'abbr':'myabbr'}
+"        "let word   = {'word':'myword', 'abbr':'myabbr', 'menu':'mymenu\n menu1 \n menu2', 'info':'myinfo'}
+"        let word   = {'word':'myword', 'abbr':'myabbr', 'menu': "mymenu\n menu1 \n menu2"}
+"        let matches[1] = word
+"        let res    = []
+"	    for m in split("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
+"            if m =~ '^' . a:base
+"                call add(res, m)
+"                let dict = {'words': matches, 'refresh': 'always'}
+"            endif
+"        endfor
+"	    "return res
+"        return dict
+"	  endif
+"endfun
+"set completefunc=CompleteMonths
+"
 
 " -----------------------------------------------------------------------------
 " Read vimrc file and capture all the iabbr, store it in a list
@@ -252,6 +254,7 @@ cabbr Sni :tabnew $g/snippets/objectivec.m
 " append [x] to the end of line
 "cmap app let x = 0 <bar> g/$/s//\='[' . x . ']'/ <bar> let x = x + 1
 :cmap SS .,$s/<C-R><C-W>//gc
+:cmap SV vim /<C-R><C-W>/ **/*.m
 :cmap White /\S\zs\s\+$
 "-----------------------------------------------------------------
 
@@ -270,8 +273,10 @@ autocmd BufEnter *.txt iabbr <buffer> bl [ ]
 
 
 autocmd BufEnter * if @% == 'noteindex.txt' | :call NoteColor() | endif 
-autocmd VimEnter *.h,*.m :call RunSnippet() 
-autocmd BufEnter,BufRead *.h,*.m :call SourceSnippet() 
+autocmd VimEnter * :call RunSnippet() 
+autocmd BufEnter,BufRead * :call SourceSnippet() 
+"autocmd VimEnter *.h,*.m :call RunSnippet() 
+"autocmd BufEnter,BufRead *.h,*.m :call SourceSnippet() 
 
 augroup Java
 au!
@@ -281,7 +286,7 @@ autocmd BufEnter *.cpp  setlocal completefunc=CompleteAbbre
 autocmd BufEnter *.py  setlocal completefunc=CompleteAbbre
 autocmd BufEnter *.m,*.h  setlocal completefunc=CompleteAbbre
 autocmd BufEnter *.html  setlocal completefunc=CompleteAbbre
-autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
+"autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
@@ -716,17 +721,20 @@ augroup END
 " searchkey
 iabbr skk // searchkey:
 
-autocmd BufEnter *.html vmap  <buffer> span  :s/\%V.*\%V/<span style="color:red;">\0<\/span>/ <CR>
+autocmd BufEnter *.html vmap  <buffer> span  :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
 
 
-autocmd BufEnter *.html iabbr <buffer> ioss <div class="mytext">
-                                        \<CR>The App shows how to use simple animation on iPhone.<br>
-                                        \<CR>1. Load images to array<br>
-                                        \<CR></div><br>
-                                        \<CR><div class="cen">
-                                        \<CR><img src="http://localhost/zsurface/image/kkk.png" width="80%" height="80%" /><br>
-                                        \<CR><a href="https://github.com/bsdshell/xcode/tree/master/OneRotateBlockApp">Source Code</a>
-                                        \<CR></div>
+autocmd BufEnter *.html iabbr <buffer> ioss <div class="mytitle">
+                                            \<CR>My Title
+                                            \<CR></div>
+                                            \<CR><div class="mytext">
+                                            \<CR>The App shows how to use simple animation on iPhone.<br>
+                                            \<CR>1. Load images to array<br>
+                                            \<CR></div><br>
+                                            \<CR><div class="cen">
+                                            \<CR><img src="http://localhost/zsurface/image/kkk.png" width="40%" height="40%" /><br>
+                                            \<CR><a href="https://github.com/bsdshell/xcode/tree/master/OneRotateBlockApp">Source Code</a>
+                                            \<CR></div>
 
 autocmd BufEnter *.html iabbr <buffer> myw <div class="mytitle">
                                         \<CR>Find the maximum Height of a Binary Tree
@@ -1048,7 +1056,10 @@ func! NoteColor()
     hi link MyBlock Special
 
     syn match MyKeyWord /\sString\s\|\sNSString\s\|\star\s\|\sgpg\s\|\sList\|\sArrayList/
-    highlight  MyKeyWord ctermfg=cyan 
+    highlight  MyKeyWord ctermfg=33 
+
+    syn match MyMainKey /\s*new\s*/
+    highlight  MyMainKey ctermfg=200 
 
     syn match MyNameKey /\s*CTRL\s*\|\s*ALT\s*\|\s*Command\s*\|\s*Shift\s*/
     highlight  MyNameKey ctermfg=107 
@@ -1070,8 +1081,12 @@ func! NoteColor()
 
     syn match CodeKeyword /\(\s\|[\[{(:<]\)\zsif\ze\(\s\|[\\\]}):>]\)\|\s*then\s*\|\s*public\s*\|\s*static\s*\|\s*for\ze\(\s\|[\[\]{}()]\)\|\s*do\s*\|\s*done\s*/
     highlight  CodeKeyword ctermfg=white cterm=bold 
+
+    syn match CodeKeyword /\s*while\s*\|\s*try\s*/
+    highlight  CodeKeyword ctermfg=white cterm=bold 
+
     
-    syn match CodeKeyword /\s*where\s*\|\s*static\s*\|\s*void\s*\|\(\s\|[\[\]{}():<>]\)int\ze\(\s\|[\[\]{}():<>]\)\|\s*else\s*\|\s*return\s*/
+    syn match CodeKeyword /\s*where\s*\|\s*static\s*\|\s*void\s*\|\(\s\|[\[\]{}():<>]\)int\ze\(\s\|[\[\]{}():<>]\)\|\s*else\s*\|\s*return\s*\|\s*self\s*/
     highlight  CodeKeyword ctermfg=white  cterm=bold
 
     syn match NSKey /NS\h\+/
@@ -1084,7 +1099,6 @@ func! NoteColor()
     syn match UIKey /UI\h\+/
     highlight  UIKey ctermfg=81
 
-    
     syn match  HaskellKeyword /\([\[]\)\zsInt\ze\([\]]\|\s\|$\)/
     highlight  HaskellKeyword  ctermfg=26 cterm=bold 
 
