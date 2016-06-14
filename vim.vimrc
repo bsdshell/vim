@@ -48,7 +48,12 @@ autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Dev
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/*
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/*
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/*
+
+" latex file
 autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*.tex
+
+" cpp file, c++ file
+autocmd BufRead *.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
 
 :set notimeout          " don't timeout on mappings
 :set ttimeout           " do timeout on terminal key codes
@@ -93,6 +98,12 @@ nnoremap <F6>    :call ToggleBracketGroup()<CR>
 map <F1>         :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt <CR>
 
 "=====================================================================
+" special character in abbreviation 
+"---------------------------------------------------------------------
+inoreabbr \date\ <C-R>=strftime("%d-%d-%Y @ %H:%M")<CR>
+"---------------------------------------------------------------------
+
+"=====================================================================
 " Generate code snippets 
 "---------------------------------------------------------------------
 func! RunSnippet()
@@ -107,9 +118,7 @@ endfunc
 func! SourceSnippet()
    :source /Users/cat/myfile/github/snippets/snippet.vimrc 
 endfunc
-
-
-"=====================================================================
+"---------------------------------------------------------------------
 
 "inoremap <F6> <C-R>=ListMonths()<CR>
 func! ListMonths()
@@ -214,10 +223,7 @@ endfun
 " end
 " -----------------------------------------------------------------------------
 
-
-
 map _in :call IncreaseColor() <CR>
-
 let g:buffermanage = 1
 "noremap <F5>  :call ToggleBufMag() <CR>
 "map <F6> :call CloseBufferManager() <CR>
@@ -245,6 +251,7 @@ cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt
 cabbr mm :marks
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito <CR>
 cabbr Sni :tabnew $g/snippets/objectivec.m 
+cabbr Sty :%!astyle --style=java <CR>
 
 " command line mode
 "-----------------------------------------------------------------
@@ -429,8 +436,8 @@ au!
 autocmd BufEnter  *.tex,*.html cabbr example :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/html/indexLatexExample.html -incongnito <CR>
 autocmd BufEnter  *.tex,*.html cabbr Greek   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/greek1.png -incongnito <CR>
 autocmd BufEnter  *.tex,*.html cabbr Font    :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/latexfont.png -incongnito <CR>
-autocmd BufEnter  *.vimrc,*.html cabbr Color   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome https://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg<CR>
-autocmd BufEnter  *.vimrc,*.html cabbr Mat   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  http://localhost/zsurface/html/indexLatexMatrix.html<CR>
+autocmd BufEnter  *.vimrc,*.html cabbr Color :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome https://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg<CR>
+autocmd BufEnter  *.vimrc,*.html,*.tex cabbr Mat   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  http://localhost/zsurface/html/indexLatexMatrix.html<CR>
 
 
 
@@ -440,53 +447,53 @@ autocmd BufEnter *.tex cabbr ln :tabe /Users/cat/myfile/github/math/latexnote.te
 "autocmd BufEnter *.tex cabbr ed :.,$s/\S.*\S/\$\0\$/gc <bar> :nohlsearch <CR>
 "autocmd BufEnter *.tex cabbr el :.,$s/\S.*\S/\0\ \\\\/gc <bar> :nohlsearch <CR>
 
-autocmd BufEnter *.tex iabbr <buffer> nl \newline <CR>
-autocmd BufEnter *.tex iabbr <buffer> bc \mathbb{C}
-autocmd BufEnter *.tex iabbr <buffer> bq \mathbb{Q}
-autocmd BufEnter *.tex iabbr <buffer> bn \mathbb{N}
-autocmd BufEnter *.tex iabbr <buffer> br \mathbb{R}
-autocmd BufEnter *.tex iabbr <buffer> gro   $(\mathbb{N}, +)$
-autocmd BufEnter *.tex iabbr <buffer> grtau $\Huge \color{red}\tau$
-autocmd BufEnter *.tex iabbr <buffer> lmapq $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
-autocmd BufEnter *.tex iabbr <buffer> lmapr $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
-autocmd BufEnter *.tex iabbr <buffer> lmapn $\phi: \polyringn{x} \rightarrow  \polyringn{x}$
-autocmd BufEnter *.tex iabbr <buffer> lmapc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
-autocmd BufEnter *.tex iabbr <buffer> fra  \frac{}{}
-autocmd BufEnter *.tex iabbr <buffer> mdet \det (\mathbf{A} - \lambda \mathbf{I}) = 0
-autocmd BufEnter *.tex iabbr <buffer> deta \det (\mathbf{A})
-autocmd BufEnter *.tex iabbr <buffer> detb \det (\mathbf{B})
-autocmd BufEnter *.tex iabbr <buffer> detc \det (\mathbf{C}) 
-autocmd BufEnter *.tex iabbr <buffer> ast  ^{\ast} 
-autocmd BufEnter *.tex iabbr <buffer> bfa  \mathbf{A} 
-autocmd BufEnter *.tex iabbr <buffer> bfai \mathbf{A^{\ast}} 
-autocmd BufEnter *.tex iabbr <buffer> bfaa $\mathbf{A}$ 
-autocmd BufEnter *.tex iabbr <buffer> bfb  \mathbf{B} 
-autocmd BufEnter *.tex iabbr <buffer> bfbi \mathbf{B^{\ast}} 
-autocmd BufEnter *.tex iabbr <buffer> bfbb $\mathbf{B}$
-autocmd BufEnter *.tex iabbr <buffer> bfc  \mathbf{C}
-autocmd BufEnter *.tex iabbr <buffer> bfci \mathbf{C^{\ast}}
-autocmd BufEnter *.tex iabbr <buffer> bfcc $\mathbf{C}$
-autocmd BufEnter *.tex iabbr <buffer> bfq  \mathbf{Q}
-autocmd BufEnter *.tex iabbr <buffer> bfqq $\mathbf{Q}$
-autocmd BufEnter *.tex iabbr <buffer> bfp  \mathbf{P}
-autocmd BufEnter *.tex iabbr <buffer> bfpi \mathbf{P^{\ast}}
-autocmd BufEnter *.tex iabbr <buffer> bfpp $\mathbf{P}$
-autocmd BufEnter *.tex iabbr <buffer> bfi  \mathbf{I}
-autocmd BufEnter *.tex iabbr <buffer> bfii $\mathbf{I}$
-autocmd BufEnter *.tex iabbr <buffer> bb \[ \]
-autocmd BufEnter *.tex iabbr <buffer> ff $ $
-autocmd BufEnter *.tex iabbr <buffer> noi \setlength\parindent{0pt}
+autocmd BufEnter *.tex,*.html iabbr <buffer> nl \newline <CR>
+autocmd BufEnter *.tex,*.html iabbr <buffer> bc \mathbb{C}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bq \mathbb{Q}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bn \mathbb{N}
+autocmd BufEnter *.tex,*.html iabbr <buffer> br \mathbb{R}
+autocmd BufEnter *.tex,*.html iabbr <buffer> gro   $(\mathbb{N}, +)$
+autocmd BufEnter *.tex,*.html iabbr <buffer> grtau $\Huge \color{red}\tau$
+autocmd BufEnter *.tex,*.html iabbr <buffer> lmapq $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> lmapr $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> lmapn $\phi: \polyringn{x} \rightarrow  \polyringn{x}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> lmapc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> fra  \frac{}{}
+autocmd BufEnter *.tex,*.html iabbr <buffer> mdet \det (\mathbf{A} - \lambda \mathbf{I}) = 0
+autocmd BufEnter *.tex,*.html iabbr <buffer> deta \det (\mathbf{A})
+autocmd BufEnter *.tex,*.html iabbr <buffer> detb \det (\mathbf{B})
+autocmd BufEnter *.tex,*.html iabbr <buffer> detc \det (\mathbf{C}) 
+autocmd BufEnter *.tex,*.html iabbr <buffer> ast  ^{\ast} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfa  \mathbf{A} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfai \mathbf{A^{\ast}} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfaa $\mathbf{A}$ 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfb  \mathbf{B} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfbi \mathbf{B^{\ast}} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfbb $\mathbf{B}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfc  \mathbf{C}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfci \mathbf{C^{\ast}}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfcc $\mathbf{C}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfq  \mathbf{Q}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfqq $\mathbf{Q}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfp  \mathbf{P}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfpi \mathbf{P^{\ast}}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfpp $\mathbf{P}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfi  \mathbf{I}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfii $\mathbf{I}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bb \[ \]
+autocmd BufEnter *.tex,*.html iabbr <buffer> ff $ $
+autocmd BufEnter *.tex,*.html iabbr <buffer> noi \setlength\parindent{0pt}
 
-autocmd BufEnter *.tex iabbr <buffer> noi \setlength\parindent{0pt}
-autocmd BufEnter *.tex iabbr <buffer> bigo $\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$
+autocmd BufEnter *.tex,*.html iabbr <buffer> noi \setlength\parindent{0pt}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bigo $\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$
 
-autocmd BufEnter *.tex iabbr <buffer> lcode 
+autocmd BufEnter *.tex,*.html iabbr <buffer> lcode 
                                     \<CR>\begin{verbatim}
                                     \<CR>for(int i=0; i<3; i++){
                                     \<CR>}
                                     \<CR>\end{verbatim}
 
-autocmd BufEnter *.tex iabbr <buffer> lhello 
+autocmd BufEnter *.tex,*.html iabbr <buffer> lhello 
                                 \<CR>\documentclass{article}
                                 \<CR>\usepackage[tc]{titlepic}
                                 \<CR>\usepackage{xcolor}
@@ -504,35 +511,35 @@ autocmd BufEnter *.tex iabbr <buffer> lhello
                                 \<CR>\end{document}
 
 " visual mode substitute or select mode
-autocmd BufEnter *.tex vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
-autocmd BufEnter *.tex vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
+autocmd BufEnter *.tex,*.html vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
+autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 
-autocmd BufEnter *.tex vmap  tbf  :s/\%V.*\%V/\\textbf{\0}/ <CR>
-autocmd BufEnter *.tex vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
+autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V.*\%V/\\textbf{\0}/ <CR>
+autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
 
 " enclose with bracket
-autocmd BufEnter *.tex cabbr <buffer> 00$ :s/\\\S\+/$\0$/gc
-autocmd BufEnter *.tex cabbr <buffer> 00( :s/\\\S\+/(\0)/gc
-autocmd BufEnter *.tex cabbr <buffer> 00[ :s/\\\S\+/[\0]/gc
-autocmd BufEnter *.tex cabbr <buffer> 00{ :s/\\\S\+/{\0}/gc
+autocmd BufEnter *.tex,*.html cabbr <buffer> 00$ :s/\\\S\+/$\0$/gc
+autocmd BufEnter *.tex,*.html cabbr <buffer> 00( :s/\\\S\+/(\0)/gc
+autocmd BufEnter *.tex,*.html cabbr <buffer> 00[ :s/\\\S\+/[\0]/gc
+autocmd BufEnter *.tex,*.html cabbr <buffer> 00{ :s/\\\S\+/{\0}/gc
 
 " summary notation
-autocmd BufEnter *.tex iabbr <buffer> summ s = \sum_{k=0}^{\infty} \frac{1}{k}
-"autocmd BufEnter *.tex iabbr <buffer> tee \[ \text{} \]
-autocmd BufEnter *.tex iabbr <buffer> boo \[ \mbox{ } \]
-autocmd BufEnter *.tex iabbr <buffer> box \mbox{ }
-autocmd BufEnter *.tex iabbr <buffer> lr( \left( \right)
-autocmd BufEnter *.tex iabbr <buffer> lr[ \left[ \right]
-autocmd BufEnter *.tex iabbr <buffer> lr{ \left{ \right}
-autocmd BufEnter *.tex iabbr <buffer> lr< \left< \right>
-autocmd BufEnter *.tex iabbr <buffer> inn \left< \vec{u} \,, \vec{v} \right>
-autocmd BufEnter *.tex iabbr <buffer> sq  \sqrt{a + b}
+autocmd BufEnter *.tex,*.html iabbr <buffer> summ s = \sum_{k=0}^{\infty} \frac{1}{k}
+"autocmd BufEnter *.tex,*.html iabbr <buffer> tee \[ \text{} \]
+autocmd BufEnter *.tex,*.html iabbr <buffer> boo \[ \mbox{ } \]
+autocmd BufEnter *.tex,*.html iabbr <buffer> box \mbox{ }
+autocmd BufEnter *.tex,*.html iabbr <buffer> lr( \left( \right)
+autocmd BufEnter *.tex,*.html iabbr <buffer> lr[ \left[ \right]
+autocmd BufEnter *.tex,*.html iabbr <buffer> lr{ \left{ \right}
+autocmd BufEnter *.tex,*.html iabbr <buffer> lr< \left< \right>
+autocmd BufEnter *.tex,*.html iabbr <buffer> inn \left< \vec{u} \,, \vec{v} \right>
+autocmd BufEnter *.tex,*.html iabbr <buffer> sq  \sqrt{a + b}
 
-autocmd BufEnter *.tex iabbr <buffer> ctc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
-autocmd BufEnter *.tex iabbr <buffer> qtc $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
-autocmd BufEnter *.tex iabbr <buffer> por $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> ctc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> qtc $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> por $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
 
-autocmd BufEnter *.tex,*.html iabbr <buffer> vv \left[ \begin{array}{cc}
+autocmd BufEnter *.tex,*.html,*.html iabbr <buffer> vv \left[ \begin{array}{cc}
                                  \<CR>c_1 \\
                                  \<CR>c_2 \\
                                  \<CR>\vdots \\
@@ -752,7 +759,7 @@ autocmd BufEnter *.html iabbr <buffer> tipp <!-- begin tooltip-wrap-->
                     \<CR>\]
                     \<CR><div class="tooltip-content">
                     \<CR><div class="tex2jax_ignore">
-                    \<CR><pre style="background:#FFF" onClick="clip(document.getElementById(''copy23''));" id="copy23">
+                    \<CR><pre class="lbox" onClick="clip(document.getElementById('copy23'));" id="copy23">
                     \<CR>\sqrt{x}
                     \<CR></pre>
                     \<CR></div>
