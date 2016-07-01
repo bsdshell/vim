@@ -79,6 +79,8 @@ colorscheme aron
 "colorscheme haskellcolor
 "=====================================================================
 
+nnoremap gO :!open <cfile><CR>
+
 nnoremap <silent> <C-l> :nohlsearch<CR>
 "map <Left>       :nohlsearch <CR>
 "imap <Left><Esc> :nohlsearch <CR>
@@ -216,7 +218,7 @@ function! CompleteAbbre(findstart, base)
                 call add(res, m)
             endif
         endfor
-        return res
+        return sort(res)
     endif
 endfun
 " -----------------------------------------------------------------------------
@@ -285,6 +287,13 @@ autocmd BufEnter,BufRead * :call SourceSnippet()
 "autocmd VimEnter *.h,*.m :call RunSnippet() 
 "autocmd BufEnter,BufRead *.h,*.m :call SourceSnippet() 
 
+" repeating 80 characters 
+"===============================================================================
+autocmd BufEnter * iabbr <expr> r= "// ".'<C-o>80i=<Esc>' . "<CR>"  
+autocmd BufEnter * iabbr <expr> r- "// ".'<C-o>80i-<Esc>' . "<CR>"
+"-------------------------------------------------------------------------------
+
+
 augroup Java
 au!
 autocmd BufEnter *.java setlocal completefunc=CompleteAbbre
@@ -314,14 +323,9 @@ autocmd BufEnter *.java iabbr <expr> jim 'import java.io.*;
 
 autocmd BufEnter *.java iabbr <expr> jl 'List<String> list = new ArrayList<String>();' . "\<Esc>" . "^" . ":.,.s/String/Integer/gc" . "<CR>"
 
-autocmd BufEnter *.java iabbr <expr> jm 'Map<String, Integer> map = new HashMap<String, Integer>();' . "\<Esc>" . "^"
+autocmd BufEnter *.java iabbr <expr> jm_HashMap 'Map<String, Integer> map = new HashMap<String, Integer>();' . "\<Esc>" . "^"
+autocmd BufEnter *.java iabbr <expr> jll_ListOfList 'ArrayList<ArrayList<String>> list2d = new ArrayList<ArrayList<String>>();' . "\<Esc>" . "^"
          
-autocmd BufEnter *.java iabbr <expr> jda 'List<String> list = new ArrayList<String>();
-                                        \<CR>List<String> list = new LinkedList<String>();
-                                        \<CR>List<String> list = new Stack<String>();
-                                        \<CR>List<String> list = new Vector<String>();
-                                        \<CR>Queue<String> queue = new ArrayList<String>();
-                                        \<CR>Queue<String> queue = new PriorityQueue<String>();' . "\<Esc>" . "^"
 augroup END
 
 "------------------------------------------------------------------
@@ -438,8 +442,6 @@ autocmd BufEnter  *.tex,*.html cabbr Greek   :!/Applications/Google\ Chrome.app/
 autocmd BufEnter  *.tex,*.html cabbr Font    :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/latexfont.png -incongnito <CR>
 autocmd BufEnter  *.vimrc,*.html cabbr Color :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome https://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg<CR>
 autocmd BufEnter  *.vimrc,*.html,*.tex cabbr Mat   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  http://localhost/zsurface/html/indexLatexMatrix.html<CR>
-
-
 
 autocmd BufEnter *.tex cabbr ln :tabe /Users/cat/myfile/github/math/latexnote.tex
 
