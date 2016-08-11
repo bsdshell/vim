@@ -55,6 +55,10 @@ autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*.tex
 " cpp file, c++ file
 autocmd BufRead *.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
 
+" java file
+autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/java/*
+autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/JavaLib/*
+
 :set notimeout          " don't timeout on mappings
 :set ttimeout           " do timeout on terminal key codes
 :set timeoutlen=100     " timeout after 100 msec
@@ -772,6 +776,9 @@ autocmd BufEnter *.html iabbr <buffer> tipp <!-- begin tooltip-wrap-->
 "compile latex
 "autocmd BufEnter tex map  <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader %<.pdf <CR>
 autocmd BufEnter *.tex map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open %:p:r.pdf <CR>
+autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
+
+
 
 " save file and compile latex file
 "autocmd BufWritePost *.tex      :silent exec ':!pdflatex %:p ' | :!open %:p:r.pdf
