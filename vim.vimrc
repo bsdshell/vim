@@ -40,6 +40,7 @@ set dictionary=/home/user/.vim/myword/myword.txt
  
 set omnifunc=csscomplete#CompleteCSS
 
+
 "=====================================================================
 " objc header file
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/Foundation.framework/Headers/*
@@ -100,9 +101,10 @@ map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
-nnoremap <F6>    :call ToggleBracketGroup()<CR>
+"nnoremap <F6>    :call ToggleBracketGroup()<CR>
 map <F1>         :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt <CR>
 
+"inoremap . .<C-X><C-U>
 "=====================================================================
 " special character in abbreviation 
 "---------------------------------------------------------------------
@@ -125,6 +127,213 @@ func! SourceSnippet()
    :source /Users/cat/myfile/github/snippets/snippet.vimrc 
 endfunc
 "---------------------------------------------------------------------
+"function! CompleteMethod(findstart, base)
+"    if a:findstart
+"        " locate the start of the word
+"        let line = getline('.')
+"        let l:start = col('.') - 1
+"        "while l:start > 0 && (line[l:start - 1] =~ '\a')
+"        while l:start > 0 && (line[l:start - 1] =~ '\S')
+"            echo "l:start=" . l:start
+"            ":1sleep
+"            let l:start -= 1
+"        endwhile
+"
+"        "debug
+"        "echo "last l:start=" . l:start
+"        ":3sleep
+"
+"        return l:start
+"    else
+"        " find classes matching "a:base"
+"        " let l:abbmatch = GetAbbreviation()
+"        " let l:abbmatch = GetMethod() 
+"        let res = []
+"
+""        for m in l:abbmatch
+""            if m =~ '^' . a:base
+""            "if m =~ a:base
+""                call add(res, m)
+""            endif
+""        endfor
+"
+"        echo "a:base=[" . a:base . "]"
+"        let l:objType = FindType(a:base)
+"        echo  "ret l:objType=[" . l:objType  . "]"
+"        ":3sleep
+"
+"        
+"        let newlist = []
+"        if l:objType ==# "String"
+"            let res = GetMethod()
+"        endif
+"
+"        return sort(res)
+"    endif
+"endfun
+
+inoremap <F6> <C-R>=CustomComplete()<CR>
+func! CustomComplete()
+        let l:javaClassName = ""
+        let l:line = getline('.')
+        let l:start = col('.') - 1
+        "while l:start > 0 && (l:line[l:start - 1] =~ '\a')
+        while l:start > 0 && (l:line[l:start - 1] =~ '\S')
+            let l:start -= 1
+        endwhile
+
+        let substr = strpart(l:line, 0, col('.')-2)
+        let l:word =  matchstr(substr, '\w\+$')
+
+        let l:objType = FindType(l:word)
+        let l:classFileName = l:objType . ".java"
+        
+        let l:pathList = GetJavaImportPath()
+        for l:plist in l:pathList
+            let l:dirList = split(l:plist, '\.')
+
+            " remove * from the l:dirList [h filter()]
+            call filter(l:dirList, 'v:val !~ "*"')
+
+            let l:path = join(l:dirList, '/') 
+            let l:findCmd = 'find /Users/cat/try/jsource/' . l:path . ' -name ' .  l:classFileName . ' -print'
+            let l:javaClassName = system(l:findCmd)
+
+            if strlen(l:javaClassName) > 0
+                break
+            endif
+        endfor
+        let l:javaClassName = substitute(l:javaClassName, '\n\+', '', '')
+
+        let l:newlist = GetMethod(l:javaClassName)
+
+        call complete(col("."), l:newlist)
+
+        return ''
+endfunc
+
+function! GetJavaImportPath()
+        let l:retList = []
+        " Java default package: import java.lang.*
+        call add(l:retList, 'java.lang.*')
+        let l:count = 1 
+        let l:lastNum = 3 
+        while l:count < l:lastNum 
+            let l:line = getline(l:count)
+            let l:list = matchlist(l:line, '\(import\)\s*\(\S\+\)')
+            if len(l:list) > 0
+                if len(l:list[1]) > 0 && len(l:list[2]) > 0
+                    call add(l:retList, l:list[2])
+                endif
+            endif
+            let l:count += 1
+        endwhile
+        return l:retList
+endfunc
+
+
+
+function! GetMethod(fname)
+    "let list = ["dog", "cat", "insurgency", "temporary"]
+    let list = []
+    let mpat = '\(public\)\s\+\(static\)\?\s*\(\p\+\)\s\+\(\w\+\)(\(\p\|\s\)*)\s*'
+    "a:fname = "/Users/cat/try/jsource/java/lang/String.java"
+    let l:methodPattern = '\(\w\+\s*([^)]*)\)'
+    "echo matchlist("public void getchar(int dog, cat ii)what is new", '\(\w\+\s*([^)]*)\)', 0)
+
+
+    for line in readfile(a:fname)
+        let str = matchstr(line, mpat, 0)
+        let methodList = matchlist(str, l:methodPattern, 0) 
+        if len(methodList) > 0
+            echo "mn=" . methodList[0] 
+            if len(methodList[0]) > 0 
+                call add(list, methodList[0])
+            endif
+        endif
+    endfor
+    return list
+endfunc
+
+fun! FindType(strbase)
+    let l:lnum = line(".")
+    let l:start = col('.')
+    let l:lineCount = 100 
+    let l:declareType = ""
+
+    let l:dotObj = matchstr(a:strbase, '\w\+', 0)
+    echo "a:strbase=[" . a:strbase  . "]"
+    ":1sleep
+    echo "l:dotObj=[" . l:dotObj  . "]"
+    ":1sleep
+
+    while l:lineCount > 0
+        let line = getline(l:lnum)
+        "echo line
+
+        "echo "l:dotObj=[" . l:dotObj  . "]"
+        ":1sleep
+        if strlen(l:dotObj) > 0
+            " String str;
+            let l:noInitTypePat = '\(\w\+\)\s\+' . l:dotObj . '\s*;' 
+            let l:noInitTypePatList = matchlist(line, l:noInitTypePat, 0) 
+
+            " String str = null;
+            let l:noNewTypePat = '\(\w\+\)\s\+' . l:dotObj . '\s*=\s*\S\+\s*;' 
+            let l:noNewTypePatList = matchlist(line, l:noNewTypePat, 0) 
+
+            " String str = new String('a') 
+            let l:simpleTypePat = '\w\+\s\+' . l:dotObj . '\s*=\s*new\s*\(\w\+\)\s*(\p*)' 
+            let l:simpleTypePatList = matchlist(line, l:simpleTypePat, 0) 
+            
+            " List<String> list = new ArrayList<String>();
+            let l:complexTypePat = '\w\+\s*<\s*\w\+\s*>\s*' . l:dotObj . '\s*=\s*new\s*\(\w\+\)\s*<\s*\w\+\s*>\s*(\p*)'
+            let l:complexTypePatList = matchlist(line, l:complexTypePat)
+
+            " Map<Integer, Integer> map = new HashMap<Integer, Integer>(); 
+            let l:mapTypePat = '\w\+\s*<\s*\w\+\s*,\s*\w\+\s*>\s*' . l:dotObj . '\s*=\s*new\s*\(\w\+\)\s*<\s*\w\+\s*,\s*\w\+\s*>\s*(\p*)'
+            let l:mapTypePatList = matchlist(line, l:mapTypePat)
+
+            if len(l:simpleTypePatList) > 1
+                let l:declareType = l:simpleTypePatList[1]
+                if strlen(l:declareType) > 0
+                    echo "1"
+                    :1sleep
+                    return l:declareType
+                endif
+            elseif  len(l:complexTypePatList) > 1
+                let l:declareType = l:complexTypePatList[1]
+                if strlen(l:declareType) > 0
+                    echo "2"
+                    :1sleep
+                    return l:declareType
+                endif
+            elseif len(l:mapTypePatList) > 1
+                let l:declareType = l:mapTypePatList[1]
+                if strlen(l:declareType) > 0
+                    echo "3"
+                    :1sleep
+                    return l:declareType
+                endif
+            elseif len(l:noNewTypePatList) > 1
+                let l:declareType = l:noNewTypePatList[1]
+                if strlen(l:declareType) > 0
+                    return l:declareType
+                endif
+            elseif len(l:noInitTypePatList) > 1
+                let l:declareType = l:noInitTypePatList[1]
+                if strlen(l:declareType) > 0
+                    return l:declareType
+                endif
+            endif
+        endif
+
+        let l:lineCount -= 1
+        let l:lnum -= 1 
+    endwhile
+
+    return l:declareType
+endfunc
 
 "inoremap <F6> <C-R>=ListMonths()<CR>
 func! ListMonths()
@@ -145,6 +354,7 @@ endfunc
 "	    return start
 "	  else
 "	    " find months matching with "a:base"
+"       " Jan<- is a:base, current word under the cursor
 "        let matches = split("cat dog cow")
 "        let dict   = {}
 "        "let word   = {'word':'myword', 'abbr':'myabbr'}
@@ -170,7 +380,6 @@ endfunc
 " Usage: type prefix<C-X><C-U>
 " Ref: http://vi.stackexchange.com/questions/7750/how-to-manage-and-remember-many-abbreviations-in-my-vimrc/7763#7763
 " -----------------------------------------------------------------------------
-                 
 function! CaptureCmd(excmd)
     let l:abbList = []
     redir=> l:result
@@ -178,14 +387,9 @@ function! CaptureCmd(excmd)
     redir END
     let l:list = split(l:result, '\n')
     for item in l:list
-        ":silent echo "[" . item . "]\n"
-        "echo "[" . item . "]\n"
         call substitute(item, '^\s*[ic]\s\+\(\S\+\)\s\+', '\=add(abbList, submatch(1))', 'g')
     endfor
-    for abbItem in l:abbList
-        ":silent echo "{" . abbItem . "}\n"
-        "echo "{" . abbItem . "}\n"
-    endfor
+
     return l:abbList
 endfunc
 
@@ -286,8 +490,15 @@ autocmd BufEnter *.txt iabbr <buffer> bl [ ]
 
 
 autocmd BufEnter * if @% == 'noteindex.txt' | :call NoteColor() | endif 
-autocmd VimEnter * :call RunSnippet() 
-autocmd BufEnter,BufRead * :call SourceSnippet() 
+
+"-------------------------------------------------------------------------------- 
+" Fri Aug 12 13:50:59 PDT 2016
+" Vim is very slow if VimEnter is enabled here
+" autocmd VimEnter * :call RunSnippet() 
+"-------------------------------------------------------------------------------- 
+
+" disable it temporally 
+" autocmd BufEnter,BufRead * :call SourceSnippet() 
 "autocmd VimEnter *.h,*.m :call RunSnippet() 
 "autocmd BufEnter,BufRead *.h,*.m :call SourceSnippet() 
 
@@ -301,6 +512,9 @@ autocmd BufEnter * iabbr <expr> r- "// ".'<C-o>80i-<Esc>' . "<CR>"
 augroup Java
 au!
 autocmd BufEnter *.java setlocal completefunc=CompleteAbbre
+"autocmd BufEnter *.java setlocal completefunc=CompleteMethod
+"autocmd BufEnter *.java setlocal omnifunc=CompleteMethod
+
 autocmd BufEnter *.tex  setlocal completefunc=CompleteAbbre
 autocmd BufEnter *.cpp  setlocal completefunc=CompleteAbbre
 autocmd BufEnter *.py  setlocal completefunc=CompleteAbbre
@@ -735,6 +949,7 @@ augroup END
 iabbr skk // searchkey:
 
 autocmd BufEnter *.html vmap  <buffer> span  :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
+autocmd BufEnter *.java,*.h,*.c,*.cpp vmap  <buffer> str  :s/\%V.*\%V/"\0"/ <CR>
 
 
 autocmd BufEnter *.html iabbr <buffer> ioss <div class="mytitle">
