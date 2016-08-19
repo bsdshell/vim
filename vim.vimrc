@@ -107,8 +107,8 @@ map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
+inoremap <F1> <C-R>=CompleteJava()<CR>
 "nnoremap <F6>    :call ToggleBracketGroup()<CR>
-map <F1>         :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt <CR>
 
 
 
@@ -143,7 +143,6 @@ function! LineCompleteFromFile(findstart,base)
             " trim leading whitespace
             call add(matches, matchstr(thismatch.text, '\S.*'))
             "echo "[" . thismatch.text . "]"
-            ":3sleep
         endfor
         call setqflist([])
         return matches
@@ -183,7 +182,6 @@ endfunc
 "        "while l:start > 0 && (line[l:start - 1] =~ '\a')
 "        while l:start > 0 && (line[l:start - 1] =~ '\S')
 "            echo "l:start=" . l:start
-"            ":1sleep
 "            let l:start -= 1
 "        endwhile
 "
@@ -293,6 +291,7 @@ endfunc
 " -------------------------------------------------------------------------------- 
 
 func! CompleteJava()
+        set verbosefile=/tmp/vimlog.txt
         let l:javaClassName = ""
         let l:path = ""
         let l:line = getline('.')
@@ -300,9 +299,11 @@ func! CompleteJava()
         let l:obj_instance = ""
 
         if l:line[col('.') - 2] =~ '\.'
+            " str.{}
             let substr = strpart(l:line, 0, col('.')-2)
             let l:obj_instance =  matchstr(substr, '\w\+$')
         elseif l:line[col('.')-2] =~ '\w'
+            " str.get{}
             let l:objList = split(strpart(l:line, 0, col('.')-1), '\.')
             echo l:objList
             if len(l:objList) > 1
@@ -312,14 +313,12 @@ func! CompleteJava()
 
         " str. -> str
         " str.get -> [str, get]
-
         let l:obj_type = FindType(l:obj_instance)
         let l:classFileName = l:obj_type . '.java'
         
         let l:pathList = GetJavaImportPath()
         for l:plist in l:pathList
             let l:dirList = split(l:plist, '\.')
-            
             if len(l:dirList) > 1
                 if l:dirList[-1] =~ '*'
                     call filter(l:dirList, 'v:val !~ "*"')
@@ -343,20 +342,17 @@ func! CompleteJava()
 
         let l:newlist = GetMethod(l:javaClassName)
 
-        let l:mList = []
         if len(l:objList) > 1
+            let l:mList = []
             for item in l:newlist
-                if l:item =~ l:objList[-1]
+                if l:item =~ '^' . l:objList[-1]
                     call add(l:mList, l:item)
                 endif
             endfor
-        endif
 
-        "call complete(col("."), l:newlist)
-        if len(l:objList) > 1
             call complete(col(".") - strlen(l:objList[-1]), l:mList)
         else
-            call complete(col("."), l:mList)
+            call complete(col("."), l:newlist)
         endif
 
         return ''
@@ -596,6 +592,7 @@ cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
 cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
 cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
 cabbr Eng :tabe /Library/WebServer/Documents/zsurface/html/indexEnglishNote.html  
+cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
 " command line mode
 "-----------------------------------------------------------------
 " multiple command in map
@@ -672,7 +669,6 @@ au!
 "autocmd BufEnter *.html  setlocal completefunc=CompleteAbbre
 "autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
 "autocmd BufEnter *.java setlocal completefunc=CompleteJava
-inoremap <F6> <C-R>=CompleteJava()<CR>
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
