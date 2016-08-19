@@ -292,23 +292,29 @@ func! CountCloseBracket(line)
 endfunc
 " -------------------------------------------------------------------------------- 
 
-inoremap <F6> <C-R>=CompleteJava()<CR>
 func! CompleteJava()
         let l:javaClassName = ""
         let l:path = ""
         let l:line = getline('.')
+        let l:objList = []
+        let l:obj_instance = ""
 
-        let l:start = col('.') - 1
-        "while l:start > 0 && (l:line[l:start - 1] =~ '\a')
-        while l:start > 0 && (l:line[l:start - 1] =~ '\S')
-            let l:start -= 1
-        endwhile
+        if l:line[col('.') - 2] =~ '\.'
+            let substr = strpart(l:line, 0, col('.')-2)
+            let l:obj_instance =  matchstr(substr, '\w\+$')
+        elseif l:line[col('.')-2] =~ '\w'
+            let l:objList = split(strpart(l:line, 0, col('.')-1), '\.')
+            echo l:objList
+            if len(l:objList) > 1
+                let l:obj_instance = l:objList[-2]
+            endif
+        endif
 
-        let substr = strpart(l:line, 0, col('.')-2)
-        let l:word =  matchstr(substr, '\w\+$')
+        " str. -> str
+        " str.get -> [str, get]
 
-        let l:objType = FindType(l:word)
-        let l:classFileName = l:objType . '.java'
+        let l:obj_type = FindType(l:obj_instance)
+        let l:classFileName = l:obj_type . '.java'
         
         let l:pathList = GetJavaImportPath()
         for l:plist in l:pathList
@@ -320,7 +326,7 @@ func! CompleteJava()
                     let l:path = join(l:dirList, '/') 
                 else
                     let l:path = join(l:dirList[0:len(l:dirList)-2], '/') 
-                    if l:objType =~ l:dirList[-1]
+                    if l:obj_type =~ l:dirList[-1]
                         let l:classFileName = l:dirList[-1] . '.java'
                     endif
                 endif
@@ -337,7 +343,21 @@ func! CompleteJava()
 
         let l:newlist = GetMethod(l:javaClassName)
 
-        call complete(col("."), l:newlist)
+        let l:mList = []
+        if len(l:objList) > 1
+            for item in l:newlist
+                if l:item =~ l:objList[-1]
+                    call add(l:mList, l:item)
+                endif
+            endfor
+        endif
+
+        "call complete(col("."), l:newlist)
+        if len(l:objList) > 1
+            call complete(col(".") - strlen(l:objList[-1]), l:mList)
+        else
+            call complete(col("."), l:mList)
+        endif
 
         return ''
 endfunc
@@ -644,13 +664,15 @@ au!
 
 " completefunc have two functions: LineCompleteFromFile() and CompleteAbbre()
 "autocmd BufEnter *.html setlocal completefunc=LineCompleteFromFile
-autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java  setlocal completefunc=CompleteAbbre
+"autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java  setlocal completefunc=CompleteAbbre
 
 "autocmd BufEnter *.cpp  setlocal completefunc=CompleteAbbre
 "autocmd BufEnter *.py  setlocal completefunc=CompleteAbbre
 "autocmd BufEnter *.m,*.h  setlocal completefunc=CompleteAbbre
 "autocmd BufEnter *.html  setlocal completefunc=CompleteAbbre
 "autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
+"autocmd BufEnter *.java setlocal completefunc=CompleteJava
+inoremap <F6> <C-R>=CompleteJava()<CR>
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
@@ -1854,7 +1876,6 @@ func! FindFun()
         endif
     endfor
 endfunc
-
 
 func! Defun()
     let input = expand("<cword>")
