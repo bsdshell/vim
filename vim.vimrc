@@ -661,14 +661,10 @@ au!
 
 " completefunc have two functions: LineCompleteFromFile() and CompleteAbbre()
 "autocmd BufEnter *.html setlocal completefunc=LineCompleteFromFile
-"autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java  setlocal completefunc=CompleteAbbre
 
-"autocmd BufEnter *.cpp  setlocal completefunc=CompleteAbbre
-"autocmd BufEnter *.py  setlocal completefunc=CompleteAbbre
-"autocmd BufEnter *.m,*.h  setlocal completefunc=CompleteAbbre
-"autocmd BufEnter *.html  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java  setlocal completefunc=CompleteAbbre
+
 "autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
-"autocmd BufEnter *.java setlocal completefunc=CompleteJava
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
