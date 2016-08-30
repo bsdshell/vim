@@ -47,7 +47,7 @@ set dictionary+=/Users/cat/myfile/github/vim/myword.utf-8.add
 set spellfile=/Users/cat/myfile/github/vim/myword.utf-8.add
 " open Mac dictionary, Apple dictionary 
 nmap <silent> <Leader>d :!open dict://<cword><CR><CR>
-nmap <silent> <Leader>c :call SelectJavaMethod()<CR>
+nmap <silent> <Leader>c :call CopyJavaMethod()<CR>
 
 "=====================================================================
 " objc header file
@@ -98,8 +98,9 @@ nnoremap gO :!open <cfile><CR>
 nnoremap <silent> <C-l> :nohlsearch<CR>
 "map <Left>       :nohlsearch <CR>
 "imap <Left><Esc> :nohlsearch <CR>
-map <F7>         :vertical   res +5 <CR>
-map <F8>         :vertical   res -5 <CR>
+"map <F7>         :vertical   res +5 <CR>
+"map <F8>         :vertical   res -5 <CR>
+map <F8>         :call FoldComment()<CR>
 map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
 map <F4>         :tabnew     <CR>
@@ -108,9 +109,27 @@ map <F10>        :tabc        <CR>
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
 inoremap <F1> <C-R>=CompleteJava()<CR>
+inoremap <F7> <C-R>=LineCompleteFromFile()<CR>
 "nnoremap <F6>    :call ToggleBracketGroup()<CR>
 
+" save folding after file is closed
+au BufWinLeave * mkview
+au BufWinEnter * silent loadview
 
+" ================================================================================ 
+" ref: http://superuser.com/questions/219667/multiple-foldmethods-in-vim 
+" set foldmethod with different values
+nmap <Leader>ff :call <SID>ToggleFold()<CR>
+function! s:ToggleFold()
+    if &foldmethod == 'marker'
+        let &l:foldmethod = 'expr'
+        set foldmethod=expr | set foldexpr=getline(v:lnum)=~'^\\s*\/\/'
+    else
+        let &l:foldmethod = 'marker'
+        set foldmethod=marker foldmarker=/**,*/
+    endif
+    echo 'foldmethod is now ' . &l:foldmethod
+endfunction
 
 "=====================================================================
 " Ref: http://stackoverflow.com/questions/18160053/vim-line-completion-with-external-file 
@@ -126,7 +145,7 @@ function! SilentFileGrep(leader, file )
 endfunction
 
 " Try to do line completion from external file
-" 1. Read the external file 
+" 1. Read the external file=/Users/cat/myfile/github/vim/myword.utf-8.add
 " 2. Grep all text from the file and insern to list
 " 3. Insert the text to quickfix with flag [j] since line completion only works in loaded buffer[why]
 " 4. Match the string with completefunc
@@ -214,12 +233,73 @@ endfunc
 "endfun
 
 " ================================================================================ 
-" copy method code with y
+" select all //.* line 
 " -------------------------------------------------------------------------------- 
-func! SelectJavaMethod()
+func! JavaComment()
+    let l:list = JavaCommentScope()
+    set foldmethod=manual
+    exec list[0] . ','  l:list[1] . 'fo' 
+endfunc
+
+func! JavaCommentScope()
+        let l:list = []
+        let l:max = line('$')
         let l:currLine = line('.')
         let l:line = getline('.')
-        let l:methodPat = '^\s*\(\w\+\s\+\)\{1,4}\s*\w\+\s*([^)]*)'
+
+        " // Java comment
+        let l:methodPat = '^\s*\/\/.*'
+
+        let l:begNum= 0
+        let l:endNum= 0
+        let l:up = 0
+        let l:down = 0
+
+        " check current line
+        let l:list = matchlist(l:line, l:methodPat)
+        if len(l:list) > 0
+            let l:upCount = 0 
+            while l:currLine - l:upCount > 0
+                let l:begNum = l:currLine - l:upCount
+                let l:line = getline(l:begNum)
+                let l:list = matchlist(l:line, l:methodPat)
+                if len(l:list) > 0
+                    let l:upCount += 1
+                else 
+                    break
+                endif
+            endwhile
+
+
+            let l:downCount = 1 
+            while l:currLine + l:downCount <= l:max 
+                let l:endNum = l:currLine + l:downCount 
+                let l:line = getline(l:endNum)
+                let l:list = matchlist(l:line, l:methodPat)
+                if len(l:list) > 0
+                    let l:downCount += 1
+                else 
+                    break
+                endif
+            endwhile
+        endif
+        call add(l:list, l:begNum + 1)
+        call add(l:list, l:endNum - 1)
+        return l:list
+endfunc
+
+" ================================================================================ 
+" return [firstLine, lastLine] for Java method 
+" -------------------------------------------------------------------------------- 
+func! JavaMethodScope()
+        "  lineScope = [beginLine, endLine]
+        let l:lineScope = []
+        let l:currLine = line('.')
+        let l:line = getline('.')
+
+        " Sat Aug 27 10:48:18 PDT 2016
+        " fix <,> characters on return type
+        let l:methodPat = '^\s*\([a-zA-Z0-9<>\[\]]\+\s\+\)\{2,4}\s*\w\+\s*([^)]*)'
 
         let l:num = 0 
         let l:methodBegNum= 0
@@ -262,7 +342,27 @@ func! SelectJavaMethod()
             let l:tmpIndex += 1
         endwhile
 
-        exec l:methodBegNum . ','  l:methodEndNum . 'y' 
+        call add(l:lineScope, l:methodBegNum)
+        call add(l:lineScope, l:methodEndNum)
+        return l:lineScope
+endfunc
+
+" ================================================================================ 
+" copy method code with <leader>c 
+" -------------------------------------------------------------------------------- 
+func! FoldComment()
+        let l:list = JavaMethodScope()
+        set foldmethod=manual
+        exec list[0] . ','  l:list[1] . 'fo' 
+endfunc
+
+
+" ================================================================================ 
+" copy method code with <leader>c 
+" -------------------------------------------------------------------------------- 
+func! CopyJavaMethod()
+        let l:list = JavaMethodScope()
+        exec list[0] . ','  l:list[1] . 'y' 
 endfunc
 
 func! CountOpenBracket(line)
@@ -291,7 +391,6 @@ endfunc
 " -------------------------------------------------------------------------------- 
 
 func! CompleteJava()
-        set verbosefile=/tmp/vimlog.txt
         let l:javaClassName = ""
         let l:path = ""
         let l:line = getline('.')
@@ -581,6 +680,7 @@ map  ,w :w! <CR>
 cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! <CR>
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
+cabbr ep :tabnew /etc/profile 
 cabbr mk :mksession! $sess <CR>                                 " save vim session
 cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt " quick node
 cabbr wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
@@ -592,6 +692,7 @@ cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
 cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
 cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
 cabbr Eng :tabe /Library/WebServer/Documents/zsurface/html/indexEnglishNote.html  
+cabbr Cl :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks.html  
 cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
 " command line mode
 "-----------------------------------------------------------------
@@ -661,10 +762,9 @@ au!
 
 " completefunc have two functions: LineCompleteFromFile() and CompleteAbbre()
 "autocmd BufEnter *.html setlocal completefunc=LineCompleteFromFile
+"autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
 
 autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java  setlocal completefunc=CompleteAbbre
-
-"autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
@@ -1094,6 +1194,7 @@ iabbr skk // searchkey:
 
 autocmd BufEnter *.html vmap  <buffer> span :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
 autocmd BufEnter *.html vmap  <buffer> cmd  :s/\%V.*\%V/<span class="cmd">\0<\/span>/ <CR>
+autocmd BufEnter *.html vmap  <buffer> sou  :s/\%V.*\%V/<span class="source">\0<\/span>/ <CR>
 autocmd BufEnter *.html cmap  <buffer> Cmd  :s/\S*\%#\S*/<span class="cmd">\0<\/span>/ <CR>
 autocmd BufEnter *.java,*.h,*.c,*.cpp,*.vimrc vmap  <buffer> str  :s/\%V.*\%V/"\0"/ <CR>
 
