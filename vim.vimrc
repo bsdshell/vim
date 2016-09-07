@@ -100,7 +100,7 @@ nnoremap <silent> <C-l> :nohlsearch<CR>
 "imap <Left><Esc> :nohlsearch <CR>
 "map <F7>         :vertical   res +5 <CR>
 "map <F8>         :vertical   res -5 <CR>
-map <F8>         :call FoldComment()<CR>
+map <F8>         :call FoldJavaMethod()<CR>
 map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
 map <F4>         :tabnew     <CR>
@@ -112,9 +112,9 @@ inoremap <F1> <C-R>=CompleteJava()<CR>
 inoremap <F7> <C-R>=LineCompleteFromFile()<CR>
 "nnoremap <F6>    :call ToggleBracketGroup()<CR>
 
-" save folding after file is closed
-au BufWinLeave * mkview
-au BufWinEnter * silent loadview
+" save folding after file is closed [~/.vim/view/]  
+au BufWinLeave *.* mkview
+au BufWinEnter *.* silent loadview
 
 " ================================================================================ 
 " ref: http://superuser.com/questions/219667/multiple-foldmethods-in-vim 
@@ -299,7 +299,8 @@ func! JavaMethodScope()
 
         " Sat Aug 27 10:48:18 PDT 2016
         " fix <,> characters on return type
-        let l:methodPat = '^\s*\([a-zA-Z0-9<>\[\]]\+\s\+\)\{2,4}\s*\w\+\s*([^)]*)'
+        "let l:methodPat = '^\s*\([a-zA-Z0-9<>\[\]]\+\s\+\)\{2,4}\s*\w\+\s*([^)]*)'
+        let l:methodPat = '^\s*\([a-zA-Z0-9<>\[\]]\+\s\+\)\{2,4}\s*\w\+\s*([^)]*)\(\s\+\w\+\s\+\w\+\)\?'
 
         let l:num = 0 
         let l:methodBegNum= 0
@@ -350,7 +351,7 @@ endfunc
 " ================================================================================ 
 " copy method code with <leader>c 
 " -------------------------------------------------------------------------------- 
-func! FoldComment()
+func! FoldJavaMethod()
         let l:list = JavaMethodScope()
         set foldmethod=manual
         exec list[0] . ','  l:list[1] . 'fo' 
@@ -694,6 +695,9 @@ cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
 cabbr Eng :tabe /Library/WebServer/Documents/zsurface/html/indexEnglishNote.html  
 cabbr Cl :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks.html  
 cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
+
+cabbr FF  :call JavaComment() <CR> 
+
 " command line mode
 "-----------------------------------------------------------------
 " multiple command in map
