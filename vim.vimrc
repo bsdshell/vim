@@ -36,9 +36,18 @@ set nowritebackup
 set noswapfile
 set autochdir
 set backspace=2
-set dictionary=/home/user/.vim/myword/myword.txt
- 
 set omnifunc=csscomplete#CompleteCSS
+
+
+"---------------------------------------------------------------------
+" dictionary files
+set dictionary=/Users/cat/myfile/github/vim/words.txt
+" add my word
+set dictionary+=/Users/cat/myfile/github/vim/myword.utf-8.add
+set spellfile=/Users/cat/myfile/github/vim/myword.utf-8.add
+" open Mac dictionary, Apple dictionary 
+nmap <silent> <Leader>d :!open dict://<cword><CR><CR>
+nmap <silent> <Leader>c :call CopyJavaMethod()<CR>
 
 "=====================================================================
 " objc header file
@@ -54,6 +63,11 @@ autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*.tex
 
 " cpp file, c++ file
 autocmd BufRead *.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
+
+" java file
+autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/java/*
+autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/JavaLib/*
+autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/Jsource/*
 
 :set notimeout          " don't timeout on mappings
 :set ttimeout           " do timeout on terminal key codes
@@ -84,21 +98,78 @@ nnoremap gO :!open <cfile><CR>
 nnoremap <silent> <C-l> :nohlsearch<CR>
 "map <Left>       :nohlsearch <CR>
 "imap <Left><Esc> :nohlsearch <CR>
-map <F7>         :vertical   res +5 <CR>
-map <F8>         :vertical   res -5 <CR>
+"map <F7>         :vertical   res +5 <CR>
+"map <F8>         :vertical   res -5 <CR>
+map <F8>         :call FoldComment()<CR>
 map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
 map <F4>         :tabnew     <CR>
-imap <F2><Esc>   :tabp       <CR>
-imap <F3><Esc>   :tabnew     <CR>
-imap <F4><Esc>   :tabnew     <CR>
 map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
-nnoremap <F6>    :call ToggleBracketGroup()<CR>
-map <F1>         :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt <CR>
+inoremap <F1> <C-R>=CompleteJava()<CR>
+inoremap <F7> <C-R>=LineCompleteFromFile()<CR>
+"nnoremap <F6>    :call ToggleBracketGroup()<CR>
 
+" save folding after file is closed
+au BufWinLeave * mkview
+au BufWinEnter * silent loadview
+
+" ================================================================================ 
+" ref: http://superuser.com/questions/219667/multiple-foldmethods-in-vim 
+" set foldmethod with different values
+nmap <Leader>ff :call <SID>ToggleFold()<CR>
+function! s:ToggleFold()
+    if &foldmethod == 'marker'
+        let &l:foldmethod = 'expr'
+        set foldmethod=expr | set foldexpr=getline(v:lnum)=~'^\\s*\/\/'
+    else
+        let &l:foldmethod = 'marker'
+        set foldmethod=marker foldmarker=/**,*/
+    endif
+    echo 'foldmethod is now ' . &l:foldmethod
+endfunction
+
+"=====================================================================
+" Ref: http://stackoverflow.com/questions/18160053/vim-line-completion-with-external-file 
+" Grep pattern {leader} from the file and update to quickfix
+function! SilentFileGrep(leader, file )
+    " [j], without the 'j' flag Vim jumps to the first match. 
+    " [j], with the 'j' only the quickfix list is updated.
+    try
+        exe 'vimgrep /^\s*' . a:leader . '.*/j ' . a:file
+    catch /.*/
+        echo "no matches"
+    endtry
+endfunction
+
+" Try to do line completion from external file
+" 1. Read the external file=/Users/cat/myfile/github/vim/myword.utf-8.add
+" 2. Grep all text from the file and insern to list
+" 3. Insert the text to quickfix with flag [j] since line completion only works in loaded buffer[why]
+" 4. Match the string with completefunc
+function! LineCompleteFromFile(findstart,base)
+    if a:findstart
+        " column to begin searching from (first non-whitespace column):
+        return match(getline("."), '\S')
+    else
+        " grep the file and build list of results:
+        let path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
+        call SilentFileGrep(a:base, path)
+        let matches = []
+        for thismatch in getqflist()
+            " trim leading whitespace
+            call add(matches, matchstr(thismatch.text, '\S.*'))
+            "echo "[" . thismatch.text . "]"
+        endfor
+        call setqflist([])
+        return matches
+    endif
+endfunction
+"---------------------------------------------------------------------
+
+"inoremap . .<C-X><C-U>
 "=====================================================================
 " special character in abbreviation 
 "---------------------------------------------------------------------
@@ -120,7 +191,379 @@ endfunc
 func! SourceSnippet()
    :source /Users/cat/myfile/github/snippets/snippet.vimrc 
 endfunc
+
 "---------------------------------------------------------------------
+"function! CompleteMethod(findstart, base)
+"    if a:findstart
+"        " locate the start of the word
+"        let line = getline('.')
+"        let l:start = col('.') - 1
+"        "while l:start > 0 && (line[l:start - 1] =~ '\a')
+"        while l:start > 0 && (line[l:start - 1] =~ '\S')
+"            echo "l:start=" . l:start
+"            let l:start -= 1
+"        endwhile
+"
+"        return l:start
+"    else
+"        let l:objType = FindType(a:base)
+"        let l:classFileName = l:objType . ".java"
+"        
+"        let l:pathList = GetJavaImportPath()
+"        for l:plist in l:pathList
+"            let l:dirList = split(l:plist, '\.')
+"
+"            " remove * from the l:dirList [h filter()]
+"            call filter(l:dirList, 'v:val !~ "*"')
+"
+"            let l:path = join(l:dirList, '/') 
+"            let l:findCmd = 'find /Users/cat/myfile/github/Jsource/' . l:path . ' -name ' .  l:classFileName . ' -print'
+"            let l:javaClassName = system(l:findCmd)
+"
+"            if strlen(l:javaClassName) > 0
+"                break
+"            endif
+"        endfor
+"        let l:javaClassName = substitute(l:javaClassName, '\n\+', '', '')
+"
+"        let l:newlist = GetMethod(l:javaClassName)
+"
+"        return sort(l:newlist)
+"    endif
+"endfun
+
+" ================================================================================ 
+" select all //.* line 
+" -------------------------------------------------------------------------------- 
+func! JavaComment()
+    let l:list = JavaCommentScope()
+    set foldmethod=manual
+    exec list[0] . ','  l:list[1] . 'fo' 
+endfunc
+
+func! JavaCommentScope()
+        let l:list = []
+        let l:max = line('$')
+        let l:currLine = line('.')
+        let l:line = getline('.')
+
+        " // Java comment
+        let l:methodPat = '^\s*\/\/.*'
+
+        let l:begNum= 0
+        let l:endNum= 0
+        let l:up = 0
+        let l:down = 0
+
+        " check current line
+        let l:list = matchlist(l:line, l:methodPat)
+        if len(l:list) > 0
+            let l:upCount = 0 
+            while l:currLine - l:upCount > 0
+                let l:begNum = l:currLine - l:upCount
+                let l:line = getline(l:begNum)
+                let l:list = matchlist(l:line, l:methodPat)
+                if len(l:list) > 0
+                    let l:upCount += 1
+                else 
+                    break
+                endif
+            endwhile
+
+
+            let l:downCount = 1 
+            while l:currLine + l:downCount <= l:max 
+                let l:endNum = l:currLine + l:downCount 
+                let l:line = getline(l:endNum)
+                let l:list = matchlist(l:line, l:methodPat)
+                if len(l:list) > 0
+                    let l:downCount += 1
+                else 
+                    break
+                endif
+            endwhile
+        endif
+        call add(l:list, l:begNum + 1)
+        call add(l:list, l:endNum - 1)
+        return l:list
+endfunc
+
+" ================================================================================ 
+" return [firstLine, lastLine] for Java method 
+" -------------------------------------------------------------------------------- 
+func! JavaMethodScope()
+        "  lineScope = [beginLine, endLine]
+        let l:lineScope = []
+        let l:currLine = line('.')
+        let l:line = getline('.')
+
+        " Sat Aug 27 10:48:18 PDT 2016
+        " fix <,> characters on return type
+        let l:methodPat = '^\s*\([a-zA-Z0-9<>\[\]]\+\s\+\)\{2,4}\s*\w\+\s*([^)]*)'
+
+        let l:num = 0 
+        let l:methodBegNum= 0
+        let l:methodEndNum= 0
+
+        while l:currLine - l:num > 0
+            let l:methodBegNum = l:currLine - l:num
+            let l:line = getline(l:methodBegNum)
+            let l:list = matchlist(l:line, l:methodPat)
+            if len(l:list) > 0
+                break
+            endif
+            let l:num += 1
+        endwhile
+        
+        let l:countOpen = 0
+        let l:countClose = 0
+        let l:tmpCurr = l:currLine
+        while l:tmpCurr >= l:methodBegNum
+            let l:lineStr = getline(l:tmpCurr)
+            let l:countOpen += CountOpenBracket(l:lineStr)
+            let l:countClose += CountCloseBracket(l:lineStr)
+            let l:tmpCurr -=1
+        endwhile
+
+        let l:max = line('$')
+        let l:tmpCount = 1
+        while l:tmpCount <= l:max && l:countOpen !~ l:countClose 
+            let l:methodEndNum = l:tmpCount + l:currLine
+            let l:strLine = getline(l:methodEndNum)
+
+            let l:countOpen += CountOpenBracket(l:strLine)
+            let l:countClose += CountCloseBracket(l:strLine)
+            let l:tmpCount += 1
+        endwhile
+
+        let l:tmpc = 0
+        let l:tmpIndex =  l:methodBegNum
+        while l:tmpIndex <= l:methodEndNum
+            let l:tmpIndex += 1
+        endwhile
+
+        call add(l:lineScope, l:methodBegNum)
+        call add(l:lineScope, l:methodEndNum)
+        return l:lineScope
+endfunc
+
+" ================================================================================ 
+" copy method code with <leader>c 
+" -------------------------------------------------------------------------------- 
+func! FoldComment()
+        let l:list = JavaMethodScope()
+        set foldmethod=manual
+        exec list[0] . ','  l:list[1] . 'fo' 
+endfunc
+
+
+" ================================================================================ 
+" copy method code with <leader>c 
+" -------------------------------------------------------------------------------- 
+func! CopyJavaMethod()
+        let l:list = JavaMethodScope()
+        exec list[0] . ','  l:list[1] . 'y' 
+endfunc
+
+func! CountOpenBracket(line)
+    let l:count = 0
+    let l:index = 0
+    while l:index < strlen(a:line)
+        if a:line[l:index] =~ '{'
+            let l:count +=1
+        endif
+        let l:index +=1
+    endwhile
+    return l:count
+endfunc
+
+func! CountCloseBracket(line)
+    let l:count = 0
+    let l:index = 0
+    while l:index < strlen(a:line)
+        if a:line[l:index] =~ '}'
+            let l:count +=1
+        endif
+        let l:index +=1
+    endwhile
+    return l:count
+endfunc
+" -------------------------------------------------------------------------------- 
+
+func! CompleteJava()
+        let l:javaClassName = ""
+        let l:path = ""
+        let l:line = getline('.')
+        let l:objList = []
+        let l:obj_instance = ""
+
+        if l:line[col('.') - 2] =~ '\.'
+            " str.{}
+            let substr = strpart(l:line, 0, col('.')-2)
+            let l:obj_instance =  matchstr(substr, '\w\+$')
+        elseif l:line[col('.')-2] =~ '\w'
+            " str.get{}
+            let l:objList = split(strpart(l:line, 0, col('.')-1), '\.')
+            echo l:objList
+            if len(l:objList) > 1
+                let l:obj_instance = l:objList[-2]
+            endif
+        endif
+
+        " str. -> str
+        " str.get -> [str, get]
+        let l:obj_type = FindType(l:obj_instance)
+        let l:classFileName = l:obj_type . '.java'
+        
+        let l:pathList = GetJavaImportPath()
+        for l:plist in l:pathList
+            let l:dirList = split(l:plist, '\.')
+            if len(l:dirList) > 1
+                if l:dirList[-1] =~ '*'
+                    call filter(l:dirList, 'v:val !~ "*"')
+                    let l:path = join(l:dirList, '/') 
+                else
+                    let l:path = join(l:dirList[0:len(l:dirList)-2], '/') 
+                    if l:obj_type =~ l:dirList[-1]
+                        let l:classFileName = l:dirList[-1] . '.java'
+                    endif
+                endif
+
+                let l:findCmd = 'find /Users/cat/myfile/github/Jsource/' . l:path . ' -name ' .  l:classFileName . ' -print'
+                let l:javaClassName = system(l:findCmd)
+
+                if strlen(l:javaClassName) > 0
+                    break
+                endif
+            endif
+        endfor
+        let l:javaClassName = substitute(l:javaClassName, '\n\+', '', '')
+
+        let l:newlist = GetMethod(l:javaClassName)
+
+        if len(l:objList) > 1
+            let l:mList = []
+            for item in l:newlist
+                if l:item =~ '^' . l:objList[-1]
+                    call add(l:mList, l:item)
+                endif
+            endfor
+
+            call complete(col(".") - strlen(l:objList[-1]), l:mList)
+        else
+            call complete(col("."), l:newlist)
+        endif
+
+        return ''
+endfunc
+
+function! GetJavaImportPath()
+        let l:retList = []
+        " Java default package: import java.lang.*
+        call add(l:retList, 'java.lang.*')
+        let l:count = 1 
+        let l:lastNum = 10 
+        while l:count < l:lastNum 
+            let l:line = getline(l:count)
+                            
+            let l:list = matchlist(l:line, '\(import\)\s\+\([a-zA-Z0-9\*\._]\+\)\s*;')
+
+            "let l:list = matchlist(l:line, '\(import\)\s*\([a-zA-Z$_][a-zA-Z0-9$]*\)')
+            if len(l:list) > 0
+                if len(l:list[1]) > 0 && len(l:list[2]) > 0
+                    call add(l:retList, l:list[2])
+                endif
+            endif
+            let l:count += 1
+        endwhile
+        return l:retList
+endfunc
+
+
+
+function! GetMethod(fname)
+    let list = []
+    let mpat = '\(public\)\s\+\(static\)\?\s*\(\p\+\)\s\+\(\w\+\)(\(\p\|\s\)*)\s*'
+    let l:methodPattern = '\(\w\+\s*([^)]*)\)'
+
+    for line in readfile(a:fname)
+        let str = matchstr(line, mpat, 0)
+        let methodList = matchlist(str, l:methodPattern, 0) 
+        if len(methodList) > 0
+            if len(methodList[0]) > 0 
+                call add(list, methodList[0])
+            endif
+        endif
+    endfor
+    return sort(list)
+endfunc
+
+fun! FindType(strbase)
+    let l:lnum = line(".")
+    let l:start = col('.')
+    let l:lineCount = 100 
+    let l:declareType = ""
+
+    let l:dotObj = matchstr(a:strbase, '\w\+', 0)
+
+    while l:lineCount > 0
+        let line = getline(l:lnum)
+
+        if strlen(l:dotObj) > 0
+            " String str;
+            let l:noInitTypePat = '\(\w\+\)\s\+' . l:dotObj . '\s*;' 
+            let l:noInitTypePatList = matchlist(line, l:noInitTypePat, 0) 
+
+            " String str = null;
+            let l:noNewTypePat = '\(\w\+\)\s\+' . l:dotObj . '\s*=\s*\S\+\s*;' 
+            let l:noNewTypePatList = matchlist(line, l:noNewTypePat, 0) 
+
+            " String str = new String('a') 
+            let l:simpleTypePat = '\w\+\s\+' . l:dotObj . '\s*=\s*new\s*\(\w\+\)\s*(\p*)' 
+            let l:simpleTypePatList = matchlist(line, l:simpleTypePat, 0) 
+            
+            " List<String> list = new ArrayList<String>();
+            let l:complexTypePat = '\w\+\s*<\s*\w\+\s*>\s*' . l:dotObj . '\s*=\s*new\s*\(\w\+\)\s*<\s*\w\+\s*>\s*(\p*)'
+            let l:complexTypePatList = matchlist(line, l:complexTypePat)
+
+            " Map<Integer, Integer> map = new HashMap<Integer, Integer>(); 
+            let l:mapTypePat = '\w\+\s*<\s*\w\+\s*,\s*\w\+\s*>\s*' . l:dotObj . '\s*=\s*new\s*\(\w\+\)\s*<\s*\w\+\s*,\s*\w\+\s*>\s*(\p*)'
+            let l:mapTypePatList = matchlist(line, l:mapTypePat)
+
+            if len(l:simpleTypePatList) > 1
+                let l:declareType = l:simpleTypePatList[1]
+                if strlen(l:declareType) > 0
+                    return l:declareType
+                endif
+            elseif  len(l:complexTypePatList) > 1
+                let l:declareType = l:complexTypePatList[1]
+                if strlen(l:declareType) > 0
+                    return l:declareType
+                endif
+            elseif len(l:mapTypePatList) > 1
+                let l:declareType = l:mapTypePatList[1]
+                if strlen(l:declareType) > 0
+                    return l:declareType
+                endif
+            elseif len(l:noNewTypePatList) > 1
+                let l:declareType = l:noNewTypePatList[1]
+                if strlen(l:declareType) > 0
+                    return l:declareType
+                endif
+            elseif len(l:noInitTypePatList) > 1
+                let l:declareType = l:noInitTypePatList[1]
+                if strlen(l:declareType) > 0
+                    return l:declareType
+                endif
+            endif
+        endif
+
+        let l:lineCount -= 1
+        let l:lnum -= 1 
+    endwhile
+
+    return l:declareType
+endfunc
 
 "inoremap <F6> <C-R>=ListMonths()<CR>
 func! ListMonths()
@@ -141,6 +584,7 @@ endfunc
 "	    return start
 "	  else
 "	    " find months matching with "a:base"
+"       " Jan<- is a:base, current word under the cursor
 "        let matches = split("cat dog cow")
 "        let dict   = {}
 "        "let word   = {'word':'myword', 'abbr':'myabbr'}
@@ -166,7 +610,6 @@ endfunc
 " Usage: type prefix<C-X><C-U>
 " Ref: http://vi.stackexchange.com/questions/7750/how-to-manage-and-remember-many-abbreviations-in-my-vimrc/7763#7763
 " -----------------------------------------------------------------------------
-                 
 function! CaptureCmd(excmd)
     let l:abbList = []
     redir=> l:result
@@ -174,14 +617,9 @@ function! CaptureCmd(excmd)
     redir END
     let l:list = split(l:result, '\n')
     for item in l:list
-        ":silent echo "[" . item . "]\n"
-        "echo "[" . item . "]\n"
         call substitute(item, '^\s*[ic]\s\+\(\S\+\)\s\+', '\=add(abbList, submatch(1))', 'g')
     endfor
-    for abbItem in l:abbList
-        ":silent echo "{" . abbItem . "}\n"
-        "echo "{" . abbItem . "}\n"
-    endfor
+
     return l:abbList
 endfunc
 
@@ -197,14 +635,8 @@ function! CompleteAbbre(findstart, base)
         let line = getline('.')
         let l:start = col('.') - 1
         while l:start > 0 && (line[l:start - 1] =~ '\a')
-            "echo "l:start=" . l:start
-            ":1sleep
             let l:start -= 1
         endwhile
-
-        "debug
-        "echo "last l:start=" . l:start
-        ":3sleep
 
         return l:start
     else
@@ -233,7 +665,7 @@ let g:buffermanage = 1
 map ,nl :.,$s/\S.*\S/\0<br>/gc <bar> :nohlsearch <CR>
 map ,n  :nohlsearch <CR>
 "map ,l  :.,.s/\S.*\S$/\\[ \0 \\]/gc <bar> :nohlsearch <CR>
-map ,,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
+"map ,,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
 
 " prefix <CR> to a line
 map ,c :.,$s/\S.*\S/\\<CR>\0/gc <bar> :nohlsearch <CR>
@@ -248,21 +680,33 @@ map  ,w :w! <CR>
 cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! <CR>
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
-cabbr mk :mksession! $sess <CR>
-cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt
+cabbr ep :tabnew /etc/profile 
+cabbr mk :mksession! $sess <CR>                                 " save vim session
+cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt " quick node
+cabbr wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr mm :marks
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito <CR>
 cabbr Sni :tabnew $g/snippets/objectivec.m 
 cabbr Sty :%!astyle --style=java <CR>
-
+cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
+cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
+cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
+cabbr Eng :tabe /Library/WebServer/Documents/zsurface/html/indexEnglishNote.html  
+cabbr Cl :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks.html  
+cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
 " command line mode
 "-----------------------------------------------------------------
-"cmap ss :.,$s///gc
+" multiple command in map
+" cmap ss :.,$s///gc
 " one line loop command
-"cmap loo let x=line(".") <bar> let c = x <bar> while(c < x + 10) <bar> echo getline(c) <bar> let c = c + 1 <bar> endwhile
+" cmap loo let x=line(".") <bar> let c = x <bar> while(c < x + 10) <bar> echo getline(c) <bar> let c = c + 1 <bar> endwhile
 " append [x] to the end of line
-"cmap app let x = 0 <bar> g/$/s//\='[' . x . ']'/ <bar> let x = x + 1
+" cmap app let x = 0 <bar> g/$/s//\='[' . x . ']'/ <bar> let x = x + 1
+
+" visual word, select word under cursor and do something about it
 :cmap SS .,$s/<C-R><C-W>//gc
+:cmap BB s/<C-R><C-W>/\[\0\]/ <CR> 
+
 :cmap SV vim /<C-R><C-W>/ **/*.m
 :cmap White /\S\zs\s\+$
 "-----------------------------------------------------------------
@@ -281,9 +725,22 @@ autocmd BufEnter *.txt iabbr <buffer> bl [ ]
                                     \<CR>`]
 
 
-autocmd BufEnter * if @% == 'noteindex.txt' | :call NoteColor() | endif 
-autocmd VimEnter * :call RunSnippet() 
-autocmd BufEnter,BufRead * :call SourceSnippet() 
+" -------------------------------------------------------------------------------- 
+" Color the noteindex.txt file
+" 
+" Mon Aug 15 23:16:54 PDT 2016
+" It is very slow when the all the regex is enabled so disable it for now
+" autocmd BufEnter * if @% == 'noteindex.txt' | :call NoteColor() | endif 
+
+
+"-------------------------------------------------------------------------------- 
+" Fri Aug 12 13:50:59 PDT 2016
+" Vim is very slow if VimEnter is enabled here
+" autocmd VimEnter * :call RunSnippet() 
+"-------------------------------------------------------------------------------- 
+
+" disable it temporally 
+" autocmd BufEnter,BufRead * :call SourceSnippet() 
 "autocmd VimEnter *.h,*.m :call RunSnippet() 
 "autocmd BufEnter,BufRead *.h,*.m :call SourceSnippet() 
 
@@ -293,16 +750,21 @@ autocmd BufEnter * iabbr <expr> r= "// ".'<C-o>80i=<Esc>' . "<CR>"
 autocmd BufEnter * iabbr <expr> r- "// ".'<C-o>80i-<Esc>' . "<CR>"
 "-------------------------------------------------------------------------------
 
+"map ,,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
+autocmd BufEnter *.vimrc map <buffer> ,, :.,$s/\S.*\S/\0\<CR\>/gc <bar> :nohlsearch <CR>
+autocmd BufEnter *.html  map <buffer> ,, :.,$s/\S.*\S/\0\<br\>/gc <bar> :nohlsearch <CR>
 
 augroup Java
 au!
-autocmd BufEnter *.java setlocal completefunc=CompleteAbbre
-autocmd BufEnter *.tex  setlocal completefunc=CompleteAbbre
-autocmd BufEnter *.cpp  setlocal completefunc=CompleteAbbre
-autocmd BufEnter *.py  setlocal completefunc=CompleteAbbre
-autocmd BufEnter *.m,*.h  setlocal completefunc=CompleteAbbre
-autocmd BufEnter *.html  setlocal completefunc=CompleteAbbre
+
+"autocmd BufEnter *.java setlocal completefunc=CompleteMethod
+"autocmd BufEnter *.java setlocal omnifunc=CompleteMethod
+
+" completefunc have two functions: LineCompleteFromFile() and CompleteAbbre()
+"autocmd BufEnter *.html setlocal completefunc=LineCompleteFromFile
 "autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
+
+autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java  setlocal completefunc=CompleteAbbre
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
@@ -512,7 +974,7 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> lhello
                                 \<CR>\textbf{Hello World}
                                 \<CR>\end{document}
 
-" visual mode substitute or select mode
+" visual mode substitute or select mode, selection mode, highlight
 autocmd BufEnter *.tex,*.html vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 
@@ -730,8 +1192,11 @@ augroup END
 " searchkey
 iabbr skk // searchkey:
 
-autocmd BufEnter *.html vmap  <buffer> span  :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
-
+autocmd BufEnter *.html vmap  <buffer> span :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
+autocmd BufEnter *.html vmap  <buffer> cmd  :s/\%V.*\%V/<span class="cmd">\0<\/span>/ <CR>
+autocmd BufEnter *.html vmap  <buffer> sou  :s/\%V.*\%V/<span class="source">\0<\/span>/ <CR>
+autocmd BufEnter *.html cmap  <buffer> Cmd  :s/\S*\%#\S*/<span class="cmd">\0<\/span>/ <CR>
+autocmd BufEnter *.java,*.h,*.c,*.cpp,*.vimrc vmap  <buffer> str  :s/\%V.*\%V/"\0"/ <CR>
 
 autocmd BufEnter *.html iabbr <buffer> ioss <div class="mytitle">
                                             \<CR>My Title
@@ -772,6 +1237,9 @@ autocmd BufEnter *.html iabbr <buffer> tipp <!-- begin tooltip-wrap-->
 "compile latex
 "autocmd BufEnter tex map  <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader %<.pdf <CR>
 autocmd BufEnter *.tex map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open %:p:r.pdf <CR>
+autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
+
+
 
 " save file and compile latex file
 "autocmd BufWritePost *.tex      :silent exec ':!pdflatex %:p ' | :!open %:p:r.pdf
@@ -1501,7 +1969,6 @@ func! FindFun()
         endif
     endfor
 endfunc
-
 
 func! Defun()
     let input = expand("<cword>")
