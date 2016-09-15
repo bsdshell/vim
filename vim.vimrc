@@ -906,6 +906,7 @@ augroup END
 
 
 
+
 "------------------------------------------------------------------
 " placeholders mapping
 " ref: http://vim.wikia.com/wiki/Text_template_with_placeholders
@@ -915,6 +916,60 @@ augroup END
 :imap <buffer> ;; <C-O>/%%%<CR><C-O>c3l
 :nmap <buffer> ;; /%%%<CR>c3l
 "---------------------------------------------------------------
+
+
+"-------------------------------------------------------------------------------- 
+" redirect output shell commands to scratch buffer
+" gx: http://vim.wikia.com/wiki/Display_output_of_shell_commands_in_new_window 
+"-------------------------------------------------------------------------------- 
+command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
+function! s:RunShellCommand(cmdline)
+  let isfirst = 1
+  let words = []
+  for word in split(a:cmdline)
+    if isfirst
+      let isfirst = 0  " don't change first word (shell command)
+    else
+      " \v means that in the pattern after it all ASCII character except '0'-'9', 'a'-'z', 'A'-'z' and '_' have special meaning.
+      if word[0] =~ '\v[%#<]'
+        let word = expand(word)
+      endif
+      let word = shellescape(word, 1)
+    endif
+    call add(words, word)
+  endfor
+  let expanded_cmdline = join(words)
+  botright new
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
+  call setline(1, 'You entered:  ' . a:cmdline)
+  call setline(2, 'Expanded to:  ' . expanded_cmdline)
+  call append(line('$'), substitute(getline(2), '.', '=', 'g'))
+  silent execute '$read !'. expanded_cmdline
+  1
+endfunction
+
+
+"-----------------------------------------------------------------
+" redirect Ex command to tab file
+"-----------------------------------------------------------------
+function! TabMessage(cmd)
+  redir => message
+  silent execute a:cmd
+  redir END
+  if empty(message)
+    echoerr "no output"
+  else
+    " use [new] instead of [tabnew] below if you prefer split windows instead of tabs
+    tabnew
+    setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
+    silent put=message
+  endif
+endfunction
+
+command! -nargs=+ -complete=command Rd call TabMessage(<q-args>)
+" usee scratch buffer
+command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
+"-----------------------------------------------------------------
 
 "------------------------------------------------------------------
 " placeholders mapping
@@ -1501,27 +1556,6 @@ func! MapKey()
     endif
 endfunc
 
-"-----------------------------------------------------------------
-" redirect Ex command to tab file
-"-----------------------------------------------------------------
-function! TabMessage(cmd)
-  redir => message
-  silent execute a:cmd
-  redir END
-  if empty(message)
-    echoerr "no output"
-  else
-    " use "new" instead of "tabnew" below if you prefer split windows instead of tabs
-    tabnew
-    setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
-    silent put=message
-  endif
-endfunction
-"-----------------------------------------------------------------
-command! -nargs=+ -complete=command Rd call TabMessage(<q-args>)
-" usee scratch buffer
-command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
-"-----------------------------------------------------------------
 
 " searchkey: ctermfg ctermbg xterm color highlight
 func! XcodeColor()
