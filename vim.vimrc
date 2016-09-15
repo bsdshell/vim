@@ -38,7 +38,6 @@ set autochdir
 set backspace=2
 set omnifunc=csscomplete#CompleteCSS
 
-
 "---------------------------------------------------------------------
 " dictionary files
 set dictionary=/Users/cat/myfile/github/vim/words.txt
@@ -103,7 +102,8 @@ nnoremap <silent> <C-l> :nohlsearch<CR>
 map <F8>         :call FoldJavaMethod()<CR>
 map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
-map <F4>         :tabnew     <CR>
+"map <F4>         :tabnew<CR> :setlocal buftype=nofile <CR>
+map <F4>         :tabnew  /tmp/xxx.x <CR>
 map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
@@ -290,6 +290,9 @@ endfunc
 
 " ================================================================================ 
 " return [firstLine, lastLine] for Java method 
+"
+" Wed Sep 14 19:50:45 PDT 2016
+" Fix bug: when line is commented out inside the method
 " -------------------------------------------------------------------------------- 
 func! JavaMethodScope()
         "  lineScope = [beginLine, endLine]
@@ -301,6 +304,7 @@ func! JavaMethodScope()
         " fix <,> characters on return type
         "let l:methodPat = '^\s*\([a-zA-Z0-9<>\[\]]\+\s\+\)\{2,4}\s*\w\+\s*([^)]*)'
         let l:methodPat = '^\s*\([a-zA-Z0-9<>\[\]]\+\s\+\)\{2,4}\s*\w\+\s*([^)]*)\(\s\+\w\+\s\+\w\+\)\?'
+        let l:commentPat = '^\s*\/\/.*$'
 
         let l:num = 0 
         let l:methodBegNum= 0
@@ -309,20 +313,31 @@ func! JavaMethodScope()
         while l:currLine - l:num > 0
             let l:methodBegNum = l:currLine - l:num
             let l:line = getline(l:methodBegNum)
+            let l:commentCodeList = matchlist(l:line, l:commentPat)
             let l:list = matchlist(l:line, l:methodPat)
-            if len(l:list) > 0
-                break
+            if len(l:commentCodeList) == 0 
+                if len(l:list) > 0
+                    break
+                endif
             endif
             let l:num += 1
         endwhile
         
+        "-------------------------------------------------------------------------------- 
+        " searching line by line from top to bottom starts from the location of method name
+        "-------------------------------------------------------------------------------- 
         let l:countOpen = 0
         let l:countClose = 0
         let l:tmpCurr = l:currLine
         while l:tmpCurr >= l:methodBegNum
             let l:lineStr = getline(l:tmpCurr)
-            let l:countOpen += CountOpenBracket(l:lineStr)
-            let l:countClose += CountCloseBracket(l:lineStr)
+
+            " If line is commented out, skip it
+            let l:commentCodeList = matchlist(l:lineStr, l:commentPat)
+            if len(l:commentCodeList) == 0
+                let l:countOpen += CountOpenBracket(l:lineStr)
+                let l:countClose += CountCloseBracket(l:lineStr)
+            endif
             let l:tmpCurr -=1
         endwhile
 
@@ -332,8 +347,11 @@ func! JavaMethodScope()
             let l:methodEndNum = l:tmpCount + l:currLine
             let l:strLine = getline(l:methodEndNum)
 
-            let l:countOpen += CountOpenBracket(l:strLine)
-            let l:countClose += CountCloseBracket(l:strLine)
+            let l:commentCodeList = matchlist(l:strLine, l:commentPat)
+            if len(l:commentCodeList) == 0
+                let l:countOpen += CountOpenBracket(l:strLine)
+                let l:countClose += CountCloseBracket(l:strLine)
+            endif
             let l:tmpCount += 1
         endwhile
 
@@ -678,6 +696,9 @@ map  ,w :w! <CR>
 "------------------------------------------------------------------
 " vimrc file
 "------------------------------------------------------------------
+" copy current lines to clipboard
+cabbr kk .g/\S*\%#\S*/y <bar> let @*=@"
+
 cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! <CR>
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
@@ -693,10 +714,44 @@ cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
 cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
 cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
 cabbr Eng :tabe /Library/WebServer/Documents/zsurface/html/indexEnglishNote.html  
-cabbr Cl :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks.html  
-cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
+cabbr Ec :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks.html  
+cabbr Ep  :tabnew /Users/cat/myfile/vimprivate/private.vimrc
 
 cabbr FF  :call JavaComment() <CR> 
+cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
+
+"-------------------------------------------------------------------------------- 
+" my clipboard
+"-------------------------------------------------------------------------------- 
+"cab Kn  :let @*="3141590i@gmail.com"
+"cab Kp  :let @*="408-844-4280"
+"cab Kph :let @*="Phone: 408-844-4280"
+"cab Kr  :let @*="rootmath@gmail.com"
+"cab Kre :let @*="/Users/cat/GoogleDrive/NewResume"
+"cab Kj  :let @*="Hi,\n 
+"            \I'm wondering do you have any opening software engineer positions in xxx currently.\n 
+"            \I attach my updated resume.\n
+"            \Phone: 408-844-4280\n
+"            \Thanks\n"
+"
+"cab Kfr  :let @*="Hi\n 
+"        \I'm avaiable in the moring(9:30-12:00)PST from Monday to Friday\n  
+"        \Phone: 408-844-4280\n
+"        \Thanks\n"
+"
+"iab <buffer> emm shu334sit@gmail.com
+"                \<CR>shusitu123@gmail.com
+"                \<CR>aron314s@gmail.com
+"                \<CR>aronsit@gmail.com
+"                \<CR>aronsitu00@gmail.com
+"                \<CR>aronsitu1@gmail.com
+"                \<CR>aronsitu@outlook.com
+"                \<CR>aronsitus@gmail.com
+"                \<CR>longaron00@gmail.com
+"                \<CR>aronsitu@outlook.com
+"                \<CR>3141590i@gmail.com
+"                \<CR>petersitu11@gmail.com
+"-------------------------------------------------------------------------------- 
 
 " command line mode
 "-----------------------------------------------------------------
@@ -761,6 +816,7 @@ autocmd BufEnter *.html  map <buffer> ,, :.,$s/\S.*\S/\0\<br\>/gc <bar> :nohlsea
 augroup Java
 au!
 
+
 "autocmd BufEnter *.java setlocal completefunc=CompleteMethod
 "autocmd BufEnter *.java setlocal omnifunc=CompleteMethod
 
@@ -768,7 +824,8 @@ au!
 "autocmd BufEnter *.html setlocal completefunc=LineCompleteFromFile
 "autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
 
-autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java  setlocal completefunc=CompleteAbbre
+"autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java,*.txt  setlocal completefunc=CompleteAbbre
+autocmd BufEnter *.*  setlocal completefunc=CompleteAbbre
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jsys_system_out 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
@@ -1240,8 +1297,9 @@ autocmd BufEnter *.html iabbr <buffer> tipp <!-- begin tooltip-wrap-->
 
 "compile latex
 "autocmd BufEnter tex map  <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader %<.pdf <CR>
-autocmd BufEnter *.tex map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open %:p:r.pdf <CR>
+autocmd BufEnter *.tex  map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open %:p:r.pdf <CR>
 autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
+autocmd BufEnter *.hs   map  <F9> :w! <bar> :!runhaskell % <CR>
 
 
 
