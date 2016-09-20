@@ -698,7 +698,6 @@ map  ,w :w! <CR>
 "------------------------------------------------------------------
 " copy current lines to clipboard
 cabbr kk .g/\S*\%#\S*/y <bar> let @*=@"
-
 cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! <CR>
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
@@ -708,6 +707,7 @@ cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt " quick node
 cabbr wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr mm :marks
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito <CR>
+cabbr Res :!open /Users/cat/GoogleDrive/NewResume/aronsitu00resume.pdf <CR>     
 cabbr Sni :tabnew $g/snippets/objectivec.m 
 cabbr Sty :%!astyle --style=java <CR>
 cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
@@ -716,42 +716,9 @@ cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
 cabbr Eng :tabe /Library/WebServer/Documents/zsurface/html/indexEnglishNote.html  
 cabbr Ec :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks.html  
 cabbr Ep  :tabnew /Users/cat/myfile/vimprivate/private.vimrc
-
 cabbr FF  :call JavaComment() <CR> 
 cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
 
-"-------------------------------------------------------------------------------- 
-" my clipboard
-"-------------------------------------------------------------------------------- 
-"cab Kn  :let @*="3141590i@gmail.com"
-"cab Kp  :let @*="408-844-4280"
-"cab Kph :let @*="Phone: 408-844-4280"
-"cab Kr  :let @*="rootmath@gmail.com"
-"cab Kre :let @*="/Users/cat/GoogleDrive/NewResume"
-"cab Kj  :let @*="Hi,\n 
-"            \I'm wondering do you have any opening software engineer positions in xxx currently.\n 
-"            \I attach my updated resume.\n
-"            \Phone: 408-844-4280\n
-"            \Thanks\n"
-"
-"cab Kfr  :let @*="Hi\n 
-"        \I'm avaiable in the moring(9:30-12:00)PST from Monday to Friday\n  
-"        \Phone: 408-844-4280\n
-"        \Thanks\n"
-"
-"iab <buffer> emm shu334sit@gmail.com
-"                \<CR>shusitu123@gmail.com
-"                \<CR>aron314s@gmail.com
-"                \<CR>aronsit@gmail.com
-"                \<CR>aronsitu00@gmail.com
-"                \<CR>aronsitu1@gmail.com
-"                \<CR>aronsitu@outlook.com
-"                \<CR>aronsitus@gmail.com
-"                \<CR>longaron00@gmail.com
-"                \<CR>aronsitu@outlook.com
-"                \<CR>3141590i@gmail.com
-"                \<CR>petersitu11@gmail.com
-"-------------------------------------------------------------------------------- 
 
 " command line mode
 "-----------------------------------------------------------------
@@ -917,6 +884,7 @@ augroup END
 :nmap <buffer> ;; /%%%<CR>c3l
 "---------------------------------------------------------------
 
+autocmd BufEnter  *.html :hi Error term=reverse ctermfg=none ctermbg=none
 
 "-------------------------------------------------------------------------------- 
 " redirect output shell commands to scratch buffer
@@ -1308,6 +1276,7 @@ augroup END
 iabbr skk // searchkey:
 
 autocmd BufEnter *.html vmap  <buffer> span :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
+autocmd BufEnter *.html vmap  <buffer> bo :s/\%V.*\%V/<span class="bo">\0<\/span>/ <CR>
 autocmd BufEnter *.html vmap  <buffer> cmd  :s/\%V.*\%V/<span class="cmd">\0<\/span>/ <CR>
 autocmd BufEnter *.html vmap  <buffer> sou  :s/\%V.*\%V/<span class="source">\0<\/span>/ <CR>
 autocmd BufEnter *.html cmap  <buffer> Cmd  :s/\S*\%#\S*/<span class="cmd">\0<\/span>/ <CR>
