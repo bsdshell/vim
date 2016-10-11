@@ -68,7 +68,7 @@ autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*.tex
 autocmd BufRead *.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
 
 " haskell file
-autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/*
+autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/* 
 
 " java file
 autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/java/*
@@ -121,17 +121,9 @@ inoremap <leader>j <C-R>=CompleteJava()<CR>
 inoremap <F7> <C-R>=LineCompleteFromFile()<CR>
 "nnoremap <F6>    :call ToggleBracketGroup()<CR>
 
-" -------------------------------------------------------------------------------- 
-" Last Update: Mon Oct 10 17:32:54 PDT 2016
-" -------------------------------------------------------------------------------- 
-" Warning: There is some serious issue when mkview and loadview are used
-" mkview and loadview are used to store folds but there is some issue that
-" causes BufRead doesn't work properly 
-" e.g. [autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/*]
 " save folding after file is closed [~/.vim/view/]  
-" au BufWinLeave .* mkview
-" au BufWinEnter .* silent loadview
-" -------------------------------------------------------------------------------- 
+au BufWinLeave *.* mkview
+au BufWinEnter *.* silent loadview
 
 " ================================================================================ 
 " ref: http://superuser.com/questions/219667/multiple-foldmethods-in-vim 
