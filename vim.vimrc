@@ -15,6 +15,8 @@ set undodir=$HOME/.vim/undo " where to save undo histories
 set undolevels=1000         " How many undos
 set undoreload=10000        " number of lines to save for undo
 "---------------------------------------------------------------------
+let s:word_code = 'code'
+
 set shell=/Applications/fish.app/Contents/Resources/base/bin/fish
 autocmd BufEnter * silent :lcd%:p:h
 set laststatus=2
@@ -22,6 +24,7 @@ set statusline=%F
 set statusline+=\[%-2.5n]
 set statusline+=\ %l:%c\ %r\ %m
 set statusline+=\ %{CheckToggleBracketGroup()}
+set statusline+=\ \[%{CheckWordPhrase()}]
 set hls
 set autoindent
 set smartindent
@@ -37,7 +40,26 @@ set noswapfile
 set autochdir
 set backspace=2
 set omnifunc=csscomplete#CompleteCSS
+set path+=**
+set wildmenu
 let mapleader=","
+
+"-------------------------------------------------------------------------------- 
+" Use Vim 8 timer to save file every 2 seconds
+let timer = timer_start(2000, 'SaveFile',{'repeat':-1})
+func! SaveFile(timer)
+  :w!
+endfunc
+
+
+"---------------------------------------------------------------------
+" Enable Align, [comment it out]
+" Diable Align, [remove comment]
+" The value of loaded_AlignMapsPlugin doesn't matter
+" See gf /Users/cat/.vim/plugin/AlignMapsPlugin.vim
+" See gf http://www.drchip.org/astronaut/vim/align.html
+let g:loaded_AlignMapsPlugin = 1 
+"---------------------------------------------------------------------
 
 "---------------------------------------------------------------------
 " dictionary files
@@ -74,6 +96,10 @@ autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/*
 autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/java/*
 autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/JavaLib/*
 autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/Jsource/*
+
+" -------------------------------------------------------------------------------- 
+" excluding filetype, excluding file type [h \@<!]
+:autocmd BufEnter *\(.txt\)\@<!  cabbr TTT :exec 'echo expand("%:p")' <CR>
 " -------------------------------------------------------------------------------- 
 
 :set notimeout          " don't timeout on mappings
@@ -110,16 +136,31 @@ map <F8>         :call FoldJavaMethod()<CR>
 map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
 "map <F4>         :tabnew<CR> :setlocal buftype=nofile <CR>
-map <F4>         :tabnew  /tmp/xxx.x <CR>
+map <F4>         :tabnew     <CR>
 map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
 
 inoremap <leader>j <C-R>=CompleteJava()<CR>
-
-inoremap <F7> <C-R>=LineCompleteFromFile()<CR>
 "nnoremap <F6>    :call ToggleBracketGroup()<CR>
+
+
+function! CompileLatex()
+    :w!
+    let l:fn = expand("%:p:r") . '-1.asy'
+    echo l:fn
+
+    if !empty(l:fn)
+       let l:asyName = expand("%:p:r") . '-*.asy'
+       exec ':!asy ' . fnameescape(l:asyName)
+    endif 
+
+    " it not working with sync 
+    ":!open %:p:r.pdf
+    " open Skim => References => check the [check box] for [Check for file changes]
+    :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf 
+endfunction
 
 " -------------------------------------------------------------------------------- 
 " Last Update: Mon Oct 10 17:32:54 PDT 2016
@@ -148,19 +189,52 @@ function! s:ToggleFold()
     echo 'foldmethod is now ' . &l:foldmethod
 endfunction
 
-"=====================================================================
-" Ref: http://stackoverflow.com/questions/18160053/vim-line-completion-with-external-file 
-" Grep pattern {leader} from the file and update to quickfix
-function! SilentFileGrep(leader, file )
-    " [j], without the 'j' flag Vim jumps to the first match. 
-    " [j], with the 'j' only the quickfix list is updated.
-    try
-        exe 'vimgrep /^\s*' . a:leader . '.*/j ' . a:file
-    catch /.*/
-        echo "no matches"
-    endtry
+
+
+"-------------------------------------------------------------------------------- 
+"autocmd BufEnter *.java setlocal completefunc=CompleteMethod
+"autocmd BufEnter *.java setlocal omnifunc=CompleteMethod
+
+" completefunc have two functions: LineCompleteFromFile() and CompleteAbbre()
+"autocmd BufEnter *.html setlocal completefunc=LineCompleteFromFile
+"autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
+
+"autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java,*.txt  setlocal completefunc=CompleteAbbre
+"autocmd BufEnter *.*  setlocal completefunc=CompleteAbbre
+ 
+" -------------------------------------------------------------------------------- 
+" warning: [autocmd BufEnter *.*] can't detect file without extension 
+" warning: setlocal will cause issue when buffers are switched
+" autocmd BufEnter * setlocal completefunc=CompleteAbbre
+if &completefunc == ''
+    set completefunc=CompleteAbbre
+endif
+" -------------------------------------------------------------------------------- 
+
+" -------------------------------------------------------------------------------- 
+" toggle between abbreviation and phrase
+" -------------------------------------------------------------------------------- 
+if &completefunc == 'LineCompleteFromFile'
+    let s:word_code = 'word'
+elseif &completefunc == 'CompleteAbbre'
+    let s:word_code = 'code'
+endif
+
+function! CheckWordPhrase()
+    return s:word_code
 endfunction
 
+function! ToggleCompletefunc()
+    if &completefunc == 'LineCompleteFromFile'
+        set completefunc=CompleteAbbre
+        let s:word_code = 'code'
+    elseif &completefunc == 'CompleteAbbre'
+        set completefunc=LineCompleteFromFile
+        let s:word_code = 'word'
+    endif
+endfunction
+"=====================================================================
+" Ref: http://stackoverflow.com/questions/18160053/vim-line-completion-with-external-file 
 " Try to do line completion from external file
 " 1. Read the external file=/Users/cat/myfile/github/vim/myword.utf-8.add
 " 2. Grep all text from the file and insern to list
@@ -169,18 +243,25 @@ endfunction
 function! LineCompleteFromFile(findstart,base)
     if a:findstart
         " column to begin searching from (first non-whitespace column):
-        return match(getline("."), '\S')
+        
+	    let line = getline('.')
+	    let start = col('.') - 1
+	    while start > 0 && line[start - 1] =~ '\S'
+	      let start -= 1
+	    endwhile
+
+        " return  [  bin_] => 2
+	    return start
     else
-        " grep the file and build list of results:
-        let path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
-        call SilentFileGrep(a:base, path)
+        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
         let matches = []
-        for thismatch in getqflist()
-            " trim leading whitespace
-            call add(matches, matchstr(thismatch.text, '\S.*'))
-            "echo "[" . thismatch.text . "]"
+
+        for phrase in readfile(l:path)
+            if phrase =~ '^' . a:base
+                call add(matches, phrase)
+            endif
         endfor
-        call setqflist([])
+
         return matches
     endif
 endfunction
@@ -720,15 +801,16 @@ map <leader>s :nohlsearch <CR>
 " vimrc file
 "------------------------------------------------------------------
 " copy current lines to clipboard
-cabbr kk .g/\S*\%#\S*/y <bar> let @*=@"
+cabbr kk .g/\S*\%#\S*/y <bar> let @*=@" <CR>
 cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! <CR>
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
 cabbr ep :tabnew /etc/profile 
 cabbr mk :mksession! $sess <CR>                                 " save vim session
 cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt " quick node
-cabbr wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr mm :marks
+
+cabbr Wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito <CR>
 cabbr Res :!open /Users/cat/GoogleDrive/NewResume/aronsitu00resume.pdf <CR>     
 cabbr Sni :tabnew $g/snippets/objectivec.m 
@@ -743,6 +825,7 @@ cabbr FF  :call JavaComment() <CR>
 cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
 cabbr Job :tabnew /Users/cat/GoogleDrive/job/recruiter_email.txt <CR>
 cabbr Ky :let @*=expand("%:p")
+cabbr Co :call ToggleCompletefunc() <CR>
 
 
 
@@ -809,7 +892,7 @@ autocmd BufEnter * iabbr <expr> r- "// ".'<C-o>80i-<Esc>' . "<CR>"
 "autocmd BufEnter *.tex   map <buffer>  :.,$s/\S.*\S/\0\/\//gc <bar> :nohlsearch <CR>
 
 "map ,l  :.,.s/\S.*\S$/\\[ \0 \\]/gc <bar> :nohlsearch <CR>
-map <leader>,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
+"map <leader>,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
 
 " switch buffer
 map <leader>n  :b #<CR>
@@ -819,15 +902,6 @@ augroup Java
 au!
 
 
-"autocmd BufEnter *.java setlocal completefunc=CompleteMethod
-"autocmd BufEnter *.java setlocal omnifunc=CompleteMethod
-
-" completefunc have two functions: LineCompleteFromFile() and CompleteAbbre()
-"autocmd BufEnter *.html setlocal completefunc=LineCompleteFromFile
-"autocmd BufEnter *.vimrc  setlocal completefunc=CompleteMonths
-
-"autocmd BufEnter *.tex,*.cpp,*.py,*.m,*h,*.html,*java,*.txt  setlocal completefunc=CompleteAbbre
-"autocmd BufEnter *.*  setlocal completefunc=CompleteAbbre
 
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jprr_system_out_println 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
@@ -921,32 +995,20 @@ autocmd BufEnter  *.html :hi Error term=reverse ctermfg=none ctermbg=none
 " redirect output shell commands to scratch buffer
 " gx: http://vim.wikia.com/wiki/Display_output_of_shell_commands_in_new_window 
 "-------------------------------------------------------------------------------- 
-command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
-function! s:RunShellCommand(cmdline)
-let isfirst = 1
-let words = []
-for word in split(a:cmdline)
-if isfirst
-  let isfirst = 0  " don't change first word (shell command)
-else
-  " \v means that in the pattern after it all ASCII character except '0'-'9', 'a'-'z', 'A'-'z' and '_' have special meaning.
-  if word[0] =~ '\v[%#<]'
-    let word = expand(word)
-  endif
-  let word = shellescape(word, 1)
-endif
-call add(words, word)
-endfor
-let expanded_cmdline = join(words)
-botright new
-setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
-call setline(1, 'You entered:  ' . a:cmdline)
-call setline(2, 'Expanded to:  ' . expanded_cmdline)
-call append(line('$'), substitute(getline(2), '.', '=', 'g'))
-silent execute '$read !'. expanded_cmdline
-1
+command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
+function! s:ExecuteInShell(command)
+  let command = join(map(split(a:command), 'expand(v:val)'))
+  let winnr = bufwinnr('^' . command . '$')
+  silent! execute  winnr < 0 ? 'botright new ' . fnameescape(command) : winnr . 'wincmd w'
+  setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap number
+  echo 'Execute ' . command . '...'
+  silent! execute 'silent %!'. command
+  silent! execute 'resize ' . line('$')
+  silent! redraw
+  silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
+  silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>ExecuteInShell(''' . command . ''')<CR>'
+  echo 'Shell command ' . command . ' executed.'
 endfunction
-
 
 "-----------------------------------------------------------------
 " redirect Ex command to tab file
@@ -966,7 +1028,7 @@ endif
 endfunction
 
 command! -nargs=+ -complete=command Rd call TabMessage(<q-args>)
-" usee scratch buffer
+" use scratch buffer
 command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
 "-----------------------------------------------------------------
 
@@ -1006,14 +1068,21 @@ else
 endif 
 endfun
 
-"------------------------------------------------------------------
-
-augroup latex
+augroup Latex
 au!
+
+" -------------------------------------------------------------------------------- 
+" gf http://tex.stackexchange.com/questions/62182/shortcut-for-inserting-matching-endsomething-in-vim 
+" add \begin{environment} \end{environment}
+" Y=>yank link p=> paste to next line k => goto current+1 line I => goto beginning of line
+" A=> goto the end of line
+map  <C-B>      YpkI\begin{<ESC>A}<ESC>jI\end{<ESC>A}<esc>kA
+map! <C-B> <ESC>YpkI\begin{<ESC>A}<ESC>jI\end{<ESC>A}<esc>kA
 
 " Call Chrome from command line with url
 " Pass url to Chrome in command line
-autocmd BufEnter  *.tex,*.html cabbr example :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/html/indexLatexExample.html -incongnito <CR>
+
+autocmd BufEnter  *.tex,*.html cabbr Lexample :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/html/indexLatexExample.html -incongnito <CR>
 autocmd BufEnter  *.tex,*.html cabbr Greek   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/greek1.png -incongnito <CR>
 autocmd BufEnter  *.tex,*.html cabbr Font    :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://zsurface.com/image/latexfont.png -incongnito <CR>
 autocmd BufEnter  *.vimrc,*.html cabbr Color :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome https://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg<CR>
@@ -1023,7 +1092,8 @@ autocmd BufEnter *.tex cabbr ln :tabe /Users/cat/myfile/github/math/latexnote.te
 
 "autocmd BufEnter *.tex cabbr ee :.,$s/\S.*\S/\\\[ \0\ \\\]/gc <bar> :nohlsearch <CR>
 "autocmd BufEnter *.tex cabbr ed :.,$s/\S.*\S/\$\0\$/gc <bar> :nohlsearch <CR>
-"autocmd BufEnter *.tex cabbr el :.,$s/\S.*\S/\0\ \\\\/gc <bar> :nohlsearch <CR>
+
+autocmd BufEnter *.tex map   <buffer> <leader>, :.,$s/\S.*\S/\0\ \\\\/gc <bar> :nohlsearch <CR>
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> nl \newline <CR>
 autocmd BufEnter *.tex,*.html iabbr <buffer> bc \mathbb{C}
@@ -1062,7 +1132,7 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> bfii $\mathbf{I}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> bb \[ \]
 autocmd BufEnter *.tex,*.html iabbr <buffer> dd $ $
 autocmd BufEnter *.tex,*.html iabbr <buffer> noi \setlength\parindent{0pt}
-autocmd BufEnter *.tex,*.html iabbr <buffer> bigo $\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$
+"autocmd BufEnter *.tex,*.html iabbr <buffer> bigo $\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> lcode 
                                 \<CR>\begin{verbatim}
@@ -1093,12 +1163,30 @@ autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 
 autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V.*\%V/\\textbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
-autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V.*\%V/$\0$/ <CR>
-autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V.*\%V/\\[ \0 \\]/ <CR>
+autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%V/$\0$/ <CR>
+autocmd BufEnter *.tex,*.html vmap  1$ :s/\%V$\%V//gc <CR>
+autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%V/\\[ \0 \\]/ <CR>
+
+" select block code and enclose with brackets [:h \%V]
+" autocmd BufEnter *.tex,*.html vmap  ii :s/\%V\_.*\%V/\\[\0\\]/ <CR>
+" apparently :s/\%V\_.*\%V/\\[\0\\]/ put double pair of brackets, not sure why
+" -------------------------------------------------------------------------------- 
+autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
+" -------------------------------------------------------------------------------- 
+
+" -------------------------------------------------------------------------------- 
+" remove \[ \] from selected code
+" -------------------------------------------------------------------------------- 
+autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[\%V// <CR>
+
+
 autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
+" -------------------------------------------------------------------------------- 
 " enclose with bracket
-autocmd BufEnter *.tex,*.html cabbr <buffer> 0$ :s/\k*\%#\k*/$\0$/ <bar> :nohlsearch <CR>
+"  x => $x$
+" not very useful so far
+"autocmd BufEnter *.tex,*.html cabbr <buffer> 0$ :s/\k*\%#\k*/$\0$/ <bar> :nohlsearch <CR>
 
 " exec to normal mode :exec "normal! 3k"
 autocmd BufEnter *.tex,*.html cabbr <buffer> 00$ :.s/\(^\s*\)\(\S.*\S\)/\1$\2\$/ <bar> :nohlsearch <bar> :exec "normal! 1k0" <CR>
@@ -1142,19 +1230,11 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> detp \[ \chi(\lambda) = \left\| \be
                                       \<CR>-d & \lambda - e & -f \\
                                       \<CR>-g & -h & \lambda - i \end{array} \right\| \]
 
-autocmd BufEnter *.tex,*.html iabbr <buffer> mat( \[ \left( \begin{array}{ccc}
-                                        \<CR>a & b & c \\
-                                        \<CR>d & e & f \\
-                                        \<CR>g & h & i \end{array} \right)\]
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> det22 \[ \left\| \begin{array}{cc}
                                   \<CR>a & b \\
                                   \<CR>c & d \end{array} \right\| \]
 
-autocmd BufEnter *.tex,*.html iabbr <buffer> matv \[ \left\| \begin{array}{ccc}
-                                  \<CR>a & b & c \\
-                                  \<CR>d & e & f \\
-                                  \<CR>g & h & i \end{array} \right\| \]
 
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> bmat A_{m,n} =
@@ -1260,17 +1340,6 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> img \begin{figure}
 
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> gro $(\mathbb{N}, +)$
-autocmd BufEnter *.tex,*.html iabbr <buffer> cml <p><CR>$\Large \color{red}\lambda$
-        \<CR>Rename file name of default screenshots in Mac OSX, Open your Terminal and type:<br><br>
-        \<CR><span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">
-        \<CR>defaults write com.apple.screencapture name "myName"<br>
-        \<CR></span><br>
-        \<CR>And type:<br><br>
-        \<CR><span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">
-        \<CR>killall SystemUIServer
-        \<CR></span>
-        \<CR></p>
-
 autocmd BufEnter *.tex,*.html iabbr <buffer> gr \[
                          \<CR>\alpha     \theta     \tau      \beta
                          \<CR>\vartheta  \pi        \upsilon  \gamma
@@ -1308,6 +1377,9 @@ autocmd BufEnter *.tex iabbr <buffer> xcc blackColor
         \<CR>brownColor
         \<CR>clearColor
 
+
+augroup END
+
 "------------------------------------------------------------------
 "latex end
 "------------------------------------------------------------------
@@ -1315,6 +1387,10 @@ autocmd BufEnter *.tex iabbr <buffer> xcc blackColor
 
 " searchkey
 iabbr skk // searchkey:
+
+"map <leader>,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
+
+autocmd BufEnter *.html map   <buffer> <leader>, :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
 
 autocmd BufEnter *.html vmap  <buffer> span :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
 autocmd BufEnter *.html vmap  <buffer> bo :s/\%V.*\%V/<span class="bo">\0<\/span>/ <CR>
@@ -1359,9 +1435,30 @@ autocmd BufEnter *.html iabbr <buffer> tipp <!-- begin tooltip-wrap-->
                     \<CR></div>
                     \<CR><!-- end tooltip-wrap-->
 
-"compile latex
+autocmd BufEnter *.html iabbr <buffer> cml <p><CR>$\Large \color{red}\lambda$
+        \<CR>Rename file name of default screenshots in Mac OSX, Open your Terminal and type:<br><br>
+        \<CR><span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">
+        \<CR>defaults write com.apple.screencapture name "myName"<br>
+        \<CR></span><br>
+        \<CR>And type:<br><br>
+        \<CR><span style="color:#FFF; background:#000;border-radius:3px; padding:2px;">
+        \<CR>killall SystemUIServer
+        \<CR></span>
+        \<CR></p>
+
+" -------------------------------------------------------------------------------- 
+" latexmk  -pdf => output pdf file
+" -------------------------------------------------------------------------------- 
+autocmd BufEnter *.tex  map  <F9> :call CompileLatex()<CR>
+" -------------------------------------------------------------------------------- 
+" check for error in Tex file
+autocmd BufEnter *.tex  map  <leader><F9> :w! <bar> :!pdflatex %:p <CR>:!open %:p:r.pdf <CR>
+
 "autocmd BufEnter tex map  <F10> :!pdflatex % <CR> :!open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app/Contents/MacOS/AdobeReader %<.pdf <CR>
-autocmd BufEnter *.tex  map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open %:p:r.pdf <CR>
+"autocmd BufEnter *.tex  map  <F9> :w! <bar> :!latexmk -pdf %:p <CR> :!asy %:p:r-*.asy <CR> :!open %:p:r.pdf <CR>
+"autocmd BufEnter *.tex  map  <F9> :w! <bar> :!latexmk -pdf -synctex=1 -file-line-error %:p <CR> :!asy %:p:r-*.asy <CR> :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf <CR>
+"autocmd BufEnter *.tex  map  <F9> :w! <bar> :!latexmk -pdf -file-line-error %:p <CR> :!asy %:p:r-*.asy <CR> :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf <CR>
+"autocmd BufEnter *.tex  map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open -g %:p:r.pdf <CR> :wincmd p <CR> 
 autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
 autocmd BufEnter *.hs   map  <F9> :w! <bar> :!runhaskell % <CR>
 
@@ -1388,7 +1485,6 @@ autocmd BufEnter *.hs vmap  xx  :s/\%V\_^\%V/--/g <CR>
 autocmd BufEnter *.hs vmap  xu  :s/\%V\_^\s*\zs--\%V//g <CR>
 
 
-augroup END
 
 "-----------------------------------------------------------------
 " Haskell mapping
@@ -1462,11 +1558,10 @@ autocmd BufEnter *.m,*.h iabbr <buffer> labb UILabel *myLabel = [[UILabel alloc]
 
      
 augroup END
+
 "-----------------------------------------------------------------
 " Save and restore current split windows
 "-----------------------------------------------------------------
-
-
 function! MaximizeToggle()
   let s:tmpssop = &ssop
   let s:tmphidden = &hidden
