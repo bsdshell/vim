@@ -1,4 +1,3 @@
-spellfile
 Seattle
 under cursor
 Javascript
@@ -32,11 +31,102 @@ deletion, lookup and insection
 runtime is O(log n)
 runtime is O(nlog n)
 quick sort
+quick sort algorithm 
+Quick Sort algorithm 
+QuickSort algorithm 
+Quick Sort algorithm average runtime is $\mathcal{O}(n\log{}n)$
+quickSort algorithm 
 quick sort is O(nlog n)
 merge sort
+Merge Sort Algorithm average runtime is $\mathcal{O}(n\log{}n)$
 merge sort is O(nlog n)
 voicemail
 Phone: 408-844-4280
 Could you give me an update on the
 Would you like to
 The worst runtime
+function name
+maximum
+minimum
+follow up
+University
+University of Waterloo
+evaluate expression
+cursor position
+synchronization
+mutual exclusion
+deserialize
+technic
+technical
+technology
+technologies
+techie
+indexes
+indices
+indexable
+indexible
+average
+available
+Dynamic Programming
+dynamic programming
+precede
+precede - come before the order or position
+predecessor
+succeed 
+success
+successful
+successfully
+successor
+It appears he is is smart kid.
+seem - it seems crazy that we have to pay twice
+seem - it seems to me he is smart kid 
+It seems to me that he is smart kid
+appear - he appeared out of nowhere
+appear - they appeared to be contented
+appear - she appears quite nervous driver 
+appear - it appears as if you got the wrong direction to school
+appear - it appears that he is not the first choice
+pending - [preposition] they were released on bail pending an appeal
+pending - [adjective] the case was still pending
+BufferedWriter bf = new BufferedReader(new FileWriter(file));
+BufferedReader bufr = new BufferedReader(FileReader(file));
+catch(IOException e){  e.printStackTrack(); }
+LinkedList
+linked list
+double LinkedList
+single LinkedList
+circular LinkedList
+Singleton
+double-checked locking
+Context Switch
+
+Map<Integer, Integer> map,
+Map<String, String> map,
+Map<Integer, String> map,
+Map<String, Integer> map,
+
+Map<Integer, Integer> map = new HashMap<>();
+Map<String, String> map = new HashMap<>();
+Map<Integer, String> map = new HashMap<>();
+Map<String, Integer> map = new HashMap<>(); 
+
+List<Integer> list = new ArrayList<>();
+List<String> list = new ArrayList<>();
+List<Node> list = new ArrayList<>();
+
+Stack<Integer> stack = new Stack<>();
+Stack<String> stack = new Stack<>();
+Stack<Node> stack = new Stack<>();
+
+recruiters
+commission
+foreign key
+Jeff Bezos
+Jeff Bezos's Biosphere
+separator
+separate
+ArrayList<String> list = new ArrayList<String>();
+BufferedReader in = new BufferedReader(new FileReader(fileName));
+catch(IOException io)
+regular expression
+regex example

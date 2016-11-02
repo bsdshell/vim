@@ -15,7 +15,10 @@ set undodir=$HOME/.vim/undo " where to save undo histories
 set undolevels=1000         " How many undos
 set undoreload=10000        " number of lines to save for undo
 "---------------------------------------------------------------------
-let s:word_code = 'code'
+let s:word_code = '<,k>|code'
+
+" /search case insensitive, case sensitive
+set ic "set noic
 
 set shell=/Applications/fish.app/Contents/Resources/base/bin/fish
 autocmd BufEnter * silent :lcd%:p:h
@@ -46,12 +49,19 @@ let mapleader=","
 
 "-------------------------------------------------------------------------------- 
 " Use Vim 8 timer to save file every 2 seconds
-let timer = timer_start(2000, 'SaveFile',{'repeat':-1})
-func! SaveFile(timer)
-  :w!
+let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
+func! SaveFile(gtimer)
+  silent! :w!
 endfunc
 
+func! StartTimer()
+    let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
+endfunc
 
+"func! AutoSave()
+"    silent! :w!
+"endfunction
+"au CursorHold  *.cpp  :call AutoSave() <CR>
 "---------------------------------------------------------------------
 " Enable Align, [comment it out]
 " Diable Align, [remove comment]
@@ -85,6 +95,9 @@ autocmd BufRead *.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/*
 
 " latex file
 autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*.tex
+autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/java/*.java
+autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/JavaLib/*.java
+autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/Jsource/*
 
 " cpp file, c++ file
 autocmd BufRead *.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
@@ -139,27 +152,38 @@ map <F3>         :tabn       <CR>
 map <F4>         :tabnew     <CR>
 map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
-map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m <bar> :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<CR> 
+map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<bar> :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
 
 inoremap <leader>j <C-R>=CompleteJava()<CR>
-"nnoremap <F6>    :call ToggleBracketGroup()<CR>
+nnoremap <F6>    :call ToggleBracketGroup()<CR>
+
+
+function! CompileCpp()
+        let l:cppLib = '/Users/cat/myfile/github/cpp/Aron.cpp'
+        :silent :w! 
+        exec ':!g++ -o ' . fnameescape(expand("%:p:r")) . ' ' . fnameescape(expand("%:p")) . ' ' . fnameescape(l:cppLib) 
+        exec ':!'. fnameescape(expand("%:p:r"))  
+endfunction
 
 
 function! CompileLatex()
     :w!
     let l:fn = expand("%:p:r") . '-1.asy'
-    echo l:fn
-
-    if !empty(l:fn)
+    echo 'Search for l:fn=[' . l:fn . ']'
+    " check whether file exists or not
+    if filereadable(l:fn)
        let l:asyName = expand("%:p:r") . '-*.asy'
-       exec ':!asy ' . fnameescape(l:asyName)
+       exec ':!/Library/TeX/Root/bin/x86_64-darwin/asy ' . fnameescape(l:asyName)
+    else
+        echo 'No file:=[' . l:fn . ']'
     endif 
 
-    " it not working with sync 
-    ":!open %:p:r.pdf
+    " it' not working with sync with [:!open %:p:r.pdf] from Mac OSX 
     " open Skim => References => check the [check box] for [Check for file changes]
-    :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf 
+    let l:cmd = ':!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf' 
+    echo 'cmd=[' . l:cmd . ']'
+    exec l:cmd
 endfunction
 
 " -------------------------------------------------------------------------------- 
@@ -215,9 +239,9 @@ endif
 " toggle between abbreviation and phrase
 " -------------------------------------------------------------------------------- 
 if &completefunc == 'LineCompleteFromFile'
-    let s:word_code = 'word'
+    let s:word_code = '<,k>|word'
 elseif &completefunc == 'CompleteAbbre'
-    let s:word_code = 'code'
+    let s:word_code = '<,k>|code'
 endif
 
 function! CheckWordPhrase()
@@ -225,13 +249,18 @@ function! CheckWordPhrase()
 endfunction
 
 function! ToggleCompletefunc()
+    "let l:pos = getpos(".")
     if &completefunc == 'LineCompleteFromFile'
         set completefunc=CompleteAbbre
-        let s:word_code = 'code'
+        let s:word_code = '<,k>|code'
     elseif &completefunc == 'CompleteAbbre'
         set completefunc=LineCompleteFromFile
-        let s:word_code = 'word'
+        let s:word_code = '<,k>|word'
     endif
+    "call setpos(".", l:pos)
+
+    " return are needed here, otherwise there is weird output
+    return ''
 endfunction
 "=====================================================================
 " Ref: http://stackoverflow.com/questions/18160053/vim-line-completion-with-external-file 
@@ -801,20 +830,22 @@ map <leader>s :nohlsearch <CR>
 " vimrc file
 "------------------------------------------------------------------
 " copy current lines to clipboard
-cabbr kk .g/\S*\%#\S*/y <bar> let @*=@" <CR>
-cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! <CR>
+" Note: DON NOT put <CR> at the end of line, otherwise cursor will goto next line
+"------------------------------------------------------------------
+cabbr kk .g/\S*\%#\S*/y <bar> let @*=@" 
+cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! 
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
 cabbr ep :tabnew /etc/profile 
-cabbr mk :mksession! $sess <CR>                                 " save vim session
+cabbr mk :mksession! $sess                                  " save vim session
 cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt " quick node
 cabbr mm :marks
 
 cabbr Wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
-cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito <CR>
-cabbr Res :!open /Users/cat/GoogleDrive/NewResume/aronsitu00resume.pdf <CR>     
+cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito 
+cabbr Res :!open /Users/cat/GoogleDrive/NewResume/aronsitu00resume.pdf     
 cabbr Sni :tabnew $g/snippets/objectivec.m 
-cabbr Sty :%!astyle --style=java <CR>
+cabbr Sty :%!astyle --style=java 
 cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
 cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
 cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
@@ -823,11 +854,22 @@ cabbr Ec :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks
 cabbr Ep  :tabnew /Users/cat/myfile/vimprivate/private.vimrc
 cabbr FF  :call JavaComment() <CR> 
 cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
-cabbr Job :tabnew /Users/cat/GoogleDrive/job/recruiter_email.txt <CR>
+cabbr Job :tabnew /Users/cat/GoogleDrive/job/recruiter_email.txt 
 cabbr Ky :let @*=expand("%:p")
-cabbr Co :call ToggleCompletefunc() <CR>
+cabbr Tz :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/zsh & <CR>
+cabbr Tf :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/fish & <CR>
+cabbr Tb :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/bash & <CR>
 
 
+noremap  <leader>k :call ToggleCompletefunc()<CR>
+inoremap <leader>k <C-R>=ToggleCompletefunc()<CR>
+
+"map <leader>n  :b #<CR>
+    
+
+" not a good idea to save file with timer. use CursorHoldI instread
+"cabbr Tt :call StartTimer() <CR>
+"cabbr Ts :call timer_stop(gtimer) <CR>
 
 
 " command line mode
@@ -1010,6 +1052,18 @@ function! s:ExecuteInShell(command)
   echo 'Shell command ' . command . ' executed.'
 endfunction
 
+
+"-----------------------------------------------------------------
+" get definition from dict.org and redirect to tab 
+"-----------------------------------------------------------------
+function! Dict()
+    let dict_output = system("curl dict://dict.org/d:" . expand("<cword>"))
+    tabnew
+    setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
+    silent put=dict_output
+endfunc
+
+
 "-----------------------------------------------------------------
 " redirect Ex command to tab file
 "-----------------------------------------------------------------
@@ -1106,8 +1160,6 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> lmapq $\phi: \mathbb{Q} \rightarrow
 autocmd BufEnter *.tex,*.html iabbr <buffer> lmapr $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> lmapn $\phi: \polyringn{x} \rightarrow  \polyringn{x}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> lmapc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
-"autocmd BufEnter *.tex,*.html iabbr <buffer> fra  \frac{}{} <bar> :exec "normal! F{" <CR>
-
 autocmd BufEnter *.tex,*.html iabbr <buffer> mdet \det (\mathbf{A} - \lambda \mathbf{I}) = 0
 autocmd BufEnter *.tex,*.html iabbr <buffer> deta \det (\mathbf{A})
 autocmd BufEnter *.tex,*.html iabbr <buffer> detb \det (\mathbf{B})
@@ -1132,55 +1184,15 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> bfii $\mathbf{I}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> bb \[ \]
 autocmd BufEnter *.tex,*.html iabbr <buffer> dd $ $
 autocmd BufEnter *.tex,*.html iabbr <buffer> noi \setlength\parindent{0pt}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bigo $\mathcal{O}(2^n) \mathcal{O}(n\log{}n)$
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> lcode 
-                                \<CR>\begin{verbatim}
-                                    \<CR>for(int i=0; i<3; i++){
-                                    \<CR>}
-                                    \<CR>\end{verbatim}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> lhello 
-                                \<CR>\documentclass{article}
-                                \<CR>\usepackage[tc]{titlepic}
-                                \<CR>\usepackage{xcolor}
-                                \<CR>\usepackage{graphicx}
-                                \<CR>\usepackage{tipa}
-                                \<CR>\usepackage{pagecolor,lipsum}
-                                \<CR>\usepackage{amsmath}
-                                \<CR>\usepackage{amsfonts}
-                                \<CR>\usepackage{amssymb}
-                                \<CR>\usepackage{centernot}
-                                \<CR>\usepackage{xcolor}
-                                \<CR>\usepackage{listings}
-                                \<CR>\begin{document}
-                                \<CR>\textbf{Hello World}
-                                \<CR>\end{document}
 
 " visual mode substitute or select mode, selection mode, highlight
 autocmd BufEnter *.tex,*.html vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
-
 autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V.*\%V/\\textbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%V/$\0$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  1$ :s/\%V$\%V//gc <CR>
 autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%V/\\[ \0 \\]/ <CR>
-
-" select block code and enclose with brackets [:h \%V]
-" autocmd BufEnter *.tex,*.html vmap  ii :s/\%V\_.*\%V/\\[\0\\]/ <CR>
-" apparently :s/\%V\_.*\%V/\\[\0\\]/ put double pair of brackets, not sure why
-" -------------------------------------------------------------------------------- 
-autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
-" -------------------------------------------------------------------------------- 
-
-" -------------------------------------------------------------------------------- 
-" remove \[ \] from selected code
-" -------------------------------------------------------------------------------- 
-autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[\%V// <CR>
-
-
-autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
 " -------------------------------------------------------------------------------- 
 " enclose with bracket
@@ -1193,12 +1205,23 @@ autocmd BufEnter *.tex,*.html cabbr <buffer> 00$ :.s/\(^\s*\)\(\S.*\S\)/\1$\2\$/
 autocmd BufEnter *.tex,*.html iabbr <buffer> fra  \frac{}{}<ESC>F{
 autocmd BufEnter *.tex,*.html cabbr <buffer> 0( :s/\\\S\+/(\0)/gc <bar> :nohlsearch <CR>
 
-" my file => \[ my file \]
-autocmd BufEnter *.tex,*.html cabbr <buffer> 0[  :.s/\(^\s*\)\(\S.*\S\)/\1\\[ \2\ \\]/gc <bar> :nohlsearch <CR>
-
 " my file => \mbox{my file}
 autocmd BufEnter *.tex,*.html cabbr <buffer> 0b  :.s/\(^\s*\)\(\S.*\S\)/\1\\mbox{\2\}/gc <bar> :nohlsearch <CR>
 autocmd BufEnter *.tex,*.html cabbr <buffer> 0{ :s/\\\S\+/{\0}/gc <bar> :nohlsearch <CR>
+
+" select block code and enclose with brackets [:h \%V]
+" autocmd BufEnter *.tex,*.html vmap  ii :s/\%V\_.*\%V/\\[\0\\]/ <CR>
+" apparently :s/\%V\_.*\%V/\\[\0\\]/ put double pair of brackets, not sure why
+" -------------------------------------------------------------------------------- 
+autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
+" -------------------------------------------------------------------------------- 
+
+" -------------------------------------------------------------------------------- 
+" remove \[ \] from selected code
+" -------------------------------------------------------------------------------- 
+autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[\%V// <CR>
+autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
+
 
 " summary notation
 autocmd BufEnter *.tex,*.html iabbr <buffer> summ s = \sum_{k=0}^{\infty} \frac{1}{k}
@@ -1216,167 +1239,7 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> ctc $\phi: \mathbb{C} \rightarrow \
 autocmd BufEnter *.tex,*.html iabbr <buffer> qtc $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> por $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
 
-autocmd BufEnter *.tex,*.html,*.html iabbr <buffer> vv \left[ \begin{array}{cc}
-                                 \<CR>c_1 \\
-                                 \<CR>c_2 \\
-                                 \<CR>\vdots \\
-                                 \<CR>c_n
-                                 \<CR>\end{array}
-                                 \<CR>\right]
-
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> detp \[ \chi(\lambda) = \left\| \begin{array}{ccc}
-                                      \<CR>\lambda - a & -b & -c \\
-                                      \<CR>-d & \lambda - e & -f \\
-                                      \<CR>-g & -h & \lambda - i \end{array} \right\| \]
-
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> det22 \[ \left\| \begin{array}{cc}
-                                  \<CR>a & b \\
-                                  \<CR>c & d \end{array} \right\| \]
-
-
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> bmat A_{m,n} =
-                                 \<CR>\begin{pmatrix}
-                                 \<CR>a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
-                                 \<CR>a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
-                                 \<CR>\vdots  & \vdots  & \ddots & \vdots  \\
-                                 \<CR>a_{m,1} & a_{m,2} & \cdots & a_{m,n}
-                                 \<CR>\end{pmatrix}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> matr A= \begin{bmatrix}
-                                \<CR>\cos(\beta) & -\sin(\beta)\\
-                                \<CR>\sin(\beta) & \cos(\beta)
-                                \<CR>\end{bmatrix}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> mat1 A= \begin{bmatrix}
-                                \<CR>1 & 2\\
-                                \<CR>3 & 4
-                                \<CR>\end{bmatrix}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> mat2 A= \begin{bmatrix}
-                                \<CR>1 & 2\\
-                                \<CR>3 & 4
-                                \<CR>\end{bmatrix}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> mati A= \begin{bmatrix}
-                                \<CR>1 & 0\\
-                                \<CR>0 & 1
-                                \<CR>\end{bmatrix}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> mat3 A= \begin{bmatrix}
-                                \<CR>1 & 2 & 3\\
-                                \<CR>4 & 5 & 6\\
-                                \<CR>7 & 8 & 9
-                                \<CR>\end{bmatrix}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> mati3 A= \begin{bmatrix}
-                                \<CR>1 & 0 & 0\\
-                                \<CR>0 & 1 & 0\\
-                                \<CR>0 & 0 & 1
-                                \<CR>\end{bmatrix}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> t66 \begin{tabular}{\|c\|c\|c\|c\|c\|c\|} \hline
-                                 \<CR>10 & 20 & 30 & 40 & 50 & 50 \\ \hline
-                                 \<CR>22 & 28 & 38 & 48 & 58 & 50 \\ \hline
-                                 \<CR>28 & 38 & 48 & 58 & 68 & 50 \\ \hline
-                                 \<CR>33 & 18 & 18 & 28 & 99 & 50 \\ \hline
-                                 \<CR>98 & 18 & 18 & 28 & 88 & 50 \\ \hline
-                                 \<CR>98 & 18 & 18 & 28 & 88 & 50 \\ \hline
-                                 \<CR>\end{tabular}
-
-autocmd  BufEnter *.tex,*.html iabbr <buffer> t55 \begin{tabular}{\|c\|c\|c\|c\|c\|} \hline
-                                 \<CR>10 & 20 & 30 & 40 & 50 \\ \hline
-                                 \<CR>22 & 28 & 38 & 48 & 58 \\ \hline
-                                 \<CR>28 & 38 & 48 & 58 & 68 \\ \hline
-                                 \<CR>33 & 28 & 18 & 18 & 99 \\ \hline
-                                 \<CR>98 & 28 & 18 & 18 & 88 \\ \hline
-                                 \<CR>\end{tabular}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> t44 \begin{tabular}{\|c\|c\|c\|c\|} \hline
-                                 \<CR>10 & 20 & 30 & 40 \\ \hline
-                                 \<CR>22 & 28 & 37 & 48 \\ \hline
-                                 \<CR>28 & 38 & 48 & 58 \\ \hline
-                                 \<CR>33 & 10 & 11 & 12 \\ \hline
-                                 \<CR>\end{tabular}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> t33 \begin{tabular}{\|c\|c\|c\|} \hline
-                                 \<CR>10 & 20 & 30  \\ \hline
-                                 \<CR>22 & 28 & 38  \\ \hline
-                                 \<CR>28 & 38 & 48  \\ \hline
-                                 \<CR>\end{tabular}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> eqq \begin{equation}
-                                       \<CR>\begin{aligned}
-                                       \<CR>x & = y + 1
-                                       \<CR>x & = z + 3
-                                       \<CR>\end{aligned}
-                                       \<CR>\end{equation}
-                
-autocmd BufEnter *.tex,*.html iabbr <buffer> begg \begin{equation}
-                                        \<CR>\begin{aligned}
-                                        \<CR>\end{aligned}
-                                        \<CR>\end{equation}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> enum \begin{enumerate}
-                                        \<CR>\item
-                                        \<CR>\item
-                                        \<CR>\end{enumerate}
-
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> eqb \begin{equation}
-                                 \<CR>\begin{aligned}
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> eqe \end{aligned}
-                                  \<CR>\end{equation}
-
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> img \begin{figure}
-                                  \<CR>\centering
-                                  \<CR>%\includegraphics[scale=0.5,height=1cm, width=6cm]{/Users/cat/myfile/github/image/spiral2.png} \\
-                                  \<CR>\includegraphics[scale=0.3]{/Users/cat/myfile/github/image/spiral2.png} \\
-                                  \<CR>\end{figure} \\
-
-
 autocmd BufEnter *.tex,*.html iabbr <buffer> gro $(\mathbb{N}, +)$
-autocmd BufEnter *.tex,*.html iabbr <buffer> gr \[
-                         \<CR>\alpha     \theta     \tau      \beta
-                         \<CR>\vartheta  \pi        \upsilon  \gamma
-                         \<CR>\gamma     \varpi     \phi      \delta
-                         \<CR>\kappa     \rho       \varphi   \epsilon
-                         \<CR>\lambda    \varrho    \chi      \varepsilon
-                         \<CR>\mu        \sigma     \psi      \zeta
-                         \<CR>\nu        \varsigma  \omega    \eta
-                         \<CR>\xi        \Gamma     \Lambda   \Sigma
-                         \<CR>\Psi       \Delta     \Upsilon  \Omega
-                         \<CR>\Theta     \Pi        \Phi
-                         \<CR>\]
-
-
-autocmd BufEnter *.tex,*.html iabbr <buffer> ma \begin{bmatrix}
-        \<CR>1 & 2  & 3 \\
-        \<CR>4 & 5  & 6 \\
-        \<CR>7 & 8  & 9 \\
-        \<CR>\end{bmatrix}
-
-
-autocmd BufEnter *.tex iabbr <buffer> xcc blackColor
-        \<CR>darkGrayColor
-        \<CR>lightGrayColor
-        \<CR>whiteColor
-        \<CR>grayColor
-        \<CR>redColor
-        \<CR>greenColor
-        \<CR>blueColor
-        \<CR>cyanColor
-        \<CR>yellowColor
-        \<CR>magentaColor
-        \<CR>orangeColor
-        \<CR>purpleColor
-        \<CR>brownColor
-        \<CR>clearColor
-
 
 augroup END
 
@@ -1450,6 +1313,7 @@ autocmd BufEnter *.html iabbr <buffer> cml <p><CR>$\Large \color{red}\lambda$
 " latexmk  -pdf => output pdf file
 " -------------------------------------------------------------------------------- 
 autocmd BufEnter *.tex  map  <F9> :call CompileLatex()<CR>
+autocmd BufEnter *.cpp  map  <F9> :call CompileCpp()<CR>
 " -------------------------------------------------------------------------------- 
 " check for error in Tex file
 autocmd BufEnter *.tex  map  <leader><F9> :w! <bar> :!pdflatex %:p <CR>:!open %:p:r.pdf <CR>
