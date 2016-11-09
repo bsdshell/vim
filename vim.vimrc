@@ -26,6 +26,8 @@ set undolevels=1000         " How many undos
 set undoreload=10000        " number of lines to save for undo
 "---------------------------------------------------------------------
 let s:word_code = '<,k>|code'
+let g:watchTimer = -1 
+let g:currStopWatch = "" 
 
 let mapleader=","
 
@@ -41,6 +43,7 @@ set statusline+=\ %l:%c\ %r\ %m
 set statusline+=\ %{CheckToggleBracketGroup()}
 set statusline+=%1*\ \[%{CheckWordPhrase()}]
 set statusline+=%2*\ \[%{CheckIgnoreCase()}]
+set statusline+=%3*\ \[%{GetCurrStop()}]
 set hls
 set autoindent
 set smartindent
@@ -256,20 +259,33 @@ endif
   "silent! :w!
 "endfunc
 
-"func! StartTimer()
-    "let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
-"endfunc
-
-function! StopWatch(numSecond)
-let  s:watchTimer = timer_start(2000, 'ShowWatch',{'repeat': a:numSecond})
+function! MyTry()
+    echo "mytry"
 endfunc
 
-function! ShowWatch()
-    let dict = timer_info(s:watchTimer)
-    let sec = dict['repeat']['repeat']
-    return g(sec / 60). ':' . (sec % 60)
+
+function! GetCurrStop()
+    return g:currStopWatch
+endfunc
+function! TTime(numMin)
+let  g:watchTimer = timer_start(2000, 'MyTime',{'repeat': a:numMin*60})
+    echo 'time[' . g:watchTimer . ']'
+    hi User3 ctermfg=yellow ctermbg=0
 endfunc
 
+function! MyTime(watchTimer)
+    if g:watchTimer > 0 
+        let dict = timer_info(a:watchTimer)
+        let sec = dict['repeat']['repeat']
+        let g:currStopWatch = (sec / 60). ':' . (sec % 60)
+        "echo g:currStopWatch
+    endif
+endfunc
+
+function! St()
+    silent! call timer_stop(g:watchTimer)
+    g:currStopWatch = ""
+endfunc
 
 " -------------------------------------------------------------------------------- 
 " toggle between ignoreCase and noignorecase 
@@ -1369,6 +1385,11 @@ autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%V/$\0$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  1$ :s/\%V$\%V//gc <CR>
 autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%V/\\[ \0 \\]/ <CR>
+
+" -------------------------------------------------------------------------------- 
+" not sure why it work with '%>v' => next to cursor position 
+autocmd BufEnter *.vimrc,*.rc vmap  0[ :s/\%V\S.*\S\%>v/echo '[ ' . \0 . ']'/gc <CR>
+
 
 " -------------------------------------------------------------------------------- 
 " enclose with bracket
