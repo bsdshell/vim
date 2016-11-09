@@ -268,7 +268,7 @@ function! GetCurrStop()
     return g:currStopWatch
 endfunc
 function! TTime(numMin)
-let  g:watchTimer = timer_start(2000, 'MyTime',{'repeat': a:numMin*60})
+let  g:watchTimer = timer_start(1000, 'MyTime',{'repeat': a:numMin*60})
     echo 'time[' . g:watchTimer . ']'
     hi User3 ctermfg=yellow ctermbg=0
 endfunc
@@ -278,6 +278,9 @@ function! MyTime(watchTimer)
         let dict = timer_info(a:watchTimer)
         let sec = dict['repeat']['repeat']
         let g:currStopWatch = (sec / 60). ':' . (sec % 60)
+        if sec == 0
+            :call system('say time is up')
+        endif
         "echo g:currStopWatch
     endif
 endfunc
@@ -1273,7 +1276,7 @@ silent put=message
 endif
 endfunction
 
-command! -nargs=+ -complete=command Rd call TabMessage(<q-args>)
+command! -nargs=+ -complete=command Rx call TabMessage(<q-args>)
 " use scratch buffer
 command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
 "-----------------------------------------------------------------
@@ -1521,6 +1524,7 @@ autocmd BufEnter *.tex  map  <leader><F9> :w! <bar> :!pdflatex %:p <CR>:!open %:
 "autocmd BufEnter *.tex  map  <F9> :w! <bar> :!latexmk -pdf -file-line-error %:p <CR> :!asy %:p:r-*.asy <CR> :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf <CR>
 "autocmd BufEnter *.tex  map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open -g %:p:r.pdf <CR> :wincmd p <CR> 
 autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
+autocmd BufEnter *.java map  <Leader><F9> :R /Users/cat/myfile/script/jav.sh % <CR>
 autocmd BufEnter *.hs   map  <F9> :w! <bar> :!runhaskell % <CR>
 
 " save file and compile latex file
