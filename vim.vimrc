@@ -1,13 +1,23 @@
 syntax enable
+
+
+" -------------------------------------------------------------------------------- 
+" TODO remove it 
+" Wed Nov  2 22:01:32 PDT 2016
 "hi search         ctermbg=Gray ctermfg=Brown
-highlight Cursor  ctermfg=green guifg=green guibg=white
-highlight iCursor ctermfg=green guifg=green guibg=white
-hi User1          ctermbg=white ctermfg=brown   guibg=white guifg=brown
-hi User2          ctermbg=LightGray ctermfg=Magenta guibg=LightGray guifg=Magenta
-hi User3          ctermbg=blue  ctermfg=green guibg=blue  guifg=green
-hi User4          ctermbg=brown  ctermfg=white guibg=white  guifg=black
-hi User5          ctermbg=DarkGray  ctermfg=green guibg=#FFFFFE  guifg=brown
-hi User6          ctermbg=gray ctermfg=blue guibg=gray guifg=blue
+"highlight Cursor  ctermfg=green guifg=green guibg=white
+"highlight iCursor ctermfg=green guifg=green guibg=white
+" set the current line Bold
+
+set cursorline
+
+"hi User1          ctermbg=red ctermfg=brown   guibg=white     guifg=brown   
+"hi User2          ctermbg=LightGray ctermfg=Magenta guibg=LightGray guifg=Magenta 
+"hi User3          ctermbg=blue      ctermfg=green   guibg=blue      guifg=green   
+"hi User4          ctermbg=brown     ctermfg=white   guibg=white     guifg=black   
+"hi User5          ctermbg=DarkGray  ctermfg=green   guibg=yellow    guifg=brown   
+"hi User6          ctermbg=gray      ctermfg=blue    guibg=gray      guifg=blue    
+"hi User7          ctermbg=white     ctermfg=red     guibg=gray      guifg=blue    
 
 "=====================================================================
 set undofile                " Save undo's after file closes
@@ -16,6 +26,8 @@ set undolevels=1000         " How many undos
 set undoreload=10000        " number of lines to save for undo
 "---------------------------------------------------------------------
 let s:word_code = '<,k>|code'
+
+let mapleader=","
 
 " /search case insensitive, case sensitive
 set ic "set noic
@@ -27,7 +39,8 @@ set statusline=%F
 set statusline+=\[%-2.5n]
 set statusline+=\ %l:%c\ %r\ %m
 set statusline+=\ %{CheckToggleBracketGroup()}
-set statusline+=\ \[%{CheckWordPhrase()}]
+set statusline+=%1*\ \[%{CheckWordPhrase()}]
+set statusline+=%2*\ \[%{CheckIgnoreCase()}]
 set hls
 set autoindent
 set smartindent
@@ -45,7 +58,9 @@ set backspace=2
 set omnifunc=csscomplete#CompleteCSS
 set path+=**
 set wildmenu
-let mapleader=","
+set tags+=/Users/cat/.vim/tags/java.tags
+
+
 
 "-------------------------------------------------------------------------------- 
 " Use Vim 8 timer to save file every 2 seconds
@@ -235,27 +250,75 @@ if &completefunc == ''
 endif
 " -------------------------------------------------------------------------------- 
 
+
+"let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
+"func! SaveFile(gtimer)
+  "silent! :w!
+"endfunc
+
+"func! StartTimer()
+    "let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
+"endfunc
+
+function! StopWatch(numSecond)
+let  s:watchTimer = timer_start(2000, 'ShowWatch',{'repeat': a:numSecond})
+endfunc
+
+function! ShowWatch()
+    let dict = timer_info(s:watchTimer)
+    let sec = dict['repeat']['repeat']
+    return g(sec / 60). ':' . (sec % 60)
+endfunc
+
+
+" -------------------------------------------------------------------------------- 
+" toggle between ignoreCase and noignorecase 
+" -------------------------------------------------------------------------------- 
+
+function! CheckIgnoreCase()
+        return '<,i>|' . (&ic == 1 ? 'ic' : 'noic') 
+endfunc
+function! ToggleIgnoreCase()
+    if &ic == 1 
+        set noic
+        hi User2 ctermfg=yellow ctermbg=0
+        :redrawstatus
+    elseif &ic == 0
+        set ic 
+        hi User2 ctermfg=cyan ctermbg=0
+        :redrawstatus
+    endif
+endfunc
+
 " -------------------------------------------------------------------------------- 
 " toggle between abbreviation and phrase
 " -------------------------------------------------------------------------------- 
-if &completefunc == 'LineCompleteFromFile'
-    let s:word_code = '<,k>|word'
+let s:dict_key = {'word':'<,k>|word', 'code':'<,k>|code'}
+"if &completefunc == 'LineCompleteFromFile'
+if &completefunc == 'LineNew'
+    let s:word_code = s:dict_key['word'] 
 elseif &completefunc == 'CompleteAbbre'
-    let s:word_code = '<,k>|code'
+    let s:word_code = s:dict_key['code']
 endif
 
 function! CheckWordPhrase()
+    "if &completefunc == 'LineCompleteFromFile'
+    :redrawstatus
     return s:word_code
 endfunction
 
 function! ToggleCompletefunc()
     "let l:pos = getpos(".")
-    if &completefunc == 'LineCompleteFromFile'
+    "if &completefunc == 'LineCompleteFromFile'
+    if &completefunc == 'LineNew'
         set completefunc=CompleteAbbre
-        let s:word_code = '<,k>|code'
+        let s:word_code = s:dict_key['code'] 
+        hi User1 ctermfg=gray ctermbg=4
     elseif &completefunc == 'CompleteAbbre'
-        set completefunc=LineCompleteFromFile
-        let s:word_code = '<,k>|word'
+        "set completefunc=LineCompleteFromFile
+        set completefunc=LineNew
+        let s:word_code = s:dict_key['word'] 
+        hi User1 ctermfg=red ctermbg=0
     endif
     "call setpos(".", l:pos)
 
@@ -269,31 +332,141 @@ endfunction
 " 2. Grep all text from the file and insern to list
 " 3. Insert the text to quickfix with flag [j] since line completion only works in loaded buffer[why]
 " 4. Match the string with completefunc
-function! LineCompleteFromFile(findstart,base)
-    if a:findstart
-        " column to begin searching from (first non-whitespace column):
+"function! LineCompleteFromFile(findstart,base)
+    "if a:findstart
+        "" column to begin searching from (first non-whitespace column):
         
-	    let line = getline('.')
-	    let start = col('.') - 1
-	    while start > 0 && line[start - 1] =~ '\S'
-	      let start -= 1
-	    endwhile
+	    "let line = getline('.')
+        "let init_col = col('.')
+	    "let start = col('.') - 1
 
-        " return  [  bin_] => 2
-	    return start
+	    "while start > 0 && line[start - 1] =~ '\S'
+	      "let start -= 1
+	    "endwhile
+
+        "let list = split(strpart(line, 0, init_col-1), '\s\+')
+        "let index = len(list) - 1 
+        "while index >= 0 
+            "let index -= 1
+        "endwhile
+
+        "" return  [  bin_] => 2
+	    "return start
+    "else
+        "let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
+        "let matches = []
+
+        "for phrase in readfile(l:path)
+            "if phrase =~ '^' . a:base
+                "call add(matches, phrase)
+            "endif
+        "endfor
+
+        "return matches
+    "endif
+"endfunction
+
+function! LineCompleteFromFile(findstart,base)
+    "if a:findstart
+	    "return 3 
+    "else
+        "let matches = ['dog', 'cat', 'pig']
+        "return matches
+    "endif
+
+    if a:findstart
+	    return 4 
     else
-        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
         let matches = []
-
-        for phrase in readfile(l:path)
-            if phrase =~ '^' . a:base
-                call add(matches, phrase)
-            endif
-        endfor
-
+        call add(matches, 'dog')
         return matches
     endif
 endfunction
+
+let g:lineMatch = []
+function! LineNew(findstart,base)
+    let matches = []
+    if a:findstart
+	    let start = col('.') - 1
+        let list = LongestMatch()
+        if  len(list) > 1 
+            let start = list[1]
+            let g:lineMatch = list[3]
+        else
+            "-2 To cancel silently and stay in completion mode.[h complete-functions] 
+            let start = -2
+        endif
+	    return start 
+    else
+       "return  {
+        "\   'word': a:key,
+        "\   'menu': strpart(snipFormatted, 0, 80),
+        "\ } 
+        "return g:lineMatch 
+        let tmpMat = ['dog', 'cat']
+        "return {'word' : tmpMat, 'refresh', 'always'}
+        call add(g:lineMatch, {'word' : 'last word', 'menu': 'cool', 'abbr' : 'abbr_ las word'})
+        call add(g:lineMatch, {'word' : 'How to however', 'menu': 'However, this is cool stuff', 'abbr' : 'However'})
+	    return {'words': g:lineMatch, 'refresh': 'always'}
+
+    endif
+endfunc
+
+function! LongestMatch()
+	    let line = getline('.')
+        let init_col = col('.')
+	    let start = col('.') - 1
+        if strlen(strpart(line, 0, init_col-1)) == 0
+            return [[]] 
+        endif
+
+        let list = split(strpart(line, 0, init_col-1), '\s\+')
+        let index = len(list) - 1 
+        let substr = ""
+        let min = -1 
+        let minIndex = -1 
+        let maxDist = ['', -1, -1]
+        let maxStr = ""
+        let matchPhrase= []
+
+        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
+        "let l:path = '/Users/cat/myfile/github/vim/try.txt'
+        let keylist = readfile(l:path)
+        while index >= 0 
+            let str = list[index]
+            let long = 0
+            if substr == ""
+                let substr = str 
+            else
+                let substr = str .  '\s\+' . substr 
+            endif
+            
+            for phrase in keylist 
+                let tmpList = matchstrpos(phrase, substr)
+                if tmpList[1] != -1
+                    if (tmpList[2] - tmpList[1]) > (maxDist[2] - maxDist[1])
+                        "call remove(matchPhrase, 0, -1)
+                        let matchPhrase = []
+                        call add(matchPhrase, phrase)
+                        let maxDist = tmpList 
+                    elseif (tmpList[2]-tmpList[1]) == (maxDist[2] - maxDist[1])
+                        call add(matchPhrase, phrase)
+                        let maxDist = tmpList 
+                    endif
+                endif
+            endfor
+            let index -= 1
+        endwhile
+
+        let biglist = [] 
+        if len(maxDist) > 0
+            let biglist = matchstrpos(line, maxDist[0])
+        endif
+
+        call add(biglist, matchPhrase)
+        return biglist 
+endfunc
+
 "---------------------------------------------------------------------
 
 "inoremap . .<C-X><C-U>
@@ -833,7 +1006,7 @@ map <leader>s :nohlsearch <CR>
 " Note: DON NOT put <CR> at the end of line, otherwise cursor will goto next line
 "------------------------------------------------------------------
 cabbr kk .g/\S*\%#\S*/y <bar> let @*=@" 
-cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc <bar> :tabdo e! 
+cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc 
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
 cabbr ep :tabnew /etc/profile 
@@ -864,6 +1037,9 @@ cabbr Tb :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/bas
 noremap  <leader>k :call ToggleCompletefunc()<CR>
 inoremap <leader>k <C-R>=ToggleCompletefunc()<CR>
 
+
+noremap  <leader>i :call ToggleIgnoreCase()<CR>
+inoremap <leader>i <C-R>=ToggleIgnoreCase()<CR>
 "map <leader>n  :b #<CR>
     
 
@@ -2086,3 +2262,4 @@ endif
 "hi PreProc 		guifg=#e5786d gui=none
 "hi Number		guifg=#e5786d gui=none
 "hi Special		guifg=#e7f6da gui=none
+" =====================================================

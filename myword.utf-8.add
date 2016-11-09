@@ -1,5 +1,8 @@
+while(r != null){ }
 Seattle
-under cursor
+extra - added to existing or usual amount or number.
+extract - remove or take out 
+ender cursor
 Javascript
 stylesheet
 Binary Tree
@@ -8,6 +11,8 @@ binary search tree
 Binary Search Tree[BST]
 Binary Search Tree
 Homomorphism
+Quick Sort algorithm average runtime is $\mathcal{O}(n\log{}n)$
+
 Homomorphic
 Homeomorphism
 Homeomorphic
@@ -20,8 +25,36 @@ Serialize
 serialization
 Serialization
 Microsoft
+\mathbf{}
+\mathbb{}
+\quad
+\tiny
+\scriptsize
+\small
+\footnotesize
+\normalsize
+\large
+\Large
+\huge
+\Huge
+$\mathcal{O}(\log{}n)$
+$\mathcal{O}(n)$
+$\mathcal{O}(n\log{}n)$
+$\mathcal{O}(n^2)$
+$\mathcal{O}(2^n)$
+
+but - The festival is held today, but it is canceled today because of the rainy weather [compound sentense]
+however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
+however - The sport event, however, continued despite the weather. [no a compound sentense]
+except - Nothing else mattered except that he is alive
+except - There is no one in the room except Michelle 
+In other words - In other words, grammar is useful skill[conjunctive adverb]
+On the other hands - Living in code climate is difficult for some people; on the other hand, there are many fun winter activities such as sleding, that you can can't do in warm climate.
+
 Least Common Ancestor
 instantiate
+essential
+essentially
 essentiality
 associativity
 feature
@@ -55,11 +88,20 @@ evaluate expression
 cursor position
 synchronization
 mutual exclusion
+hundred - a hundreds of, a thousands of, a number of 
+thousand - a hundreds of, a thousands of, a number of 
+number - a hundreds of, a thousands of, a number of 
 deserialize
 technic
 technical
+technically
+technically - Technically speaking, I awoke at normal time of 6:50am
+Technically
+Technically speaking
 technology
 technologies
+Michael
+Michelle
 techie
 indexes
 indices
@@ -72,11 +114,6 @@ dynamic programming
 precede
 precede - come before the order or position
 predecessor
-succeed 
-success
-successful
-successfully
-successor
 It appears he is is smart kid.
 seem - it seems crazy that we have to pay twice
 seem - it seems to me he is smart kid 
@@ -88,8 +125,8 @@ appear - it appears as if you got the wrong direction to school
 appear - it appears that he is not the first choice
 pending - [preposition] they were released on bail pending an appeal
 pending - [adjective] the case was still pending
-BufferedWriter bf = new BufferedReader(new FileWriter(file));
-BufferedReader bufr = new BufferedReader(FileReader(file));
+BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+BufferedReader br = new BufferedReader(FileReader(file));
 catch(IOException e){  e.printStackTrack(); }
 LinkedList
 linked list
@@ -117,8 +154,22 @@ List<Node> list = new ArrayList<>();
 Stack<Integer> stack = new Stack<>();
 Stack<String> stack = new Stack<>();
 Stack<Node> stack = new Stack<>();
+succeed 
+success
+successful
+successfully
+successor
+succinct
+succcintly
+succinctness
 
-recruiters
+beside  - he sat beside[next to] me[preposition]
+besides - there is no one there besides[except] me[preposition]
+besides - It's unlikely anyone besides Tom would consider to taking the job[preposition]
+besides - he no friend besides me[preposition]
+besides - [except] besides paying tennis, she skis very well[preposition]
+besides - [in addition to] Besides its famours cake, the bakery also make delicious bread and cookies[preposition]
+recruiter
 commission
 foreign key
 Jeff Bezos
@@ -130,3 +181,29 @@ BufferedReader in = new BufferedReader(new FileReader(fileName));
 catch(IOException io)
 regular expression
 regex example
+can not
+You can not
+scratch buffer
+error message will also be skipped
+error message will also be ignored 
+initialize
+initialized
+initialization
+surprisedly
+extremely
+Caramel Macchiato
+Could you give me an update on the interview.
+Johnny Sohn <bobbyboo358@gmail.com>
+public static void test1()
+public static void print(Node r){ }
+delimiter
+try{ } catch(IOException e){  e.printStackTrack(); }
+Aron.printList(list);
+intellectual
+impossibility
+auxiliary
+Auxiliaries
+$\color{red}{delete()}$
+public void get()
+public void get(){}
+HashMap<>();
