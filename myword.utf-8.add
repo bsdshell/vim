@@ -1,3 +1,9 @@
+constrain 
+constraint - limitation, restriction 
+restrict - put a limit on, keep it under control
+satifaction
+constraint satifaction problems
+
 while(r != null){ }
 Seattle
 extra - added to existing or usual amount or number.
@@ -42,7 +48,6 @@ $\mathcal{O}(n)$
 $\mathcal{O}(n\log{}n)$
 $\mathcal{O}(n^2)$
 $\mathcal{O}(2^n)$
-
 but - The festival is held today, but it is canceled today because of the rainy weather [compound sentense]
 however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
 however - The sport event, however, continued despite the weather. [no a compound sentense]
@@ -154,6 +159,10 @@ List<Node> list = new ArrayList<>();
 Stack<Integer> stack = new Stack<>();
 Stack<String> stack = new Stack<>();
 Stack<Node> stack = new Stack<>();
+Queue<Integer> queue = new LinkedList<>();
+Queue<String> queue = new LinkedList<>();
+Queue<Node> queue = new LinkedList<>();
+
 succeed 
 success
 successful
@@ -207,3 +216,4 @@ $\color{red}{delete()}$
 public void get()
 public void get(){}
 HashMap<>();
+List<Integer> list

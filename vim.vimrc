@@ -43,7 +43,7 @@ set statusline+=\ %l:%c\ %r\ %m
 set statusline+=\ %{CheckToggleBracketGroup()}
 set statusline+=%1*\ \[%{CheckWordPhrase()}]
 set statusline+=%2*\ \[%{CheckIgnoreCase()}]
-set statusline+=%3*\ \[%{GetCurrStop()}]
+set statusline+=%3*\ \%{GetCurrStop()}
 set hls
 set autoindent
 set smartindent
@@ -67,13 +67,13 @@ set tags+=/Users/cat/.vim/tags/java.tags
 
 "-------------------------------------------------------------------------------- 
 " Use Vim 8 timer to save file every 2 seconds
-let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
+let g:gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
 func! SaveFile(gtimer)
   silent! :w!
 endfunc
 
 func! StartTimer()
-    let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
+    let g:gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
 endfunc
 
 "func! AutoSave()
@@ -254,11 +254,6 @@ endif
 " -------------------------------------------------------------------------------- 
 
 
-"let gtimer = timer_start(2000, 'SaveFile',{'repeat':-1})
-"func! SaveFile(gtimer)
-  "silent! :w!
-"endfunc
-
 function! MyTry()
     echo "mytry"
 endfunc
@@ -277,7 +272,7 @@ function! MyTime(watchTimer)
     if g:watchTimer > 0 
         let dict = timer_info(a:watchTimer)
         let sec = dict['repeat']['repeat']
-        let g:currStopWatch = (sec / 60). ':' . (sec % 60)
+        let g:currStopWatch = '[' . (sec / 60). ':' . (sec % 60) . ']'
         if sec == 0
             :call system('say time is up')
         endif
@@ -304,7 +299,7 @@ function! ToggleIgnoreCase()
         :redrawstatus
     elseif &ic == 0
         set ic 
-        hi User2 ctermfg=cyan ctermbg=0
+        hi User2 ctermfg=red ctermbg=0
         :redrawstatus
     endif
 endfunc
@@ -417,17 +412,12 @@ function! LineNew(findstart,base)
         endif
 	    return start 
     else
-       "return  {
-        "\   'word': a:key,
-        "\   'menu': strpart(snipFormatted, 0, 80),
-        "\ } 
-        "return g:lineMatch 
         let tmpMat = ['dog', 'cat']
         "return {'word' : tmpMat, 'refresh', 'always'}
         call add(g:lineMatch, {'word' : 'last word', 'menu': 'cool', 'abbr' : 'abbr_ las word'})
         call add(g:lineMatch, {'word' : 'How to however', 'menu': 'However, this is cool stuff', 'abbr' : 'However'})
+        call add(g:lineMatch, {'word' : 'constraint', 'menu': 'limitation, restriction', 'abbr' : 'concon'})
 	    return {'words': g:lineMatch, 'refresh': 'always'}
-
     endif
 endfunc
 
@@ -1063,9 +1053,8 @@ inoremap <leader>i <C-R>=ToggleIgnoreCase()<CR>
     
 
 " not a good idea to save file with timer. use CursorHoldI instread
-"cabbr Tt :call StartTimer() <CR>
-"cabbr Ts :call timer_stop(gtimer) <CR>
-
+cabbr Tt :call StartTimer() <CR>
+cabbr Ts :call timer_stop(gtimer) <CR>
 
 " command line mode
 "-----------------------------------------------------------------
