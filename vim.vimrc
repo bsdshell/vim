@@ -38,8 +38,9 @@ set shell=/Applications/fish.app/Contents/Resources/base/bin/fish
 autocmd BufEnter * silent :lcd%:p:h
 set laststatus=2
 set statusline=%F
-set statusline+=\[%-2.5n]
+set statusline+=\ \[%1.5n]
 set statusline+=\ %l:%c\ %r\ %m
+"set statusline+=\ %l:%c\ %m
 set statusline+=\ %{CheckToggleBracketGroup()}
 set statusline+=%1*\ \[%{CheckWordPhrase()}]
 set statusline+=%2*\ \[%{CheckIgnoreCase()}]
@@ -170,7 +171,8 @@ map <F3>         :tabn       <CR>
 map <F4>         :tabnew     <CR>
 map <F10>        :tabc        <CR>
 "map <F5>         :call       MaximizeToggle() <CR>
-map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<bar> :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
+"map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<bar> :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
+map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
 
 inoremap <leader>j <C-R>=CompleteJava()<CR>
@@ -1026,7 +1028,6 @@ cabbr mm :marks
 cabbr Wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito 
 cabbr Res :!open /Users/cat/GoogleDrive/NewResume/aronsitu00resume.pdf     
-cabbr Sni :tabnew $g/snippets/objectivec.m 
 cabbr Sty :%!astyle --style=java 
 cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
 cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
@@ -1127,8 +1128,6 @@ map <leader>n  :b #<CR>
 augroup Java
 au!
 
-
-
 " Move the cursor to the beginning of the line
 autocmd BufEnter *.java iabbr <expr> jprr_system_out_println 'System.out.println(xxx)' . "\<Esc>" . "^" . ":.,.s/xxx/i/gc" . "<CR>"
                                                     
@@ -1221,20 +1220,21 @@ autocmd BufEnter  *.html :hi Error term=reverse ctermfg=none ctermbg=none
 " redirect output shell commands to scratch buffer
 " gx: http://vim.wikia.com/wiki/Display_output_of_shell_commands_in_new_window 
 "-------------------------------------------------------------------------------- 
-command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
 function! s:ExecuteInShell(command)
   let command = join(map(split(a:command), 'expand(v:val)'))
   let winnr = bufwinnr('^' . command . '$')
   silent! execute  winnr < 0 ? 'botright new ' . fnameescape(command) : winnr . 'wincmd w'
-  setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap number
+  "setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap number
+  setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
   echo 'Execute ' . command . '...'
   silent! execute 'silent %!'. command
-  silent! execute 'resize ' . line('$')
+  "silent! execute 'resize ' . line('$')
   silent! redraw
   silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
   silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>ExecuteInShell(''' . command . ''')<CR>'
   echo 'Shell command ' . command . ' executed.'
 endfunction
+command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
 
 
 "-----------------------------------------------------------------
@@ -1256,18 +1256,17 @@ redir => message
 silent execute a:cmd
 redir END
 if empty(message)
-echoerr "no output"
+    echoerr "no output"
 else
-" use [new] instead of [tabnew] below if you prefer split windows instead of tabs
-tabnew
-setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
-silent put=message
+    " use [new] instead of [tabnew] below if you prefer split windows instead of tabs
+    tabnew
+    setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
+    silent put=message
 endif
 endfunction
 
 command! -nargs=+ -complete=command Rx call TabMessage(<q-args>)
 " use scratch buffer
-command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
 "-----------------------------------------------------------------
 
 "------------------------------------------------------------------
@@ -1680,33 +1679,24 @@ endfunc
 "-----------------------------------------------------------------
 " map and unmap keys
 
-
 let g:keymap = 0
 func! MapKey()
     if g:keymap == 0
-
         let g:keymap = 1
     else
         :map <F7> <Nop>
         :map <F8> <Nop>
-
         :map <F1> <Nop>
         :map <F2> <Nop>
         :map <F3> <Nop>
-
         :imap <F1> <Nop>
         :imap <F2> <Nop>
-
         :map <S-F10> <Nop>
         :map <F4> <Nop>
-
-
         echo "nunmap my key"
-
         let g:keymap = 0
     endif
 endfunc
-
 
 " searchkey: ctermfg ctermbg xterm color highlight
 func! XcodeColor()
