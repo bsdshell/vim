@@ -1042,6 +1042,23 @@ cabbr Ky :let @*=expand("%:p")
 cabbr Tz :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/zsh & <CR>
 cabbr Tf :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/fish & <CR>
 cabbr Tb :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/bash & <CR>
+cabbr Ta call TagsSymlink() <CR>
+
+
+function! TagsSymlink()
+    let fpath = expand('%:p')
+    echo fpath
+"    3sleep
+    if expand('%:e') == 'java'
+        let tagsfile = '~/.vim/doc/java/' . expand('%:r') . '.txt'
+    else 
+        let tagsfile = '~/.vim/doc/' . expand('%:r') . '.txt'
+    endif
+    echo tagsfile
+"    3sleep
+    exec '!ln -s ' . fpath . ' ' . tagsfile 
+    helptags ~/.vim/doc
+endfunc
 
 
 noremap  <leader>k :call ToggleCompletefunc()<CR>
