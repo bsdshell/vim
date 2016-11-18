@@ -1071,6 +1071,7 @@ cabbr Ela :tabnew /Library/WebServer/Documents/zsurface/html/indexLatexMatrix.ht
 " 34nm
 "imap <C-l> <C-o>:call ExpandNanometers()<CR>
 
+
 " -------------------------------------------------------------------------------- 
 " gf http://tex.stackexchange.com/questions/62182/shortcut-for-inserting-matching-endsomething-in-vim 
 " add \begin{environment} \end{environment}
@@ -1079,7 +1080,6 @@ cabbr Ela :tabnew /Library/WebServer/Documents/zsurface/html/indexLatexMatrix.ht
 "map  <C-b>      YpkI\begin{<ESC>A}<ESC>jI\end{<ESC>A}<esc>kA
 "map! <C-b> <ESC>YpkI\begin{<ESC>A}<ESC>jI\end{<ESC>A}<esc>kA
 
-" add newline to string, carriage return, line break
 function! AddBegin()
     let items = matchlist(expand('<cword>'), '\(\w\+\)')
     if len(items) == 0
@@ -1088,7 +1088,12 @@ function! AddBegin()
     let modified = '\begin{' . items[1] . '}\end{' . items[1] . '}'
     exec "normal! ciw" . modified
 endfunc
-imap <C-b> <C-o>:call AddBegin()<CR>
+i \begin{map}
+\end{mapjk \begin{ESC}
+\end{ESCu \begin{ESC}
+\end{ESCjk \begin{ESC}
+\end{ESCk \begin{ESC}
+\end{ESCk}ESC> <C-b> <C-o>:call AddBegin()<CR>
 
 function! TagsSymlink()
     let fpath = expand('%:p')

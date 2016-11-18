@@ -1,219 +1,239 @@
-constrain 
-constraint - limitation, restriction 
-restrict - put a limit on, keep it under control
-satifaction
-constraint satifaction problems
-
 while(r != null){ }
-Seattle
-extra - added to existing or usual amount or number.
-extract - remove or take out 
-ender cursor
-Javascript
+voicemail
+try{ } catch(IOException e){  e.printStackTrack(); }
+thousand - a hundreds of, a thousands of, a number of 
+technology
+technologies
+technically - Technically speaking, I awoke at normal time of 6:50am
+technically
+technical
+technic
+techie
+synchronization
+surprisedly
+succinctness
+succinct
+successor
+successfully
+successful
+success
+succeed 
+succcintly
 stylesheet
-Binary Tree
+single LinkedList
+serialize
+serialization
+separator
+separate
+seem - it seems to me he is smart kid 
+seem - it seems crazy that we have to pay twice
+scratch buffer
+satifaction
+runtime is O(nlog n)
+runtime is O(log n)
+restrict - put a limit on, keep it under control
+regular expression
+regex example
+recruiter
+quickSort algorithm 
+quick sort is O(nlog n)
+quick sort algorithm 
+quick sort
+public void get(){}
+public void get()
+public static void test1()
+public static void print(Node r){ }
+programming language
+predecessor
+precede - come before the order or position
+precede
+pending - [preposition] they were released on bail pending an appeal
+pending - [adjective] the case was still pending
+number - a hundreds of, a thousands of, a number of 
+mutual exclusion
+minimum
+merge sort is O(nlog n)
+merge sort
+maximum
+linked list
+intellectual
+instantiate
+initialized
+initialize
+initialization
+indices
+indexible
+indexes
+indexable
+in plenty of
+in despite of
+impossibility
+implements
+hundred - a hundreds of, a thousands of, a number of 
+however - The sport event, however, continued despite the weather. [no a compound sentense]
+however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
+function name
+foreign key
+follow up
+feature
+facial recognition 
+recognize
+recognizable
+extremely
+extract - remove or take out 
+extra - added to existing or usual amount or number.
+extends
+except - There is no one in the room except Michelle 
+except - Nothing else mattered except that he is alive
+evaluate expression
+essentially
+essentiality
+essential
+error message will also be skipped
+error message will also be ignored 
+ender cursor
+dynamic programming
+double-checked locking
+double LinkedList
+deserialize
+delimiter
+deletion, lookup and insection are all O(log n) 
+deletion, lookup and insection
+cursor position
+constraint satifaction problems
+constraint - limitation, restriction 
+constrain 
+commission
+circular LinkedList
+catch(IOException io)
+catch(IOException e){  e.printStackTrack(); }
+can not
+but - The festival is held today, but it is canceled today because of the rainy weather [compound sentense]
 binary tree
 binary search tree 
-Binary Search Tree[BST]
-Binary Search Tree
-Homomorphism
+besides - there is no one there besides[except] me[preposition]
+besides - he no friend besides me[preposition]
+besides - [in addition to] Besides its famours cake, the bakery also make delicious bread and cookies[preposition]
+besides - [except] besides paying tennis, she skis very well[preposition]
+besides - It's unlikely anyone besides Tom would consider to taking the job[preposition]
+beside  - he sat beside[next to] me[preposition]
+average
+available
+auxiliary
+attachment
+associativity
+appear - they appeared to be contented
+appear - she appears quite nervous driver 
+appear - it appears that he is not the first choice
+appear - it appears as if you got the wrong direction to school
+appear - he appeared out of nowhere
+\tiny
+\small
+\scriptsize
+\quad
+\normalsize
+\newenvironment
+\mathbf{}
+\mathbb{}
+\large
+\huge
+\footnotesize
+\Large
+\Huge
+You can not
+Would you like to
+University of Waterloo
+University
+Topology
+The worst runtime
+Technologies
+Technically speaking
+Technically
+Stack<String> stack = new Stack<>();
+Stack<Node> stack = new Stack<>();
+Stack<Integer> stack = new Stack<>();
+Singleton
+Serialize
+Serialization
+Seattle
+QuickSort algorithm 
 Quick Sort algorithm average runtime is $\mathcal{O}(n\log{}n)$
-
+Quick Sort algorithm average runtime is $\mathcal{O}(n\log{}n)$
+Quick Sort algorithm 
+Queue<String> queue = new LinkedList<>();
+Queue<Node> queue = new LinkedList<>();
+Queue<Integer> queue = new LinkedList<>();
+Phone: 408-844-4280
+On the other hands - Living in code climate is difficult for some people; on the other hand, there are many fun winter activities such as sleding, that you can can't do in warm climate.
+Microsoft
+Michelle
+Michael
+Merge Sort Algorithm average runtime is $\mathcal{O}(n\log{}n)$
+Map<String, String> map,
+Map<String, String> map = new HashMap<>();
+Map<String, Integer> map,
+Map<String, Integer> map = new HashMap<>(); 
+Map<Integer, String> map,
+Map<Integer, String> map = new HashMap<>();
+Map<Integer, Integer> map,
+Map<Integer, Integer> map = new HashMap<>();
+List<String> list = new ArrayList<>();
+List<Node> list = new ArrayList<>();
+List<Integer> list = new ArrayList<>();
+List<Integer> list
+LinkedList
+Least Common Ancestor
+Johnny Sohn <bobbyboo358@gmail.com>
+Jeff Bezos's Biosphere
+Jeff Bezos
+Javascript
+It seems to me that he is smart kid
+It appears he is is smart kid.
+In other words - In other words, grammar is useful skill[conjunctive adverb]
+Homomorphism
 Homomorphic
 Homeomorphism
 Homeomorphic
-Topology
-Technologies
-implements
-extends
-serialize
-Serialize
-serialization
-Serialization
-Microsoft
-\mathbf{}
-\mathbb{}
-\quad
-\tiny
-\scriptsize
-\small
-\footnotesize
-\normalsize
-\large
-\Large
-\huge
-\Huge
-$\mathcal{O}(\log{}n)$
-$\mathcal{O}(n)$
-$\mathcal{O}(n\log{}n)$
-$\mathcal{O}(n^2)$
-$\mathcal{O}(2^n)$
-but - The festival is held today, but it is canceled today because of the rainy weather [compound sentense]
-however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
-however - The sport event, however, continued despite the weather. [no a compound sentense]
-except - Nothing else mattered except that he is alive
-except - There is no one in the room except Michelle 
-In other words - In other words, grammar is useful skill[conjunctive adverb]
-On the other hands - Living in code climate is difficult for some people; on the other hand, there are many fun winter activities such as sleding, that you can can't do in warm climate.
-
-Least Common Ancestor
-instantiate
-essential
-essentially
-essentiality
-associativity
-feature
-attachment
-deletion, lookup and insection are all O(log n) 
-deletion, lookup and insection
-runtime is O(log n)
-runtime is O(nlog n)
-quick sort
-quick sort algorithm 
-Quick Sort algorithm 
-QuickSort algorithm 
-Quick Sort algorithm average runtime is $\mathcal{O}(n\log{}n)$
-quickSort algorithm 
-quick sort is O(nlog n)
-merge sort
-Merge Sort Algorithm average runtime is $\mathcal{O}(n\log{}n)$
-merge sort is O(nlog n)
-voicemail
-Phone: 408-844-4280
-Could you give me an update on the
-Would you like to
-The worst runtime
-function name
-maximum
-minimum
-follow up
-University
-University of Waterloo
-evaluate expression
-cursor position
-synchronization
-mutual exclusion
-hundred - a hundreds of, a thousands of, a number of 
-thousand - a hundreds of, a thousands of, a number of 
-number - a hundreds of, a thousands of, a number of 
-deserialize
-technic
-technical
-technically
-technically - Technically speaking, I awoke at normal time of 6:50am
-Technically
-Technically speaking
-technology
-technologies
-Michael
-Michelle
-techie
-indexes
-indices
-indexable
-indexible
-average
-available
-Dynamic Programming
-dynamic programming
-precede
-precede - come before the order or position
-predecessor
-It appears he is is smart kid.
-seem - it seems crazy that we have to pay twice
-seem - it seems to me he is smart kid 
-It seems to me that he is smart kid
-appear - he appeared out of nowhere
-appear - they appeared to be contented
-appear - she appears quite nervous driver 
-appear - it appears as if you got the wrong direction to school
-appear - it appears that he is not the first choice
-pending - [preposition] they were released on bail pending an appeal
-pending - [adjective] the case was still pending
-BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-BufferedReader br = new BufferedReader(FileReader(file));
-catch(IOException e){  e.printStackTrack(); }
-LinkedList
-linked list
-double LinkedList
-single LinkedList
-circular LinkedList
-Singleton
-double-checked locking
-Context Switch
-
-Map<Integer, Integer> map,
-Map<String, String> map,
-Map<Integer, String> map,
-Map<String, Integer> map,
-
-Map<Integer, Integer> map = new HashMap<>();
-Map<String, String> map = new HashMap<>();
-Map<Integer, String> map = new HashMap<>();
-Map<String, Integer> map = new HashMap<>(); 
-
-List<Integer> list = new ArrayList<>();
-List<String> list = new ArrayList<>();
-List<Node> list = new ArrayList<>();
-
-Stack<Integer> stack = new Stack<>();
-Stack<String> stack = new Stack<>();
-Stack<Node> stack = new Stack<>();
-Queue<Integer> queue = new LinkedList<>();
-Queue<String> queue = new LinkedList<>();
-Queue<Node> queue = new LinkedList<>();
-
-succeed 
-success
-successful
-successfully
-successor
-succinct
-succcintly
-succinctness
-
-beside  - he sat beside[next to] me[preposition]
-besides - there is no one there besides[except] me[preposition]
-besides - It's unlikely anyone besides Tom would consider to taking the job[preposition]
-besides - he no friend besides me[preposition]
-besides - [except] besides paying tennis, she skis very well[preposition]
-besides - [in addition to] Besides its famours cake, the bakery also make delicious bread and cookies[preposition]
-recruiter
-commission
-foreign key
-Jeff Bezos
-Jeff Bezos's Biosphere
-separator
-separate
-ArrayList<String> list = new ArrayList<String>();
-BufferedReader in = new BufferedReader(new FileReader(fileName));
-catch(IOException io)
-regular expression
-regex example
-can not
-You can not
-scratch buffer
-error message will also be skipped
-error message will also be ignored 
-initialize
-initialized
-initialization
-surprisedly
-extremely
-Caramel Macchiato
-Could you give me an update on the interview.
-Johnny Sohn <bobbyboo358@gmail.com>
-public static void test1()
-public static void print(Node r){ }
-delimiter
-try{ } catch(IOException e){  e.printStackTrack(); }
-Aron.printList(list);
-intellectual
-impossibility
-auxiliary
-Auxiliaries
-$\color{red}{delete()}$
-public void get()
-public void get(){}
+Haskell
 HashMap<>();
-List<Integer> list
+Dynamic Programming
+Could you give me an update on the interview.
+Could you give me an update on the
+Context Switch
+Caramel Macchiato
+BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+BufferedReader in = new BufferedReader(new FileReader(fileName));
+BufferedReader br = new BufferedReader(FileReader(file));
+Binary Tree
+Binary Search Tree[BST]
+Binary Search Tree
+Auxiliaries
+ArrayList<String> list = new ArrayList<String>();
+ArrayList<Integer> list = new ArrayList<Integer>();
+ArrayList<Node> list = new ArrayList<Node>();
+ArrayList<String> list = new ArrayList<>();
+ArrayList<Integer> list = new ArrayList<>();
+ArrayList<Node> list = new ArrayList<>();
+ArrayList<String> list
+ArrayList<Integer> list
+ArrayList<Node> list
+ArrayList<String> list
+ArrayList<Integer> list
+ArrayList<Node> list
+Aron.printList(list);
+$\mathcal{O}(n^2)$
+$\mathcal{O}(n\log{}n)$
+$\mathcal{O}(n)$
+$\mathcal{O}(\log{}n)$
+$\mathcal{O}(2^n)$
+$\color{red}{delete()}$
+
+
+
+
+
+
+
+
+
+industry-leading
