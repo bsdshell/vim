@@ -454,6 +454,7 @@ function! LongestMatch()
             
             for phrase in keylist 
 
+            "  *matchstrpos*
             ":echo matchstrpos("testing", "ing")    => ["ing", 4, 7]
             ":echo matchstrpos('test$ing', '$ing')  => ['$ing', 4, 7]
             ":echo matchstrpos('test\ing', '\ing')  => ['ing', 4, 7]
@@ -1057,6 +1058,18 @@ cabbr Ta call TagsSymlink() <CR>
 cabbr Info :tabnew ~/.viminfo
 cabbr Ela :tabnew /Library/WebServer/Documents/zsurface/html/indexLatexMatrix.html
 
+" -------------------------------------------------------------------------------- 
+" gf http://stackoverflow.com/questions/35041731/select-inside-dollar-signs-in-vim-with-vim-latex-plugin
+" select text between two dollar signs including the ends
+" vaw, vap, va[, va<, va(, va$, viw, vip, vi[, vi<, vi(, vi$
+:onoremap <silent> i$ :<c-u>normal! T$vt$<cr>
+:vnoremap i$ T$ot$
+" select text between two dollar signs but excluding the ends 
+:onoremap <silent> a$ :<c-u>normal! F$vf$<cr>
+:vnoremap a$   F$of$
+" -------------------------------------------------------------------------------- 
+
+
 " gx http://stackoverflow.com/questions/14360427/vim-abbreviations-and-regular-expressions
 " interesting post
 "function! ExpandNanometers()
@@ -1428,14 +1441,23 @@ autocmd BufEnter *.tex,*.html vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V\S.*\S\%V/\\textbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
-autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%V/$\0$/ <CR>
-autocmd BufEnter *.tex,*.html vmap  1$ :s/\%V$\%V//gc <CR>
-autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%V/\\[ \0 \\]/ <CR>
+"autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
+autocmd BufEnter *.tex,*.html vmap  $$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
+autocmd BufEnter *.tex,*.html vmap  x$ :s/\%V\$\%V//g <CR>
+"autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
+autocmd BufEnter *.tex,*.html vmap  [[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
+
+" add two stars
+vmap  0* :s/\%V\S.*\S\%>v/\*\0\*/ <CR>
 
 " -------------------------------------------------------------------------------- 
-" not sure why it work with '%>v' => next to cursor position 
+" *highlight_column*
+" [:h '\%>17c'] 
+" not sure why it work with '\%>v' => next to cursor position 
+" '\%>17v.*' => highlight column >17 => highlight column from 18 to the end 
+" '/^.*\%17v'  => highlight column up to 17, column 17 is not included because it is zero-with 
+" '/^.*\%17v.' => include column 17
 autocmd BufEnter *.vimrc,*.rc vmap  0[ :s/\%V\S.*\S\%>v/echo '[ ' . \0 . ']'/gc <CR>
-
 
 " -------------------------------------------------------------------------------- 
 " enclose with bracket
@@ -1462,7 +1484,8 @@ autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
 " -------------------------------------------------------------------------------- 
 " remove \[ \] from selected code
 " -------------------------------------------------------------------------------- 
-autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[\%V// <CR>
+"autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[\%V// <CR>
+autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\[\%V// <bar> :s/\%V\\\]\%V// <CR>
 autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
 
@@ -1484,7 +1507,6 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> por $\phi: \polyringr{x} \rightarro
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> gro $(\mathbb{N}, +)$
 
-augroup END
 
 "------------------------------------------------------------------
 "latex end
@@ -1587,6 +1609,12 @@ autocmd BufEnter *.m,*.h,*.java,*.cpp,*.c vmap  xu  :s/\%V\_^\s*\zs\/\/\%V//g <C
 " tex
 autocmd BufEnter *.tex vmap  xx  :s/\%V\_^\%V/%/g <CR>
 autocmd BufEnter *.tex vmap  xu  :s/\%V\_^\s*\zs%\%V//g <CR>
+
+" ------------------------------------------------------------------------------- 
+"autocmd BufEnter *.tex map  x$  :exec 'normal! F$s' <bar><Esc> :exec 'normal! f$s' <CR>
+" Note: above cmd is not working, not sure what
+" TODO: instore cursor position
+autocmd BufEnter *.tex map  r$  :exec 'normal! F$s' <bar><Esc> :exec 'normal! f$s' <Esc>  
 
 " haskell 
 autocmd BufEnter *.hs vmap  xx  :s/\%V\_^\%V/--/g <CR>
