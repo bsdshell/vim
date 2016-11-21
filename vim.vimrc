@@ -423,6 +423,87 @@ function! LineNew(findstart,base)
     endif
 endfunc
 
+"function! LongestMatch()
+"	    let line = getline('.')
+"        let init_col = col('.')
+"	    let start = col('.') - 1
+"        if strlen(strpart(line, 0, init_col-1)) == 0
+"            return [[]] 
+"        endif
+"
+"        let list = split(strpart(line, 0, init_col-1), '\s\+')
+"        let index = len(list) - 1 
+"        let substr = ""
+"        let min = -1 
+"        let minIndex = -1 
+"        let maxDist = ['', -1, -1]
+"        let maxStr = ""
+"        let matchPhrase= []
+"        let matchDict = {}
+"
+"        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
+"        "let l:path = '/Users/cat/myfile/github/vim/try.txt'
+"        let keylist = readfile(l:path)
+"        while index >= 0 
+"            let str = list[index]
+"            let long = 0
+"            if substr == ""
+"                let substr = str 
+"            else
+"                let substr = str .  '\s\+' . substr 
+"            endif
+"            
+"            for phrase in keylist 
+"            "  *v_matchstrpos*
+"            ":echo matchstrpos("testing", "ing")    => ["ing", 4, 7]
+"            ":echo matchstrpos('test$ing', '$ing')  => ['$ing', 4, 7]
+"            ":echo matchstrpos('test\ing', '\ing')  => ['ing', 4, 7]
+"            ":echo matchstrpos('test\ing', '\\ing') => ['\ing', 4, 7]
+"            ":echo matchstrpos('test^ing', '^ing')  => ['\ing', 4, 7]
+"            ":echo matchstrpos('test^ing', '^ing')  => ['', 4, 7]
+"            ":echo matchstrpos('test^ing', '\^ing') => ['', 4, 7]
+"            ":echo matchstrpos('testing$', 'ing$')  => ['', 4, 7]
+"            ":echo matchstrpos('testing$', 'ing\$') => ['ing$', 4, 7]
+"
+"                let tmpList = matchstrpos(phrase, substr)
+"                if tmpList[1] != -1
+"                    let keyDist = tmpList[2] - tmpList[1]
+"                    "if (tmpList[2] - tmpList[1]) > (maxDist[2] - maxDist[1])
+"                    if has_key(matchDict, keyDist)
+"                        let tmpVList = matchDict[keyDist] 
+"                        call add(tmpVList, phrase)
+"                        call add(matchDict[keyDist], tmpVList)
+"                    else
+"                        let wordList = []
+"                        call add(wordList, phrase)
+"                        call add(matchDict, wordList)
+"                        "call add(matchDict[keyDist], ) 
+"                    endif
+""                    if keyDist > (maxDist[2] - maxDist[1])
+""                        let matchPhrase = []
+""                        let matchDict = {}
+""                        call add(matchPhrase, phrase)
+""                        let maxDist = tmpList 
+""                    elseif keyDist == (maxDist[2] - maxDist[1])
+""                        call add(matchPhrase, phrase)
+""                        let maxDist = tmpList 
+""                    endif
+"                endif
+"            endfor
+"            let index -= 1
+"        endwhile
+"
+"        let biglist = [] 
+"        if len(maxDist) > 0
+"            let biglist = matchstrpos(line, maxDist[0])
+"        endif
+"
+"        call add(biglist, matchPhrase)
+"        "return biglist 
+"        return matchDict
+"endfunc
+"
+
 function! LongestMatch()
 	    let line = getline('.')
         let init_col = col('.')
@@ -439,6 +520,7 @@ function! LongestMatch()
         let maxDist = ['', -1, -1]
         let maxStr = ""
         let matchPhrase= []
+        let matchDict = {}
 
         let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
         "let l:path = '/Users/cat/myfile/github/vim/try.txt'
@@ -453,8 +535,7 @@ function! LongestMatch()
             endif
             
             for phrase in keylist 
-
-            "  *matchstrpos*
+            "  *v_matchstrpos*
             ":echo matchstrpos("testing", "ing")    => ["ing", 4, 7]
             ":echo matchstrpos('test$ing', '$ing')  => ['$ing', 4, 7]
             ":echo matchstrpos('test\ing', '\ing')  => ['ing', 4, 7]
@@ -467,12 +548,16 @@ function! LongestMatch()
 
                 let tmpList = matchstrpos(phrase, substr)
                 if tmpList[1] != -1
-                    if (tmpList[2] - tmpList[1]) > (maxDist[2] - maxDist[1])
-                        "call remove(matchPhrase, 0, -1)
-                        let matchPhrase = []
+                    let keyDist = tmpList[2] - tmpList[1]
+                    if keyDist > (maxDist[2] - maxDist[1])
+                        " -------------------------------------------------------------------------------- 
+                        " match the longest phrase
+                        " let matchPhrase = []
+                        " -------------------------------------------------------------------------------- 
+                        " set to match all phrase currently
                         call add(matchPhrase, phrase)
                         let maxDist = tmpList 
-                    elseif (tmpList[2]-tmpList[1]) == (maxDist[2] - maxDist[1])
+                    elseif keyDist == (maxDist[2] - maxDist[1])
                         call add(matchPhrase, phrase)
                         let maxDist = tmpList 
                     endif
