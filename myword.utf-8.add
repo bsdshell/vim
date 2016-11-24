@@ -1,3 +1,4 @@
+Yuhui Wang <y4wang@hotmail.com>
 while(r != null){ }
 voicemail
 try{ } catch(IOException e){  e.printStackTrack(); }
@@ -41,6 +42,7 @@ quick sort is O(nlog n)
 quick sort algorithm 
 quick sort
 public void get(){}
+public static void get(){}
 public void get()
 public static void test1()
 public static void print(Node r){ }
@@ -75,6 +77,8 @@ however - The sport event, however, continued despite the weather. [no a compoun
 however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
 function name
 foreign key
+this is foreign key
+this is this is foreign key
 follow up
 feature
 facial recognition 
@@ -136,6 +140,19 @@ appear - he appeared out of nowhere
 \newenvironment
 \mathbf{}
 \mathbb{}
+\mathbf{A}
+\mathit{}
+$\mathcal{O}(\log{}n)$
+$\mathcal{O}(n\log{}n)$
+$\mathcal{O}(n^2)$
+$\mathcal{O}(2^n)$
+$\mathcal{O}(\log{}n)$
+$\mathcal{O}(n)$
+$\mathcal{O}(n\log{}n)$
+$\mathcal{O}(n^2)$
+$\mathcal{O}(2^n)$
+\quad
+\qquad
 \large
 \huge
 \footnotesize
@@ -240,3 +257,10 @@ such as
 NP-complete problems
 some hard problems
 some difficult problems
+communicate
+Engineer
+Engineers
+ware Engineer
+Software Engineer
+I'm open to new opportunities.
+Would you give me an update on xxx

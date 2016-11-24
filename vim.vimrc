@@ -42,6 +42,7 @@ set statusline+=\ \[%1.5n]
 set statusline+=\ %l:%c\ %r\ %m
 "set statusline+=\ %l:%c\ %m
 set statusline+=\ %{CheckToggleBracketGroup()}
+set statusline+=\ %{ShowKey()}
 set statusline+=%1*\ \[%{CheckWordPhrase()}]
 set statusline+=%2*\ \[%{CheckIgnoreCase()}]
 set statusline+=%3*\ \%{GetCurrStop()}
@@ -169,7 +170,10 @@ map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
 "map <F4>         :tabnew<CR> :setlocal buftype=nofile <CR>
 map <F4>         :tabnew     <CR>
-map <F10>        :tabc        <CR>
+map <F10>        :tabc       <CR>
+
+vnoremap <F7> "*y
+
 "map <F5>         :call       MaximizeToggle() <CR>
 "map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<bar> :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
 map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
@@ -177,6 +181,8 @@ map <S-F10>      :call       ToggleColorScheme() <CR>
 
 inoremap <leader>j <C-R>=CompleteJava()<CR>
 nnoremap <F6>    :call ToggleBracketGroup()<CR>
+inoremap <F1>    <C-E><C-R>=ToggleCompletefunc()<CR><C-X><C-U>
+"inoremap <leader>k <C-R>=ToggleCompletefunc()<CR>
 
 
 function! CompileCpp()
@@ -405,7 +411,7 @@ function! LineNew(findstart,base)
     if a:findstart
 	    let start = col('.') - 1
         let list = LongestMatch()
-        if  len(list) > 1 
+        if  len(list) == 5  
             let start = list[1]
             let g:lineMatch = list[3]
         else
@@ -416,9 +422,9 @@ function! LineNew(findstart,base)
     else
         let tmpMat = ['dog', 'cat']
         "return {'word' : tmpMat, 'refresh', 'always'}
-        call add(g:lineMatch, {'word' : '\mathbf', 'menu': 'cool', 'abbr' : 'abbr_ las word'})
-        call add(g:lineMatch, {'word' : '\mathbf', 'menu': 'However, this is cool stuff', 'abbr' : 'However'})
-        call add(g:lineMatch, {'word' : '\textbf', 'menu': 'limitation, restriction', 'abbr' : 'concon'})
+"        call add(g:lineMatch, {'word' : '\mathbf', 'menu': 'cool', 'abbr' : 'abbr_ las word'})
+"        call add(g:lineMatch, {'word' : '\mathbf', 'menu': 'However, this is cool stuff', 'abbr' : 'However'})
+"        call add(g:lineMatch, {'word' : '\textbf', 'menu': 'limitation, restriction', 'abbr' : 'concon'})
 	    return {'words': g:lineMatch, 'refresh': 'always'}
     endif
 endfunc
@@ -504,6 +510,77 @@ endfunc
 "endfunc
 "
 
+"function! LongestMatch()
+"	    let line = getline('.')
+"        let init_col = col('.')
+"	    let start = col('.') - 1
+"        if strlen(strpart(line, 0, init_col-1)) == 0
+"            return [[]] 
+"        endif
+"
+"        let list = split(strpart(line, 0, init_col-1), '\s\+')
+"        let index = len(list) - 1 
+"        let substr = ""
+"        let min = -1 
+"        let minIndex = -1 
+"        let maxDist = ['', -1, -1]
+"        let maxStr = ""
+"        let matchPhrase= []
+"        let matchDict = {}
+"
+"        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
+"        "let l:path = '/Users/cat/myfile/github/vim/try.txt'
+"        let keylist = readfile(l:path)
+"        while index >= 0 
+"            let str = list[index]
+"            let long = 0
+"            if substr == ""
+"                let substr = str 
+"            else
+"                let substr = str .  '\s\+' . substr 
+"            endif
+"            
+"            for phrase in keylist 
+"            "  *v_matchstrpos*
+"            ":echo matchstrpos("testing", "ing")    => ["ing", 4, 7]
+"            ":echo matchstrpos('test$ing', '$ing')  => ['$ing', 4, 7]
+"            ":echo matchstrpos('test\ing', '\ing')  => ['ing', 4, 7]
+"            ":echo matchstrpos('test\ing', '\\ing') => ['\ing', 4, 7]
+"            ":echo matchstrpos('test^ing', '^ing')  => ['\ing', 4, 7]
+"            ":echo matchstrpos('test^ing', '^ing')  => ['', 4, 7]
+"            ":echo matchstrpos('test^ing', '\^ing') => ['', 4, 7]
+"            ":echo matchstrpos('testing$', 'ing$')  => ['', 4, 7]
+"            ":echo matchstrpos('testing$', 'ing\$') => ['ing$', 4, 7]
+"
+"                let tmpList = matchstrpos(phrase, substr)
+"                if tmpList[1] != -1
+"                    let keyDist = tmpList[2] - tmpList[1]
+"                    if keyDist > (maxDist[2] - maxDist[1])
+"                        " -------------------------------------------------------------------------------- 
+"                        " match the longest phrase
+"                        " let matchPhrase = []
+"                        " -------------------------------------------------------------------------------- 
+"                        " set to match all phrase currently
+"                        call add(matchPhrase, phrase)
+"                        let maxDist = tmpList 
+"                    elseif keyDist == (maxDist[2] - maxDist[1])
+"                        call add(matchPhrase, phrase)
+"                        let maxDist = tmpList 
+"                    endif
+"                endif
+"            endfor
+"            let index -= 1
+"        endwhile
+"
+"        let biglist = [] 
+"        if len(maxDist) > 0
+"            let biglist = matchstrpos(line, maxDist[0])
+"        endif
+"
+"        call add(biglist, matchPhrase)
+"        return biglist 
+"endfunc
+
 function! LongestMatch()
 	    let line = getline('.')
         let init_col = col('.')
@@ -512,29 +589,41 @@ function! LongestMatch()
             return [[]] 
         endif
 
-        let list = split(strpart(line, 0, init_col-1), '\s\+')
-        let index = len(list) - 1 
-        let substr = ""
-        let min = -1 
-        let minIndex = -1 
-        let maxDist = ['', -1, -1]
-        let maxStr = ""
-        let matchPhrase= []
-        let matchDict = {}
+        let list        = split(strpart(line, 0, init_col-1), '\s\+')
+        let index       = len(list) - 1
+        let substr      = ""
+        let min         = -1
+        let minIndex    = -1
+        let maxDist     = ['', -1, -1]
+        let maxStr      = ""
+        let matchPhrase = []
+        let matchDict   = {}
 
         let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
         "let l:path = '/Users/cat/myfile/github/vim/try.txt'
-        let keylist = readfile(l:path)
+        "let l:path = '/Users/cat/try/file1.txt'
+        let phraseList = readfile(l:path)
         while index >= 0 
+            " *v_literal* *v_string*
+            " ------------------------------------------------
+            " non-literal => literal string
+            " string("\math") => "math"
+            " string("\\math") => "\math"
+            " ------------------------------------------------
             let str = list[index]
+            "let str1 = substitute(tmp_str, '\\s+' , '', "")
+            "let str = substitute(str1, '\' , '\\\\', "")
+            "2sleep
             let long = 0
             if substr == ""
+                "let substr = string(str) 
                 let substr = str 
             else
-                let substr = str .  '\s\+' . substr 
+                "let substr = string(str) .  '\s\+' . substr 
+                let substr = str .  ' ' . substr 
             endif
             
-            for phrase in keylist 
+            for phrase in phraseList 
             "  *v_matchstrpos*
             ":echo matchstrpos("testing", "ing")    => ["ing", 4, 7]
             ":echo matchstrpos('test$ing', '$ing')  => ['$ing', 4, 7]
@@ -546,20 +635,29 @@ function! LongestMatch()
             ":echo matchstrpos('testing$', 'ing$')  => ['', 4, 7]
             ":echo matchstrpos('testing$', 'ing\$') => ['ing$', 4, 7]
 
-                let tmpList = matchstrpos(phrase, substr)
-                if tmpList[1] != -1
-                    let keyDist = tmpList[2] - tmpList[1]
+                let currTmpList = matchstrpos(phrase, escape(substr, '\'))
+                if currTmpList[1] != -1
+                    let keyDist = currTmpList[2] - currTmpList[1]
+                    "let keyDist = currTmpList[2]
+
                     if keyDist > (maxDist[2] - maxDist[1])
-                        " -------------------------------------------------------------------------------- 
-                        " match the longest phrase
-                        " let matchPhrase = []
-                        " -------------------------------------------------------------------------------- 
-                        " set to match all phrase currently
+                        if has_key(matchDict, keyDist)
+                           call add(matchDict[keyDist], phrase)
+                        else
+                           let matchDict[keyDist] = [phrase] 
+                        endif
+
                         call add(matchPhrase, phrase)
-                        let maxDist = tmpList 
+                        let maxDist = currTmpList 
                     elseif keyDist == (maxDist[2] - maxDist[1])
+                        if has_key(matchDict, keyDist)
+                           call add(matchDict[keyDist], phrase)
+                        else
+                           let matchDict[keyDist] = [phrase] 
+                        endif
+
                         call add(matchPhrase, phrase)
-                        let maxDist = tmpList 
+                        let maxDist = currTmpList 
                     endif
                 endif
             endfor
@@ -568,12 +666,37 @@ function! LongestMatch()
 
         let biglist = [] 
         if len(maxDist) > 0
-            let biglist = matchstrpos(line, maxDist[0])
+            let biglist = matchstrpos(line, escape(maxDist[0], '\'))
         endif
 
-        call add(biglist, matchPhrase)
+        " add item to a list in increasing length order 
+        let sortList = []
+        "for key in sort(keys(matchDict))
+        for key in sort(keys(matchDict)) 
+            for item in matchDict[key] 
+                call add(sortList, item)
+            endfor
+        endfor
+
+        call add(biglist, sortList)
+        call add(biglist, matchDict)
         return biglist 
 endfunc
+
+fun! TryFun()
+    let dict = {'3':'c', '1':'b', '0':'a', '4':'e'}    
+    "for item in sort(keys(dict))
+    for k in keys(dict)
+        echo 'k=' . k . ' item=' . dict[k]
+    endfor
+endfun
+
+fun! TryFun1()
+        let l:path = '/Users/cat/try/file1.txt'
+        for line in readfile(l:path)
+            echo substitute(line, '\' , '\\\\', "")
+        endfor
+endfun
 
 "---------------------------------------------------------------------
 
@@ -1105,8 +1228,8 @@ map <leader>s :nohlsearch <CR>
 "imap <Esc> ww :w! <CR>
 "map  ww :w! <CR>
 " ref: http://vim.wikia.com/wiki/Map_Ctrl-S_to_save_current_or_new_files
-:noremap  <F1> :w!<CR>
-:inoremap <F1> <ESC>:w!<CR>
+":noremap  <F1> :w!<CR>
+":inoremap <F1> <ESC>:w!<CR>
 "------------------------------------------------------------------
 " vimrc file
 "------------------------------------------------------------------
@@ -1459,14 +1582,18 @@ endfunction
 " Check whether placeholder is enable or not
 fun! CheckToggleBracketGroup()
 if(empty(maparg('(', 'i')))
-    return "-"
+    return "F6-{}"
 else
-    return "{}"
+    return "F6<c-j>{}"
 endif 
 endfun
 
 augroup Latex
 au!
+
+fun! ShowKey()
+    return "F7-cb"
+endfun
 
 
 " Call Chrome from command line with url
@@ -1533,7 +1660,7 @@ autocmd BufEnter *.tex,*.html vmap  x$ :s/\%V\$\%V//g <CR>
 autocmd BufEnter *.tex,*.html vmap  [[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
 
 " add two stars
-vmap  0* :s/\%V\S.*\S\%>v/\*\0\*/ <CR>
+vmap  ** :s/\%V\S.*\S\%>v/\*\0\*/ <CR>
 
 " -------------------------------------------------------------------------------- 
 " *highlight_column*
@@ -1569,8 +1696,9 @@ autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
 " -------------------------------------------------------------------------------- 
 " remove \[ \] from selected code
 " -------------------------------------------------------------------------------- 
-"autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[\%V// <CR>
-autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\[\%V// <bar> :s/\%V\\\]\%V// <CR>
+" gx http://stackoverflow.com/questions/40702100/remove-and-in-latex-file-with-vim-vmapping/40702937#40702937
+autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[//g <CR>
+"autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\[\%V// <bar> :s/\%V\\\]\%V// <CR>
 autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
 
@@ -1686,6 +1814,10 @@ au!
 " vimrc
 autocmd BufEnter *.vimrc vmap xx   :s/\%V\_^\%V/"/g <CR>
 autocmd BufEnter *.vimrc vmap xu   :s/\%V\_^\s*\zs"\%V//g <CR>
+
+" *.sh
+autocmd BufEnter *.sh vmap xx   :s/\%V\_^\%V/#/g <CR>
+autocmd BufEnter *.sh vmap xu   :s/\%V\_^\s*\zs#\%V//g <CR>
 
 " objectivec
 autocmd BufEnter *.m,*.h,*.java,*.cpp,*.c vmap  xx  :s/\%V\_^\%V/\/\//g <CR>
