@@ -1,8 +1,10 @@
-Yuhui Wang <y4wang@hotmail.com>
 while(r != null){ }
+ware Engineer
 voicemail
 try{ } catch(IOException e){  e.printStackTrack(); }
 thousand - a hundreds of, a thousands of, a number of 
+this is this is foreign key
+this is foreign key
 technology
 technologies
 technically - Technically speaking, I awoke at normal time of 6:50am
@@ -12,9 +14,10 @@ technic
 techie
 synchronization
 surprisedly
+such as
 succinctness
-succinct
 succinctly
+succinct
 successor
 successfully
 successful
@@ -22,6 +25,8 @@ success
 succeed 
 succcintly
 stylesheet
+some hard problems
+some difficult problems
 single LinkedList
 serialize
 serialization
@@ -37,15 +42,20 @@ restrict - put a limit on, keep it under control
 regular expression
 regex example
 recruiter
+recognize
+recognizable
 quickSort algorithm 
 quick sort is O(nlog n)
 quick sort algorithm 
 quick sort
+quantum technology
+quantum satellite
+quantum key distribution
 public void get(){}
-public static void get(){}
 public void get()
 public static void test1()
 public static void print(Node r){ }
+public static void get(){}
 programming language
 predecessor
 precede - come before the order or position
@@ -64,6 +74,7 @@ instantiate
 initialized
 initialize
 initialization
+industry-leading
 indices
 indexible
 indexes
@@ -77,13 +88,9 @@ however - The sport event, however, continued despite the weather. [no a compoun
 however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
 function name
 foreign key
-this is foreign key
-this is this is foreign key
 follow up
 feature
 facial recognition 
-recognize
-recognizable
 extremely
 extract - remove or take out 
 extra - added to existing or usual amount or number.
@@ -100,6 +107,8 @@ ender cursor
 dynamic programming
 double-checked locking
 double LinkedList
+does't make sense
+distribution
 deserialize
 delimiter
 deletion, lookup and insection are all O(log n) 
@@ -108,7 +117,9 @@ cursor position
 constraint satifaction problems
 constraint - limitation, restriction 
 constrain 
+communicate
 commission
+command abbreviations
 circular LinkedList
 catch(IOException io)
 catch(IOException e){  e.printStackTrack(); }
@@ -136,30 +147,43 @@ appear - he appeared out of nowhere
 \small
 \scriptsize
 \quad
+\quad
+\qquad
 \normalsize
 \newenvironment
+\mathit{}
 \mathbf{}
 \mathbb{}
 \mathbf{A}
-\mathit{}
-$\mathcal{O}(\log{}n)$
-$\mathcal{O}(n\log{}n)$
-$\mathcal{O}(n^2)$
-$\mathcal{O}(2^n)$
-$\mathcal{O}(\log{}n)$
-$\mathcal{O}(n)$
-$\mathcal{O}(n\log{}n)$
-$\mathcal{O}(n^2)$
-$\mathcal{O}(2^n)$
-\quad
-\qquad
+\mathbb{C}
+\mathbb{Q}
+\mathbb{N}
+\mathbb{R}
+\mathbf{A} 
+\mathbf{A^{\ast}} 
+$\mathbf{A}$ 
+\mathbf{B} 
+\mathbf{B^{\ast}} 
+$\mathbf{B}$
+\mathbf{C}
+\mathbf{C^{\ast}}
+$\mathbf{C}$
+\mathbf{Q}
+$\mathbf{Q}$
+\mathbf{P}
+\mathbf{P^{\ast}}
+$\mathbf{P}$
+\mathbf{I}
+$\mathbf{I}$
 \large
 \huge
 \footnotesize
 \Large
 \Huge
+Yuhui Wang <y4wang@hotmail.com>
 You can not
 Would you like to
+Would you give me an update on xxx
 University of Waterloo
 University
 Topology
@@ -170,6 +194,7 @@ Technically
 Stack<String> stack = new Stack<>();
 Stack<Node> stack = new Stack<>();
 Stack<Integer> stack = new Stack<>();
+Software Engineer
 Singleton
 Serialize
 Serialization
@@ -183,6 +208,7 @@ Queue<Node> queue = new LinkedList<>();
 Queue<Integer> queue = new LinkedList<>();
 Phone: 408-844-4280
 On the other hands - Living in code climate is difficult for some people; on the other hand, there are many fun winter activities such as sleding, that you can can't do in warm climate.
+NP-complete problems
 Microsoft
 Michelle
 Michael
@@ -208,12 +234,15 @@ Javascript
 It seems to me that he is smart kid
 It appears he is is smart kid.
 In other words - In other words, grammar is useful skill[conjunctive adverb]
+I'm open to new opportunities.
 Homomorphism
 Homomorphic
 Homeomorphism
 Homeomorphic
 Haskell
 HashMap<>();
+Engineers
+Engineer
 Dynamic Programming
 Could you give me an update on the interview.
 Could you give me an update on the
@@ -227,40 +256,31 @@ Binary Search Tree[BST]
 Binary Search Tree
 Auxiliaries
 ArrayList<String> list = new ArrayList<String>();
-ArrayList<Integer> list = new ArrayList<Integer>();
-ArrayList<Node> list = new ArrayList<Node>();
 ArrayList<String> list = new ArrayList<>();
-ArrayList<Integer> list = new ArrayList<>();
+ArrayList<String> list
+ArrayList<String> list
+ArrayList<Node> list = new ArrayList<Node>();
 ArrayList<Node> list = new ArrayList<>();
-ArrayList<String> list
-ArrayList<Integer> list
 ArrayList<Node> list
-ArrayList<String> list
-ArrayList<Integer> list
 ArrayList<Node> list
+ArrayList<Integer> list = new ArrayList<Integer>();
+ArrayList<Integer> list = new ArrayList<>();
+ArrayList<Integer> list
+ArrayList<Integer> list
 Aron.printList(list);
 $\mathcal{O}(n^2)$
+$\mathcal{O}(n^2)$
+$\mathcal{O}(n^2)$
+$\mathcal{O}(n\log{}n)$
+$\mathcal{O}(n\log{}n)$
 $\mathcal{O}(n\log{}n)$
 $\mathcal{O}(n)$
+$\mathcal{O}(n)$
 $\mathcal{O}(\log{}n)$
+$\mathcal{O}(\log{}n)$
+$\mathcal{O}(\log{}n)$
+$\mathcal{O}(2^n)$
+$\mathcal{O}(2^n)$
 $\mathcal{O}(2^n)$
 $\color{red}{delete()}$
 
-industry-leading
-command abbreviations
-does't make sense
-quantum key distribution
-distribution
-quantum satellite
-quantum technology
-such as
-NP-complete problems
-some hard problems
-some difficult problems
-communicate
-Engineer
-Engineers
-ware Engineer
-Software Engineer
-I'm open to new opportunities.
-Would you give me an update on xxx
