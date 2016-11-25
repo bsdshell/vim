@@ -28,6 +28,8 @@ set undoreload=10000        " number of lines to save for undo
 let s:word_code = '<,k>|code'
 let g:watchTimer = -1 
 let g:currStopWatch = "" 
+let g:compileJavaMaven = "java"
+let g:initPath= getcwd() 
 
 let mapleader=","
 
@@ -45,7 +47,9 @@ set statusline+=\ %{CheckToggleBracketGroup()}
 set statusline+=\ %{ShowKey()}
 set statusline+=%1*\ \[%{CheckWordPhrase()}]
 set statusline+=%2*\ \[%{CheckIgnoreCase()}]
-set statusline+=%3*\ \%{GetCurrStop()}
+set statusline+=%3*\ \%{Status_StopWatch()}
+set statusline+=%4*\ \[%{Status_JavaMaven()}]
+set statusline+=%5*\ \[%{Status_ShowInitPath()}]
 set hls
 set autoindent
 set smartindent
@@ -129,6 +133,7 @@ autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/*
 autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/java/*
 autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/JavaLib/*
 autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/Jsource/*
+autocmd BufRead *.java :call ReadPomXML()
 
 " -------------------------------------------------------------------------------- 
 " excluding filetype, excluding file type [h \@<!]
@@ -267,7 +272,7 @@ function! MyTry()
 endfunc
 
 
-function! GetCurrStop()
+function! Status_StopWatch()
     return g:currStopWatch
 endfunc
 function! TTime(numMin)
@@ -1801,7 +1806,11 @@ autocmd BufEnter *.tex  map  <leader><F9> :w! <bar> :!pdflatex %:p <CR>:!open %:
 "autocmd BufEnter *.tex  map  <F9> :w! <bar> :!latexmk -pdf -synctex=1 -file-line-error %:p <CR> :!asy %:p:r-*.asy <CR> :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf <CR>
 "autocmd BufEnter *.tex  map  <F9> :w! <bar> :!latexmk -pdf -file-line-error %:p <CR> :!asy %:p:r-*.asy <CR> :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf <CR>
 "autocmd BufEnter *.tex  map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open -g %:p:r.pdf <CR> :wincmd p <CR> 
-autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
+
+"autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
+autocmd BufEnter *.java map  <F9> :w! <bar>  :call CompileJava()  <CR>
+autocmd BufEnter *.java map  <Leader>m  :call ChangeJavaMaven()<CR>
+
 autocmd BufEnter *.java map  <Leader><F9> :R /Users/cat/myfile/script/jav.sh % <CR>
 autocmd BufEnter *.hs   map  <F9> :w! <bar> :!runhaskell % <CR>
 
@@ -2313,17 +2322,40 @@ endfunc
 command! -nargs=1 Bs :call BufSel("<args>")
 "-----------------------------------------------------------------
 
-
 "-----------------------------------------------------------------
-" Fix the missing -cp option in java
-" Assume java file is in current buffer
+func! Status_ShowInitPath()
+    return g:initPath
+endfunc
+func! ReadPomXML()
+    let l:currPath = "./pom.xml"
+    if !empty(glob(l:currPath))
+        let g:initPath = getcwd() 
+        let g:compileJavaMaven="maven"
+"        for line in readfile(l:currPath)
+"            if match(line, "<groupId>") != -1	
+"                echo substitute(line, "<groupId>\\|</groupId>", '', "g")
+"            endif
+"        endfor
+    endif
+endfunc
+
+func! ChangeJavaMaven()
+    if g:compileJavaMaven == "java"
+        let g:compileJavaMaven = "maven"
+    elseif g:compileJavaMaven == "maven"
+        let g:compileJavaMaven = "java"
+    endif
+endfunc
+func! Status_JavaMaven()
+    return '<,m>' . g:compileJavaMaven
+endfun
 func! CompileJava()
-    let path = expand("%")
-    exec ":!javac " . path
-    let jclassName = expand("%:p:t:r")
-    let cwd = getcwd()
-    let full = ":!java -cp " . cwd . ":. " . jclassName
-    exec  full
+    if g:compileJavaMaven == "java"
+        :!/Users/cat/myfile/script/jav.sh %
+    elseif g:compileJavaMaven == "maven"
+        exec 'cd ' . g:initPath
+        :!java -cp target/*.jar MyApp.App
+    endif
 endfunc
 "-----------------------------------------------------------------
 func! CompileHaskell()
