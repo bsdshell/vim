@@ -151,6 +151,7 @@ appear - he appeared out of nowhere
 \qquad
 \normalsize
 \newenvironment
+
 \mathit{}
 \mathbf{}
 \mathbb{}
@@ -175,6 +176,15 @@ $\mathbf{Q}$
 $\mathbf{P}$
 \mathbf{I}
 $\mathbf{I}$
+$\color{red}{\textbf{abc}$
+$\color{blue}{\textbf{abc}$
+$\color{yellow}{\textbf{abc}$
+
+\color{red}{}
+\color{blue}{}
+\color{yellow}{}
+
+
 \large
 \huge
 \footnotesize

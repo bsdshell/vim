@@ -1262,7 +1262,6 @@ cabbr Tb :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/bas
 cabbr Ta call TagsSymlink() <CR>
 cabbr Info :tabnew ~/.viminfo
 cabbr Ela :tabnew /Library/WebServer/Documents/zsurface/html/indexLatexMatrix.html
-cabbr PP :tabnew /Library/WebServer/Documents/zsurface/html/indexLatexMatrix.html
 
 " -------------------------------------------------------------------------------- 
 " gf http://stackoverflow.com/questions/35041731/select-inside-dollar-signs-in-vim-with-vim-latex-plugin
@@ -1611,10 +1610,10 @@ autocmd BufEnter *.tex cabbr ln :tabe /Users/cat/myfile/github/math/latexnote.te
 autocmd BufEnter *.tex map   <buffer> <leader>, :.,$s/\S.*\S/\0\ \\\\/gc <bar> :nohlsearch <CR>
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> nl \newline <CR>
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bc \mathbb{C}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bq \mathbb{Q}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bn \mathbb{N}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> br \mathbb{R}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bc \mathbb{C}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bq \mathbb{Q}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bn \mathbb{N}
+autocmd BufEnter *.tex,*.html iabbr <buffer> br \mathbb{R}
 autocmd BufEnter *.tex,*.html iabbr <buffer> gro   $(\mathbb{N}, +)$
 autocmd BufEnter *.tex,*.html iabbr <buffer> grtau $\Huge \color{red}\tau$
 autocmd BufEnter *.tex,*.html iabbr <buffer> lmapq $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
@@ -1626,22 +1625,22 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> deta \det (\mathbf{A})
 autocmd BufEnter *.tex,*.html iabbr <buffer> detb \det (\mathbf{B})
 autocmd BufEnter *.tex,*.html iabbr <buffer> detc \det (\mathbf{C}) 
 autocmd BufEnter *.tex,*.html iabbr <buffer> ast  ^{\ast} 
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfa  \mathbf{A} 
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfai \mathbf{A^{\ast}} 
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfaa $\mathbf{A}$ 
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfb  \mathbf{B} 
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfbi \mathbf{B^{\ast}} 
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfbb $\mathbf{B}$
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfc  \mathbf{C}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfci \mathbf{C^{\ast}}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfcc $\mathbf{C}$
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfq  \mathbf{Q}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfqq $\mathbf{Q}$
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfp  \mathbf{P}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfpi \mathbf{P^{\ast}}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfpp $\mathbf{P}$
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfi  \mathbf{I}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> bfii $\mathbf{I}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfa  \mathbf{A} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfai \mathbf{A^{\ast}} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfaa $\mathbf{A}$ 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfb  \mathbf{B} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfbi \mathbf{B^{\ast}} 
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfbb $\mathbf{B}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfc  \mathbf{C}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfci \mathbf{C^{\ast}}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfcc $\mathbf{C}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfq  \mathbf{Q}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfqq $\mathbf{Q}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfp  \mathbf{P}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfpi \mathbf{P^{\ast}}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfpp $\mathbf{P}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfi  \mathbf{I}
+autocmd BufEnter *.tex,*.html iabbr <buffer> bfii $\mathbf{I}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> 2[ \[ \]
 autocmd BufEnter *.tex,*.html iabbr <buffer> dd $ $
 autocmd BufEnter *.tex,*.html iabbr <buffer> noi \setlength\parindent{0pt}
@@ -1651,8 +1650,9 @@ autocmd BufEnter *.tex,*.html vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V\S.*\S\%V/\\textbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
-"autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
-autocmd BufEnter *.tex,*.html vmap  <Leader>$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
+autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
+
+"autocmd BufEnter *.tex,*.html vmap  $$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  x$ :s/\%V\$\%V//g <CR>
 "autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
 autocmd BufEnter *.tex,*.html vmap  [[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
@@ -1676,8 +1676,7 @@ autocmd BufEnter *.vimrc,*.rc vmap  0[ :s/\%V\S.*\S\%>v/echo '[ ' . \0 . ']'/gc 
 "autocmd BufEnter *.tex,*.html cabbr <buffer> 0$ :s/\k*\%#\k*/$\0$/ <bar> :nohlsearch <CR>
 
 " exec to normal mode :exec "normal! 3k"
-"  \mathbb{A} => $\mathbb{A}$  in cab, replaced with 0$ in vmap
-"autocmd BufEnter *.tex,*.html cabbr <buffer> 00$ :.s/\(^\s*\)\(\S.*\S\)/\1$\2\$/ <bar> :nohlsearch <bar> :exec "normal! 1k0" <CR>
+autocmd BufEnter *.tex,*.html cabbr <buffer> 00$ :.s/\(^\s*\)\(\S.*\S\)/\1$\2\$/ <bar> :nohlsearch <bar> :exec "normal! 1k0" <CR>
 autocmd BufEnter *.tex,*.html iabbr <buffer> fra  \frac{}{}<ESC>F{
 autocmd BufEnter *.tex,*.html cabbr <buffer> 0( :s/\\\S\+/(\0)/gc <bar> :nohlsearch <CR>
 
@@ -1696,7 +1695,7 @@ autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
 " remove \[ \] from selected code
 " -------------------------------------------------------------------------------- 
 " gx http://stackoverflow.com/questions/40702100/remove-and-in-latex-file-with-vim-vmapping/40702937#40702937
-autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[//g <CR>
+autocmd BufEnter *.tex,*.html vnoremap <buffer> x[ :s/\%V\\\]\\|\\\[//g <CR>
 "autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\[\%V// <bar> :s/\%V\\\]\%V// <CR>
 autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
@@ -1712,19 +1711,26 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> lr{ \left{ \right}
 autocmd BufEnter *.tex,*.html iabbr <buffer> lr< \left< \right>
 autocmd BufEnter *.tex,*.html iabbr <buffer> inn \left< \vec{u} \,, \vec{v} \right>
 autocmd BufEnter *.tex,*.html iabbr <buffer> sq  \sqrt{a + b}
+
 autocmd BufEnter *.tex,*.html iabbr <buffer> ctc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> qtc $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> por $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
+
 autocmd BufEnter *.tex,*.html iabbr <buffer> gro $(\mathbb{N}, +)$
+
+
 "------------------------------------------------------------------
 "latex end
 "------------------------------------------------------------------
+
 
 " searchkey
 iabbr skk // searchkey:
 
 "map <leader>,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
+
 autocmd BufEnter *.html map   <buffer> <leader>, :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
+
 autocmd BufEnter *.html vmap  <buffer> span :s/\%V.*\%V/<span class="wbold">\0<\/span>/ <CR>
 autocmd BufEnter *.html vmap  <buffer> bo :s/\%V.*\%V/<span class="bo">\0<\/span>/ <CR>
 autocmd BufEnter *.html vmap  <buffer> cmd  :s/\%V.*\%V/<span class="cmd">\0<\/span>/ <CR>
