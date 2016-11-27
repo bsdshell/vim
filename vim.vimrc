@@ -22,7 +22,7 @@ set cursorline
 "=====================================================================
 set undofile                " Save undo's after file closes
 set undodir=$HOME/.vim/undo " where to save undo histories
-set undolevels=1000         " How many undos
+set undolevels=100         " How many undos
 set undoreload=10000        " number of lines to save for undo
 "---------------------------------------------------------------------
 let s:word_code = '<,k>|code'
@@ -69,7 +69,48 @@ set path+=**
 set wildmenu
 set tags+=/Users/cat/.vim/tags/java.tags
 
+"-------------------------------------------------------------------------------- 
+" encrypt and decrypt gpg file
+" 1. noswap file, 
+" 2. nothing is written to ~/.viminfo while editing an encrypted file
+"-------------------------------------------------------------------------------- 
+" gf http://blog.endpoint.com/2012/05/vim-working-with-encryption.html
+" It is not working for me
+"augroup encrypted
+"  au!
+"  " First make sure nothing is written to ~/.viminfo while editing
+"  " an encrypted file.
+"  autocmd BufReadPre,FileReadPre *.gpg set viminfo=
+"  " We don't want a swap file, as it writes unencrypted data to disk
+"  autocmd BufReadPre,FileReadPre *.gpg set noswapfile
+" 
+"  " Switch to binary mode to read the encrypted file
+"  autocmd BufReadPre,FileReadPre *.gpg set bin
+"  autocmd BufReadPre,FileReadPre *.gpg let ch_save = &ch|set ch=2
+"  " (If you use tcsh, you may need to alter this line.)
+"  autocmd BufReadPost,FileReadPost *.gpg '[,']!gpg --decrypt 2> /dev/null
+" 
+"  " Switch to normal mode for editing
+"  autocmd BufReadPost,FileReadPost *.gpg set nobin
+"  autocmd BufReadPost,FileReadPost *.gpg let &ch = ch_save|unlet ch_save
+"  autocmd BufReadPost,FileReadPost *.gpg execute ":doautocmd BufReadPost " . expand("%:r")
+" 
+"  " Convert all text to encrypted text before writing
+"  " (If you use tcsh, you may need to alter this line.)
+"  autocmd BufWritePre,FileWritePre *.gpg '[,']!gpg --default-recipient-self -ae 2>/dev/null
+"  " Undo the encryption so we are back in the normal text, directly
+"  " after the file has been written.
+"  autocmd BufWritePost,FileWritePost *.gpg u
+"augroup END
+"-------------------------------------------------------------------------------- 
 
+" remove all backupfile, swapfile, viminfo and undo
+autocmd BufReadPre,FileReadPre *.pass set viminfo=
+autocmd BufReadPre,FileReadPre *.pass set noswapfile
+autocmd BufReadPre,FileReadPre *.pass set nobackup 
+autocmd BufReadPre,FileReadPre *.pass set nowritebackup 
+autocmd BufReadPre,FileReadPre *.pass set undolevels=-1
+autocmd VimLeavePre *.pass :!rm password.pass 
 
 "-------------------------------------------------------------------------------- 
 " Use Vim 8 timer to save file every 2 seconds
@@ -1651,7 +1692,6 @@ autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V\S.*\S\%V/\\textbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
-
 "autocmd BufEnter *.tex,*.html vmap  $$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  x$ :s/\%V\$\%V//g <CR>
 "autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
@@ -1695,7 +1735,7 @@ autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
 " remove \[ \] from selected code
 " -------------------------------------------------------------------------------- 
 " gx http://stackoverflow.com/questions/40702100/remove-and-in-latex-file-with-vim-vmapping/40702937#40702937
-autocmd BufEnter *.tex,*.html vnoremap <buffer> x[ :s/\%V\\\]\\|\\\[//g <CR>
+autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[//g <CR>
 "autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\[\%V// <bar> :s/\%V\\\]\%V// <CR>
 autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
