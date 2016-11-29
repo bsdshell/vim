@@ -1691,11 +1691,13 @@ autocmd BufEnter *.tex,*.html vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V\S.*\S\%V/\\textbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
-autocmd BufEnter *.tex,*.html vmap  0$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
+"autocmd BufEnter *.tex,*.html vmap  0d :s/\%V\S.*\S\%>v/$\0$/ <CR>
+autocmd BufEnter *.tex,*.html vmap  0d :s/\%V\S.*\S\%V./$\0$/ <CR>
 "autocmd BufEnter *.tex,*.html vmap  $$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  x$ :s/\%V\$\%V//g <CR>
 "autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
 autocmd BufEnter *.tex,*.html vmap  [[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
+autocmd BufEnter *.tex,*.html vmap  {{ :s/\%V\S.*\S\%V/{\0}/ <CR>
 
 " add two stars
 vmap  ** :s/\%V\S.*\S\%>v/\*\0\*/ <CR>
