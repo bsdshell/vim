@@ -1,4 +1,39 @@
+Numeric - numeric and alphabetic, numeric keypad - in Computer
+Numerical - numerical value, numerical expression in Mathematic - Alphabetical [alphabetical order ]
+in splite of - He drove to work in spite of the blizzard.
+although - in splite of the fact that - although the sun is shinning it wasn't that warm. 
+although - however, but - he says he has the team jersey, although I have never seen him wear it.
+interested - are you interested in the job.
+interesting - it will be very interesting to see what they can come up with.
+splite - [spait, noun, verb] a desire to hurt, annoy, or offend someone: he would think I was saying it out of spite.
+dedicated
+unpredictable
+predictable
+predict - estimate - guess - evaluate 
+permanent
+permanently
+temporize
+temporise
+temporary
+temporariness
+temporization
+temporizer
+temporaries
+temporarily
+Synonym - a word or phrase that means exactly or nearly the same as another word or phrase in the same language, for example shut is a synonym of close.
+synonym
+Antonym - a word opposite in meaning to another 
+synonym
+Thesaurus - a similar meaning word.
+thesaurus 
 Thank you for contacting me.
+Bellevue
+Stephanie
+instead
+ridiculous
+isomorphic 
+isomorphous
+isomorphism
 Monday
 Tuesday
 Wednesday
@@ -92,8 +127,12 @@ in despite of
 impossibility
 implements
 hundred - a hundreds of, a thousands of, a number of 
+scene - a place where an incident in real life occurs or occurred. 
+sense - be aware of: she could sense her father's anger rising.
+fuel - supply or power with fuel: the plan includes a hydroelectric plant to fuel a paper factory
 however - The sport event, however, continued despite the weather. [no a compound sentense]
 however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
+However - We will leave next year; However, peter is leaving now. 
 function name
 foreign key
 follow up
@@ -101,6 +140,9 @@ feature
 facial recognition 
 extremely
 extract - remove or take out 
+exactly
+exactable
+exactible
 extra - added to existing or usual amount or number.
 extends
 except - There is no one in the room except Michelle 
@@ -205,6 +247,9 @@ Would you give me an update on xxx
 University of Waterloo
 University
 Topology
+hirearch
+hirearchic
+hirearchy
 The worst runtime
 Technologies
 Technically speaking
@@ -241,8 +286,21 @@ Map<Integer, Integer> map,
 Map<Integer, Integer> map = new HashMap<>();
 List<String> list = new ArrayList<>();
 List<Node> list = new ArrayList<>();
+List<Integer> list = new ArrayList<Integer>();
+List<String> list = new ArrayList<String>();
+List<String> list0 = new ArrayList<>();
+List<String> list1 = new ArrayList<>();
+List<String> list2 = new ArrayList<>();
+
+List<Integer> list = new ArrayList<Integer>();
+List<Integer> list0 = new ArrayList<>();
+List<Integer> list1 = new ArrayList<>();
+List<Integer> list2 = new ArrayList<>();
+
 List<Integer> list = new ArrayList<>();
-List<Integer> list
+List<Integer> list = 
+List<String> list = 
+
 LinkedList
 Least Common Ancestor
 Johnny Sohn <bobbyboo358@gmail.com>
@@ -261,6 +319,7 @@ Haskell
 HashMap<>();
 Engineers
 Engineer
+Melbourne
 Dynamic Programming
 Could you give me an update on the interview.
 Could you give me an update on the
@@ -301,4 +360,25 @@ $\mathcal{O}(2^n)$
 $\mathcal{O}(2^n)$
 $\mathcal{O}(2^n)$
 $\color{red}{delete()}$
+
+Interpreted 
+literally 
+In other words - In other words, you can't match the guy 
+In Regex, match eigher the end of string or specific string
+in the middle of string or at the end of string
+at the end of string
+Note that when you use bracket expression, every character within it (with some exceptions) is going to be interpreted literally  
+In other words, 'a' matches 'A'
+Return a index within the string of first(last) occurrence of the specific string
+Regex search left and right, and once the character has been used, it can not be reused.
+How to check if a string contains a substring(ignoring case)
+Read the contents of a file and place them into a list of string
+Read a file into a list of string
+How to read a text file into an ArrayList
+How to read a text file into a list of string
+How to read a text file into an ArrayList of string
+Read file into ArrayList
+Read file into list of string
+Read a file line by line into ArrayList
+How to read a file and store into an ArrayList
 

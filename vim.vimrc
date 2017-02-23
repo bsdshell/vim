@@ -68,6 +68,9 @@ set omnifunc=csscomplete#CompleteCSS
 set path+=**
 set wildmenu
 set tags+=/Users/cat/.vim/tags/java.tags
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+
+
 
 "-------------------------------------------------------------------------------- 
 " encrypt and decrypt gpg file
@@ -110,7 +113,7 @@ autocmd BufReadPre,FileReadPre *.pass set noswapfile
 autocmd BufReadPre,FileReadPre *.pass set nobackup 
 autocmd BufReadPre,FileReadPre *.pass set nowritebackup 
 autocmd BufReadPre,FileReadPre *.pass set undolevels=-1
-autocmd VimLeavePre *.pass :!rm password.pass 
+autocmd VimLeavePre *.pass :!rm password*.pass 
 
 "-------------------------------------------------------------------------------- 
 " Use Vim 8 timer to save file every 2 seconds
@@ -139,8 +142,8 @@ let g:loaded_AlignMapsPlugin = 1
 "---------------------------------------------------------------------
 " dictionary files
 set dictionary=/Users/cat/myfile/github/vim/words.txt
-" add my word
-set dictionary+=/Users/cat/myfile/github/vim/myword.utf-8.add
+
+" add my word, spell file, spell-file, spelling file, spellingfile,
 set spellfile=/Users/cat/myfile/github/vim/myword.utf-8.add
 
 " open Mac dictionary, Apple dictionary 
@@ -164,8 +167,14 @@ autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/java/*.java
 autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/JavaLib/*.java
 autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/Jsource/*
 
-" cpp file, c++ file
-autocmd BufRead *.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
+" cpp file, c/c++ file
+autocmd BufRead *.c,*.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
+
+autocmd BufRead *.c,*.cpp,*.h set complete+=k/Users/cat/myfile/github/opengl/*
+autocmd BufRead *.c,*.cpp,*.h set complete+=k/Users/cat/myfile/github/cpp/MyLib/* 
+
+" opengl header
+autocmd BufRead *.c,*.cpp,*.h set complete+=k/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers
 
 " haskell file
 autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/*
@@ -1274,6 +1283,7 @@ map <leader>s :nohlsearch <CR>
 " copy current lines to clipboard
 " Note: DON NOT put <CR> at the end of line, otherwise cursor will goto next line
 "------------------------------------------------------------------
+cabbr big :tabe  /Users/cat/myfile/github/java/big.java<CR>
 cabbr kk .g/\S*\%#\S*/y <bar> let @*=@" 
 cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc 
 cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
@@ -1282,6 +1292,7 @@ cabbr ep :tabnew /etc/profile
 cabbr mk :mksession! $sess                                  " save vim session
 cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt " quick node
 cabbr mm :marks
+cabbr mylib :tabe /Users/cat/myfile/github/cpp/MyLib
 
 cabbr Wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito 
@@ -1368,15 +1379,23 @@ endfunc
 noremap  <leader>k :call ToggleCompletefunc()<CR>
 inoremap <leader>k <C-R>=ToggleCompletefunc()<CR>
 
+" enable spell check, spelling check, enhance spelling check, spell check
+noremap <leader>s :setlocal spell<CR>
+
 
 noremap  <leader>i :call ToggleIgnoreCase()<CR>
 inoremap <leader>i <C-R>=ToggleIgnoreCase()<CR>
 "map <leader>n  :b #<CR>
     
 
-" not a good idea to save file with timer. use CursorHoldI instread
+" not a good idea to save file with timer. use CursorHoldI instead
+" Tt start the timer, enable timer, start timer
+" Ts stop the timer, disable timer, stop timer 
 cabbr Tt :call StartTimer() <CR>
 cabbr Ts :call timer_stop(gtimer) <CR>
+
+" maximum window, reset window
+cabbr Ma :call MaximizeToggle() <CR>
 
 " command line mode
 "-----------------------------------------------------------------
@@ -1683,7 +1702,6 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> bfpp $\mathbf{P}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> bfi  \mathbf{I}
 autocmd BufEnter *.tex,*.html iabbr <buffer> bfii $\mathbf{I}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> 2[ \[ \]
-autocmd BufEnter *.tex,*.html iabbr <buffer> dd $ $
 autocmd BufEnter *.tex,*.html iabbr <buffer> noi \setlength\parindent{0pt}
 
 " visual mode substitute or select mode, selection mode, highlight
@@ -1691,13 +1709,12 @@ autocmd BufEnter *.tex,*.html vmap  mbf  :s/\%V.*\%V/\\mathbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  mbf$ :s/\%V.*\%V/$\\mathbf{\0}$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf  :s/\%V\S.*\S\%V/\\textbf{\0}/ <CR>
 autocmd BufEnter *.tex,*.html vmap  tbf$ :s/\%V.*\%V/$\\textbf{\0}$/ <CR>
-"autocmd BufEnter *.tex,*.html vmap  0d :s/\%V\S.*\S\%>v/$\0$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  0d :s/\%V\S.*\S\%V./$\0$/ <CR>
-"autocmd BufEnter *.tex,*.html vmap  $$ :s/\%V\S.*\S\%>v/$\0$/ <CR>
 autocmd BufEnter *.tex,*.html vmap  x$ :s/\%V\$\%V//g <CR>
-"autocmd BufEnter *.tex,*.html vmap  0[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
 autocmd BufEnter *.tex,*.html vmap  [[ :s/\%V\S.*\S\%>v/\\[ \0 \\]/ <CR>
 autocmd BufEnter *.tex,*.html vmap  {{ :s/\%V\S.*\S\%V/{\0}/ <CR>
+autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[//g <CR>
+autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
 " add two stars
 vmap  ** :s/\%V\S.*\S\%>v/\*\0\*/ <CR>
@@ -1737,26 +1754,23 @@ autocmd BufEnter *.tex,*.html vmap  1[ :s/\%V\_.*\%V/\\[ \0 \\]/gc <CR>
 " remove \[ \] from selected code
 " -------------------------------------------------------------------------------- 
 " gx http://stackoverflow.com/questions/40702100/remove-and-in-latex-file-with-vim-vmapping/40702937#40702937
-autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\]\\|\\\[//g <CR>
-"autocmd BufEnter *.tex,*.html vmap  x[ :s/\%V\\\[\%V// <bar> :s/\%V\\\]\%V// <CR>
-autocmd BufEnter *.tex,*.html vmap  0b :s/\%V.*\%V/\\mbox{\0}/ <CR>
 
 
-" summary notation
-autocmd BufEnter *.tex,*.html iabbr <buffer> summ s = \sum_{k=0}^{\infty} \frac{1}{k}
-"autocmd BufEnter *.tex,*.html iabbr <buffer> tee \[ \text{} \]
-autocmd BufEnter *.tex,*.html iabbr <buffer> boo \[ \mbox{ } \]
-autocmd BufEnter *.tex,*.html iabbr <buffer> box \mbox{ }
-autocmd BufEnter *.tex,*.html iabbr <buffer> lr( \left( \right)
-autocmd BufEnter *.tex,*.html iabbr <buffer> lr[ \left[ \right]
-autocmd BufEnter *.tex,*.html iabbr <buffer> lr{ \left{ \right}
-autocmd BufEnter *.tex,*.html iabbr <buffer> lr< \left< \right>
+" latex bracket prefix  l
+autocmd BufEnter *.tex,*.html iabbr <buffer> l( \left( \right)
+autocmd BufEnter *.tex,*.html iabbr <buffer> l[ \left[ \right]
+autocmd BufEnter *.tex,*.html iabbr <buffer> l{ \left{ \right}
+autocmd BufEnter *.tex,*.html iabbr <buffer> l< \left< \right>
+
 autocmd BufEnter *.tex,*.html iabbr <buffer> inn \left< \vec{u} \,, \vec{v} \right>
 autocmd BufEnter *.tex,*.html iabbr <buffer> sq  \sqrt{a + b}
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> ctc $\phi: \mathbb{C} \rightarrow \mathbb{C}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> qtc $\phi: \mathbb{Q} \rightarrow \mathbb{Q}$
 autocmd BufEnter *.tex,*.html iabbr <buffer> por $\phi: \polyringr{x} \rightarrow  \polyringr{x}$
+autocmd BufEnter *.tex,*.html iabbr <buffer> summ s = \sum_{k=0}^{\infty} \frac{1}{k}
+autocmd BufEnter *.tex,*.html iabbr <buffer> boo \[ \mbox{ } \]
+autocmd BufEnter *.tex,*.html iabbr <buffer> box \mbox{ }
 
 autocmd BufEnter *.tex,*.html iabbr <buffer> gro $(\mathbb{N}, +)$
 
@@ -1768,8 +1782,6 @@ autocmd BufEnter *.tex,*.html iabbr <buffer> gro $(\mathbb{N}, +)$
 
 " searchkey
 iabbr skk // searchkey:
-
-"map <leader>,  :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
 
 autocmd BufEnter *.html map   <buffer> <leader>, :.,$s/\S.*\S/\0\<br>/gc <bar> :nohlsearch <CR>
 
@@ -2634,3 +2646,4 @@ endif
 "hi Number		guifg=#e5786d gui=none
 "hi Special		guifg=#e7f6da gui=none
 " =====================================================
+
