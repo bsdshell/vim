@@ -47,9 +47,10 @@ set statusline+=\ %{CheckToggleBracketGroup()}
 set statusline+=\ %{ShowKey()}
 set statusline+=%1*\ \[%{CheckWordPhrase()}]
 set statusline+=%2*\ \[%{CheckIgnoreCase()}]
-set statusline+=%3*\ \%{Status_StopWatch()}
-set statusline+=%4*\ \[%{Status_JavaMaven()}]
-set statusline+=%5*\ \[%{Status_ShowInitPath()}]
+set statusline+=%3*\ \[%{CheckSpell()}]
+set statusline+=%4*\ \%{Status_StopWatch()}
+set statusline+=%5*\ \[%{Status_JavaMaven()}]
+set statusline+=%6*\ \[%{Status_ShowInitPath()}]
 set hls
 set autoindent
 set smartindent
@@ -355,6 +356,7 @@ endfunc
 function! CheckIgnoreCase()
         return '<,i>|' . (&ic == 1 ? 'ic' : 'noic') 
 endfunc
+
 function! ToggleIgnoreCase()
     if &ic == 1 
         set noic
@@ -362,20 +364,42 @@ function! ToggleIgnoreCase()
         :redrawstatus
     elseif &ic == 0
         set ic 
-        hi User2 ctermfg=red ctermbg=0
+        hi User2 ctermfg=red    ctermbg=0
         :redrawstatus
     endif
 endfunc
 
+
+function! CheckSpell()
+        return '<,s>|' . (&spell == 1 ? 'spell' : 'nospell') 
+endfunc
+
+function! ToggleSpell()
+    if &spell == 1 
+        setlocal nospell 
+        hi User3 ctermfg=brown ctermbg=0
+        :redrawstatus
+    elseif &spell == 0
+        setlocal spell 
+        hi User3 ctermfg=cyan    ctermbg=0
+        :redrawstatus
+    endif
+endfunc
+
+function! CopyCurrentFilePath()
+    let @a=expand("%:p")
+endfun
+
 " -------------------------------------------------------------------------------- 
 " toggle between abbreviation and phrase
+
 " -------------------------------------------------------------------------------- 
-let s:dict_key = {'word':'<,k>|word', 'code':'<,k>|code'}
+let s:dict_key = {'line':'<,k>|line', 'abbr':'<,k>|abbr'}
 "if &completefunc == 'LineCompleteFromFile'
 if &completefunc == 'LineNew'
-    let s:word_code = s:dict_key['word'] 
+    let s:word_code = s:dict_key['line'] 
 elseif &completefunc == 'CompleteAbbre'
-    let s:word_code = s:dict_key['code']
+    let s:word_code = s:dict_key['abbr']
 endif
 
 function! CheckWordPhrase()
@@ -389,12 +413,12 @@ function! ToggleCompletefunc()
     "if &completefunc == 'LineCompleteFromFile'
     if &completefunc == 'LineNew'
         set completefunc=CompleteAbbre
-        let s:word_code = s:dict_key['code'] 
+        let s:word_code = s:dict_key['abbr'] 
         hi User1 ctermfg=gray ctermbg=4
     elseif &completefunc == 'CompleteAbbre'
         "set completefunc=LineCompleteFromFile
         set completefunc=LineNew
-        let s:word_code = s:dict_key['word'] 
+        let s:word_code = s:dict_key['line'] 
         hi User1 ctermfg=red ctermbg=0
     endif
     "call setpos(".", l:pos)
@@ -1283,6 +1307,8 @@ map <leader>s :nohlsearch <CR>
 " copy current lines to clipboard
 " Note: DON NOT put <CR> at the end of line, otherwise cursor will goto next line
 "------------------------------------------------------------------
+cabbr fp :call  CopyCurrentFilePath()<CR>
+cabbr ip :call  ChangePathInit()<CR>
 cabbr big :tabe  /Users/cat/myfile/github/java/big.java<CR>
 cabbr kk .g/\S*\%#\S*/y <bar> let @*=@" 
 cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc 
@@ -1379,12 +1405,16 @@ endfunc
 noremap  <leader>k :call ToggleCompletefunc()<CR>
 inoremap <leader>k <C-R>=ToggleCompletefunc()<CR>
 
-" enable spell check, spelling check, enhance spelling check, spell check
-noremap <leader>s :setlocal spell<CR>
 
 
 noremap  <leader>i :call ToggleIgnoreCase()<CR>
 inoremap <leader>i <C-R>=ToggleIgnoreCase()<CR>
+
+" toggle spell, enable spell check, spelling check, enhance spelling check, spell check
+" noremap <leader>s :setlocal spell<CR>
+noremap  <leader>s :call ToggleSpell()<CR>
+inoremap <leader>s <C-R>=ToggleSpell()<CR>
+
 "map <leader>n  :b #<CR>
     
 
@@ -2370,6 +2400,12 @@ command! -nargs=1 Bs :call BufSel("<args>")
 "-----------------------------------------------------------------
 
 "-----------------------------------------------------------------
+
+" change to initial path
+func! ChangePathInit()
+    :exec 'cd '. fnameescape(g:initPath)
+endfunc
+
 func! Status_ShowInitPath()
     return g:initPath
 endfunc
