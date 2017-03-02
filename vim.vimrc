@@ -221,7 +221,7 @@ nnoremap <silent> <C-l> :nohlsearch<CR>
 "imap <Left><Esc> :nohlsearch <CR>
 "map <F7>         :vertical   res +5 <CR>
 "map <F8>         :vertical   res -5 <CR>
-map <F8>         :call FoldJavaMethod()<CR>
+"map <F8>         :call FoldJavaMethod()<CR>
 map <F2>         :tabp       <CR>
 map <F3>         :tabn       <CR>
 "map <F4>         :tabnew<CR> :setlocal buftype=nofile <CR>
@@ -229,6 +229,7 @@ map <F4>         :tabnew     <CR>
 map <F10>        :tabc       <CR>
 
 vnoremap <F7> "*y
+noremap  <F8>  "*p 
 
 "map <F5>         :call       MaximizeToggle() <CR>
 "map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<bar> :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 

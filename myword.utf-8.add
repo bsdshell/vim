@@ -8,11 +8,22 @@ interesting - it will be very interesting to see what they can come up with.
 In most of cases, you can use your Run/Debug configuration profiles for your plugin projects.
 To run and debug the plugin from within Intellij IDEA, you need a special configuration profile that specified the class to run, VM parameters and other options.
 In most of cases, you can use Run/Debug configuration profiles for your plugin projects.
+How to recover deleted files
+How to recober a deleted file
+The file needs to be deleted.
+The file needs to be moved to other directory
+there is no evidence the person is involving with the crime
+there is no evidence the person is involving with the crime.
+pre-tapped interview, a portion of which is released in Fox News
+grammar
+grammatically
+is the sentence grammatically correct?
 spite - [spait, noun, verb] a desire to hurt, annoy, or offend someone: he would think I was saying it out of spite.
 slice - [noun] a thin, broad piece of food, such as bread, meat or cake, cut from larger portion: four slices of bread, potato slices
 slide - [slid, past, past participle] move alone the surface while maintaining continuous contact with it.
 deputy
 disput
+predecessor
 interrupted
 interruption
 interrupt
@@ -87,6 +98,16 @@ successful
 success
 succeed 
 succcintly
+
+scene - a place where an incident in real life occurs or occurred. 
+sense - be aware of: she could sense her father's anger rising.
+scend - push 
+descend - move or fall downward : the aircraft begin to descend
+
+predecessor - descendent
+ancessor
+precede - come before the order or position
+precede
 stylesheet
 some hard problems
 some difficult problems
@@ -120,9 +141,6 @@ public static void test1()
 public static void print(Node r){ }
 public static void get(){}
 programming language
-predecessor
-precede - come before the order or position
-precede
 pending - [preposition] they were released on bail pending an appeal
 pending - [adjective] the case was still pending
 number - a hundreds of, a thousands of, a number of 
@@ -147,8 +165,6 @@ in despite of
 impossibility
 implements
 hundred - a hundreds of, a thousands of, a number of 
-scene - a place where an incident in real life occurs or occurred. 
-sense - be aware of: she could sense her father's anger rising.
 fuel - supply or power with fuel: the plan includes a hydroelectric plant to fuel a paper factory
 however - The sport event, however, continued despite the weather. [no a compound sentense]
 however - The festival is help today; however, it is canceled due to the rainy weather [compound sentense]
@@ -393,6 +409,7 @@ In other words, 'a' matches 'A'
 Return a index within the string of first(last) occurrence of the specific string
 Regex search left and right, and once the character has been used, it can not be reused.
 How to check if a string contains a substring(ignoring case)
+How to get entered value from editable Combobox in JavaFX
 Read the contents of a file and place them into a list of string
 Read a file into a list of string
 How to read a text file into an ArrayList
