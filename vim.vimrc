@@ -229,7 +229,8 @@ map <F4>         :tabnew     <CR>
 map <F10>        :tabc       <CR>
 
 vnoremap <F7> "*y
-noremap  <F8>  "*p 
+noremap  <F8> "*p 
+inoremap <F8> <Esc>"*p 
 
 "map <F5>         :call       MaximizeToggle() <CR>
 "map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<bar> :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
