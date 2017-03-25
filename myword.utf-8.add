@@ -1,5 +1,3 @@
-$\color{blue}{\textbf{abc}$
-$\color{red}{\textbf{abc}$
 $\color{red}{delete()}$
 $\color{yellow}{\textbf{abc}$
 $\mathbf{A}$ 
@@ -22,6 +20,8 @@ $\mathcal{O}(n\log{}n)$
 $\mathcal{O}(n^2)$
 $\mathcal{O}(n^2)$
 $\mathcal{O}(n^2)$
+criteria - pl
+criterion - noun
 Antonym - a word opposite in meaning to another 
 Aron.printList(list);
 ArrayList<Integer> list
@@ -41,6 +41,7 @@ Clipboard
 Bellevue
 Binary Search Tree
 Binary Search Tree[BST]
+push forward or pull back
 Binary Tree
 BufferedReader br = new BufferedReader(FileReader(file));
 BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -78,6 +79,10 @@ In Regex, match eigher the end of string or specific string
 In most of cases, you can use Run/Debug configuration profiles for your plugin projects.
 In most of cases, you can use your Run/Debug configuration profiles for your plugin projects.
 In other words - In other words, grammar is useful skill[conjunctive adverb]
+In reverse order
+gramma
+grammar 
+grammatically
 In other words - In other words, you can't match the guy 
 In other words, 'a' matches 'A'
 Interpreted 
@@ -259,6 +264,15 @@ descendant
 deserialize
 desperate
 desperately
+deprecate
+deprecated - what does the deprecated API warning mean 
+The function is deprecated
+The API is deprecated
+fill in the form
+fill the form up
+fill up the form
+fill up the gas
+fill up my tank
 distribution
 does't make sense
 make sense

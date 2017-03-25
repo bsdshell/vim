@@ -797,6 +797,7 @@ func! RunSnippet()
     " It does works like that, don't ask me why
    :call system('runhaskell -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
    :source /Users/cat/myfile/github/snippets/snippet.vimrc 
+   :source /Users/cat/myfile/private/secret.vimrc 
 endfunc
 
 func! SourceSnippet()
@@ -1325,6 +1326,11 @@ cabbr mylib :tabe /Users/cat/myfile/github/cpp/MyLib
 cabbr Wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito 
 cabbr Res :!open /Users/cat/GoogleDrive/NewResume/aronsitu00resume.pdf     
+" run CodeManager
+cabbr Cmm :! /Users/cat/myfile/github/javabin/CodeManager/run.sh 
+" copy CodeManager to /Users/cat/myfile/github/javabin/CodeManager
+cabbr Cmmc :! /Users/cat/myfile/script/CodeManager.sh
+cabbr Int :!open /Users/cat/myfile/github/text/intellij_shortcut.pdf    
 cabbr Sty :%!astyle --style=java 
 cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
 cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
