@@ -1,16 +1,13 @@
 syntax enable
-
-
 " -------------------------------------------------------------------------------- 
+" Last updated: Fri Apr 14 15:54:23 PDT 2017
 " TODO remove it 
 " Wed Nov  2 22:01:32 PDT 2016
-"hi search         ctermbg=Gray ctermfg=Brown
-"highlight Cursor  ctermfg=green guifg=green guibg=white
-"highlight iCursor ctermfg=green guifg=green guibg=white
-" set the current line Bold
 
-set cursorline
 
+"---------------------------------------------------------------------
+" The following are useful for statusline 
+"---------------------------------------------------------------------
 "hi User1          ctermbg=red ctermfg=brown   guibg=white     guifg=brown   
 "hi User2          ctermbg=LightGray ctermfg=Magenta guibg=LightGray guifg=Magenta 
 "hi User3          ctermbg=blue      ctermfg=green   guibg=blue      guifg=green   
@@ -18,7 +15,6 @@ set cursorline
 "hi User5          ctermbg=DarkGray  ctermfg=green   guibg=yellow    guifg=brown   
 "hi User6          ctermbg=gray      ctermfg=blue    guibg=gray      guifg=blue    
 "hi User7          ctermbg=white     ctermfg=red     guibg=gray      guifg=blue    
-
 "=====================================================================
 set undofile                " Save undo's after file closes
 set undodir=$HOME/.vim/undo " where to save undo histories
@@ -30,13 +26,11 @@ let g:watchTimer = -1
 let g:currStopWatch = "" 
 let g:compileJavaMaven = "java"
 let g:initPath= getcwd() 
-
 let mapleader=","
 
 " /search case insensitive, case sensitive
 set ic "set noic
-
-set shell=/Applications/fish.app/Contents/Resources/base/bin/fish
+set shell=/bin/bash
 autocmd BufEnter * silent :lcd%:p:h
 set laststatus=2
 set statusline=%F
@@ -68,7 +62,7 @@ set backspace=2
 set omnifunc=csscomplete#CompleteCSS
 set path+=**
 set wildmenu
-set tags+=/Users/cat/.vim/tags/java.tags
+set tags+=$HOME/.vim/tags/java.tags
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 
 
@@ -135,17 +129,17 @@ endfunc
 " Enable Align, [comment it out]
 " Diable Align, [remove comment]
 " The value of loaded_AlignMapsPlugin doesn't matter
-" See gf /Users/cat/.vim/plugin/AlignMapsPlugin.vim
+" See gf $HOME/.vim/plugin/AlignMapsPlugin.vim
 " See gf http://www.drchip.org/astronaut/vim/align.html
 let g:loaded_AlignMapsPlugin = 1 
 "---------------------------------------------------------------------
 
 "---------------------------------------------------------------------
 " dictionary files
-set dictionary=/Users/cat/myfile/github/vim/words.txt
+set dictionary=$HOME/myfile/github/vim/words.txt
 
 " add my word, spell file, spell-file, spelling file, spellingfile,
-set spellfile=/Users/cat/myfile/github/vim/myword.utf-8.add
+set spellfile=$HOME/myfile/github/vim/myword.utf-8.add
 
 " open Mac dictionary, Apple dictionary 
 nmap <silent> <Leader>d :!open dict://<cword><CR><CR>
@@ -160,30 +154,30 @@ autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Dev
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk/System/Library/Frameworks/Foundation.framework/Headers/*
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/*
 autocmd BufRead *.h,*.m,*.mm set complete+=k/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/*
-autocmd BufRead *.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/*
+autocmd BufRead *.h,*.m,*.mm set complete+=k$HOME/myfile/github/*
 
 " latex file
-autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/math/*.tex
-autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/java/*.java
-autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/JavaLib/*.java
-autocmd BufRead *.tex,*.html set complete+=k/Users/cat/myfile/github/Jsource/*
+autocmd BufRead *.tex,*.html set complete+=k$HOME/myfile/github/math/*.tex
+autocmd BufRead *.tex,*.html set complete+=k$HOME/myfile/github/java/*.java
+autocmd BufRead *.tex,*.html set complete+=k$HOME/myfile/github/JavaLib/*.java
+autocmd BufRead *.tex,*.html set complete+=k$HOME/myfile/github/Jsource/*
 
 " cpp file, c/c++ file
-autocmd BufRead *.c,*.cpp,*.h,*.m,*.mm set complete+=k/Users/cat/myfile/github/cpp/*
+autocmd BufRead *.c,*.cpp,*.h,*.m,*.mm set complete+=k$HOME/myfile/github/cpp/*
 
-autocmd BufRead *.c,*.cpp,*.h set complete+=k/Users/cat/myfile/github/opengl/*
-autocmd BufRead *.c,*.cpp,*.h set complete+=k/Users/cat/myfile/github/cpp/MyLib/* 
+autocmd BufRead *.c,*.cpp,*.h set complete+=k$HOME/myfile/github/opengl/*
+autocmd BufRead *.c,*.cpp,*.h set complete+=k$HOME/myfile/github/cpp/MyLib/* 
 
 " opengl header
 autocmd BufRead *.c,*.cpp,*.h set complete+=k/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers
 
 " haskell file
-autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/*
+autocmd BufRead *.hs set complete+=k$HOME/myfile/github/haskell/*
 
 " java file
-autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/java/*
-autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/JavaLib/*
-autocmd BufRead *.java set complete+=k/Users/cat/myfile/github/Jsource/*
+autocmd BufRead *.java set complete+=k$HOME/myfile/github/java/*
+autocmd BufRead *.java set complete+=k$HOME/myfile/github/JavaLib/*
+autocmd BufRead *.java set complete+=k$HOME/myfile/github/Jsource/*
 autocmd BufRead *.java :call ReadPomXML()
 
 " -------------------------------------------------------------------------------- 
@@ -210,7 +204,7 @@ if !has('gui_running')
   let g:solarized_termtrans=1
 endif
 "----------------------------------------------
-colorscheme aron 
+colorscheme default 
 "colorscheme solarized
 "colorscheme haskellcolor
 "=====================================================================
@@ -233,8 +227,8 @@ noremap  <F8> "*p
 inoremap <F8> <Esc>"*p 
 
 "map <F5>         :call       MaximizeToggle() <CR>
-"map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.vimrc<bar> :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
-map <F5>         :tabnew /Users/cat/myfile/github/snippets/snippet.m<CR> 
+"map <F5>         :tabnew /Users/longshu/myfile/github/snippets/snippet.vimrc<bar> :tabnew $HOME/myfile/github/snippets/snippet.m<CR> 
+map <F5>         :tabnew /Users/longshu/myfile/github/snippets/snippet.m<CR> 
 map <S-F10>      :call       ToggleColorScheme() <CR>
 
 inoremap <leader>j <C-R>=CompleteJava()<CR>
@@ -244,7 +238,7 @@ inoremap <F1>    <C-E><C-R>=ToggleCompletefunc()<CR><C-X><C-U>
 
 
 function! CompileCpp()
-        let l:cppLib = '/Users/cat/myfile/github/cpp/Aron.cpp'
+        let l:cppLib = '$HOME/myfile/github/cpp/Aron.cpp'
         :silent :w! 
         exec ':!g++ -o ' . fnameescape(expand("%:p:r")) . ' ' . fnameescape(expand("%:p")) . ' ' . fnameescape(l:cppLib) 
         exec ':!'. fnameescape(expand("%:p:r"))  
@@ -276,7 +270,7 @@ endfunction
 " Warning: There is some serious issue when mkview and loadview are used
 " mkview and loadview are used to store folds but there is some issue that
 " causes BufRead doesn't work properly 
-" e.g. [autocmd BufRead *.hs set complete+=k/Users/cat/myfile/github/haskell/*]
+" e.g. [autocmd BufRead *.hs set complete+=k$HOME/myfile/github/haskell/*]
 " save folding after file is closed [~/.vim/view/]  
 " au BufWinLeave .* mkview
 " au BufWinEnter .* silent loadview
@@ -431,7 +425,7 @@ endfunction
 "=====================================================================
 " Ref: http://stackoverflow.com/questions/18160053/vim-line-completion-with-external-file 
 " Try to do line completion from external file
-" 1. Read the external file=/Users/cat/myfile/github/vim/myword.utf-8.add
+" 1. Read the external file=$HOME/myfile/github/vim/myword.utf-8.add
 " 2. Grep all text from the file and insern to list
 " 3. Insert the text to quickfix with flag [j] since line completion only works in loaded buffer[why]
 " 4. Match the string with completefunc
@@ -456,7 +450,7 @@ endfunction
         "" return  [  bin_] => 2
 	    "return start
     "else
-        "let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
+        "let l:path = '$HOME/myfile/github/vim/myword.utf-8.add'
         "let matches = []
 
         "for phrase in readfile(l:path)
@@ -528,8 +522,8 @@ endfunc
 "        let matchPhrase= []
 "        let matchDict = {}
 "
-"        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
-"        "let l:path = '/Users/cat/myfile/github/vim/try.txt'
+"        let l:path = '$HOME/myfile/github/vim/myword.utf-8.add'
+"        "let l:path = '$HOME/myfile/github/vim/try.txt'
 "        let keylist = readfile(l:path)
 "        while index >= 0 
 "            let str = list[index]
@@ -609,8 +603,8 @@ endfunc
 "        let matchPhrase= []
 "        let matchDict = {}
 "
-"        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
-"        "let l:path = '/Users/cat/myfile/github/vim/try.txt'
+"        let l:path = '$HOME/myfile/github/vim/myword.utf-8.add'
+"        "let l:path = '$HOME/myfile/github/vim/try.txt'
 "        let keylist = readfile(l:path)
 "        while index >= 0 
 "            let str = list[index]
@@ -680,9 +674,9 @@ function! LongestMatch()
         let matchPhrase = []
         let matchDict   = {}
 
-        let l:path = '/Users/cat/myfile/github/vim/myword.utf-8.add'
-        "let l:path = '/Users/cat/myfile/github/vim/try.txt'
-        "let l:path = '/Users/cat/try/file1.txt'
+        let l:path = '$HOME/myfile/github/vim/myword.utf-8.add'
+        "let l:path = '$HOME/myfile/github/vim/try.txt'
+        "let l:path = '$HOME/try/file1.txt'
         let phraseList = readfile(l:path)
         while index >= 0 
             " *v_literal* *v_string*
@@ -773,7 +767,7 @@ fun! TryFun()
 endfun
 
 fun! TryFun1()
-        let l:path = '/Users/cat/try/file1.txt'
+        let l:path = '$HOME/try/file1.txt'
         for line in readfile(l:path)
             echo substitute(line, '\' , '\\\\', "")
         endfor
@@ -792,16 +786,16 @@ endfun
 "---------------------------------------------------------------------
 func! RunSnippet()
    " Not sure why following command doesn't work
-   ":call system('runhaskell ' . ' -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
+   ":call system('runhaskell ' . ' -i$HOME/myfile/github/haskell $HOME/myfile/github/haskell/snippet.hs')
 
     " It does works like that, don't ask me why
-   :call system('runhaskell -i/Users/cat/myfile/github/haskell /Users/cat/myfile/github/haskell/snippet.hs')
-   :source /Users/cat/myfile/github/snippets/snippet.vimrc 
-   :source /Users/cat/myfile/private/secret.vimrc 
+   :call system('runhaskell -i$HOME/myfile/github/haskell $HOME/myfile/github/haskell/snippet.hs')
+   :source $HOME/myfile/github/snippets/snippet.vimrc 
+   :source $HOME/myfile/private/secret.vimrc 
 endfunc
 
 func! SourceSnippet()
-   :source /Users/cat/myfile/github/snippets/snippet.vimrc 
+   :source $HOME/myfile/github/snippets/snippet.vimrc 
 endfunc
 
 "---------------------------------------------------------------------
@@ -829,7 +823,7 @@ endfunc
 "            call filter(l:dirList, 'v:val !~ "*"')
 "
 "            let l:path = join(l:dirList, '/') 
-"            let l:findCmd = 'find /Users/cat/myfile/github/Jsource/' . l:path . ' -name ' .  l:classFileName . ' -print'
+"            let l:findCmd = 'find $HOME/myfile/github/Jsource/' . l:path . ' -name ' .  l:classFileName . ' -print'
 "            let l:javaClassName = system(l:findCmd)
 "
 "            if strlen(l:javaClassName) > 0
@@ -1059,7 +1053,7 @@ func! CompleteJava()
                     endif
                 endif
 
-                let l:findCmd = 'find /Users/cat/myfile/github/Jsource/' . l:path . ' -name ' .  l:classFileName . ' -print'
+                let l:findCmd = 'find $HOME/myfile/github/Jsource/' . l:path . ' -name ' .  l:classFileName . ' -print'
                 let l:javaClassName = system(l:findCmd)
 
                 if strlen(l:javaClassName) > 0
@@ -1312,35 +1306,35 @@ map <leader>s :nohlsearch <CR>
 "------------------------------------------------------------------
 cabbr fp :call  CopyCurrentFilePath()<CR>
 cabbr ip :call  ChangePathInit()<CR>
-cabbr big :tabe  /Users/cat/myfile/github/java/big.java<CR>
+cabbr big :tabe  $HOME/myfile/github/java/big.java<CR>
 cabbr kk .g/\S*\%#\S*/y <bar> let @*=@" 
-cabbr sv :source /Users/cat/myfile/github/vim/vim.vimrc 
-cabbr ev :tabe /Users/cat/myfile/github/vim/vim.vimrc
+cabbr sv :source $HOME/myfile/github/vim/vim.vimrc 
+cabbr ev :tabe $HOME/myfile/github/vim/vim.vimrc
 cabbr eb :tabe ~/.bashrc
 cabbr ep :tabnew /etc/profile 
 cabbr mk :mksession! $sess                                  " save vim session
-cabbr qn :tabe /Users/cat/myfile/github/quicknote/quicknote.txt " quick node
+cabbr qn :tabe $HOME/myfile/github/quicknote/quicknote.txt " quick node
 cabbr mm :marks
-cabbr mylib :tabe /Users/cat/myfile/github/cpp/MyLib
+cabbr mylib :tabe $HOME/myfile/github/cpp/MyLib
 
-cabbr Wo :tabe /Users/cat/myfile/github/vim/myword.utf-8.add    " My words file
+cabbr Wo :tabe $HOME/myfile/github/vim/myword.utf-8.add    " My words file
 cabbr Tiny :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  tiny3.com  -incongnito 
-cabbr Res :!open /Users/cat/GoogleDrive/NewResume/aronsitu00resume.pdf     
+cabbr Res :!open $HOME/GoogleDrive/NewResume/aronsitu00resume.pdf     
 " run CodeManager
-cabbr Cmm :! /Users/cat/myfile/github/javabin/CodeManager/run.sh 
-" copy CodeManager to /Users/cat/myfile/github/javabin/CodeManager
-cabbr Cmmc :! /Users/cat/myfile/script/CodeManager.sh
-cabbr Int :!open /Users/cat/myfile/github/text/intellij_shortcut.pdf    
+cabbr Cmm :! $HOME/myfile/github/javabin/CodeManager/run.sh 
+" copy CodeManager to $HOME/myfile/github/javabin/CodeManager
+cabbr Cmmc :! $HOME/myfile/script/CodeManager.sh
+cabbr Int :!open $HOME/myfile/github/text/intellij_shortcut.pdf    
 cabbr Sty :%!astyle --style=java 
 cabbr Esty :tabe /Library/WebServer/Documents/zsurface/style.css
 cabbr Enote :tabe /Library/WebServer/Documents/zsurface/html/indexDailyNote.html
 cabbr Evimt :tabe /Library/WebServer/Documents/zsurface/html/indexVimTricks.html
 cabbr Eng :tabe /Library/WebServer/Documents/zsurface/html/indexEnglishNote.html  
 cabbr Ec :tabe /Library/WebServer/Documents/zsurface/html/indexCommandLineTricks.html  
-cabbr Ep  :tabnew /Users/cat/myfile/vimprivate/private.vimrc
+cabbr Ep  :tabnew $HOME/myfile/vimprivate/private.vimrc
 cabbr FF  :call JavaComment() <CR> 
 cabbr No  :tabnew /Library/WebServer/Documents/tiny3/noteindex.txt 
-cabbr Job :tabnew /Users/cat/GoogleDrive/job/recruiter_email.txt 
+cabbr Job :tabnew $HOME/GoogleDrive/job/recruiter_email.txt 
 cabbr Ky :let @*=expand("%:p")
 cabbr Tz :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/zsh & <CR>
 cabbr Tf :!/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal /bin/fish & <CR>
@@ -1700,7 +1694,7 @@ autocmd BufEnter  *.tex,*.html cabbr Font    :!/Applications/Google\ Chrome.app/
 autocmd BufEnter  *.vimrc,*.html cabbr Color :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome https://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg<CR>
 autocmd BufEnter  *.vimrc,*.html,*.tex cabbr Mat   :!/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  http://localhost/zsurface/html/indexLatexMatrix.html<CR>
 
-autocmd BufEnter *.tex cabbr ln :tabe /Users/cat/myfile/github/math/latexnote.tex
+autocmd BufEnter *.tex cabbr ln :tabe $HOME/myfile/github/math/latexnote.tex
 
 "autocmd BufEnter *.tex cabbr ee :.,$s/\S.*\S/\\\[ \0\ \\\]/gc <bar> :nohlsearch <CR>
 "autocmd BufEnter *.tex cabbr ed :.,$s/\S.*\S/\$\0\$/gc <bar> :nohlsearch <CR>
@@ -1892,11 +1886,11 @@ autocmd BufEnter *.tex  map  <leader><F9> :w! <bar> :!pdflatex %:p <CR>:!open %:
 "autocmd BufEnter *.tex  map  <F9> :w! <bar> :!latexmk -pdf -file-line-error %:p <CR> :!asy %:p:r-*.asy <CR> :!open -a /Applications/Skim.app/Contents/MacOS/Skim %:p:r.pdf <CR>
 "autocmd BufEnter *.tex  map  <F9> :w! <bar> :!pdflatex %:p <CR> :!open -g %:p:r.pdf <CR> :wincmd p <CR> 
 
-"autocmd BufEnter *.java map  <F9> :w! <bar> :!/Users/cat/myfile/script/jav.sh % <CR>
+"autocmd BufEnter *.java map  <F9> :w! <bar> :!$HOME/myfile/script/jav.sh % <CR>
 autocmd BufEnter *.java map  <F9> :w! <bar>  :call CompileJava()  <CR>
 autocmd BufEnter *.java map  <Leader>m  :call ChangeJavaMaven()<CR>
 
-autocmd BufEnter *.java map  <Leader><F9> :R /Users/cat/myfile/script/jav.sh % <CR>
+autocmd BufEnter *.java map  <Leader><F9> :R $HOME/myfile/script/jav.sh % <CR>
 autocmd BufEnter *.hs   map  <F9> :w! <bar> :!runhaskell % <CR>
 
 " save file and compile latex file
@@ -1947,7 +1941,7 @@ augroup Xcode
 au!
 
 " run CoreApp test cases from command line
-autocmd BufEnter *.m,*.h  map  <F9> :!/Users/cat/myfile/github/xcode/CoreApp/test.sh
+autocmd BufEnter *.m,*.h  map  <F9> :!$HOME/myfile/github/xcode/CoreApp/test.sh
 
 autocmd BufEnter *.m,*.h cabbr ttd :call Test(@")<CR>
 autocmd BufEnter *.m,*.h cabbr df  :call Defun()<CR>
@@ -2409,7 +2403,7 @@ command! -nargs=1 Bs :call BufSel("<args>")
 
 "-----------------------------------------------------------------
 
-" change to initial path
+" change to initial path, change path, cd path
 func! ChangePathInit()
     :exec 'cd '. fnameescape(g:initPath)
 endfunc
@@ -2442,7 +2436,7 @@ func! Status_JavaMaven()
 endfun
 func! CompileJava()
     if g:compileJavaMaven == "java"
-        :!/Users/cat/myfile/script/jav.sh %
+        :!$HOME/myfile/script/jav.sh %
     elseif g:compileJavaMaven == "maven"
         exec 'cd ' . g:initPath
         :!java -cp target/*.jar MyApp.App
